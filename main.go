@@ -21,6 +21,7 @@ func main() {
 	w := a.NewWindow("Draw")
 	e := ui.NewEditor()
 	e.BuildUI(w)
-	w.Resize(fyne.NewSize(600, 600))
+	w.Resize(fyne.NewSize(300, 300))
 	w.ShowAndRun()
+
 }
