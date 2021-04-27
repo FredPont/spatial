@@ -73,7 +73,7 @@ func (r *interactiveRaster) clearPolygon(p [][]fyne.Position) {
 
 	for _, fps := range p {
 		for _, fp := range fps {
-			r.edit.SetPixelColor(int(fp.X), int(fp.Y), color.RGBA{0, 255, 0, 255}) // set pixel x,y to transparent
+			r.edit.SetPixelColor(int(fp.X), int(fp.Y), color.RGBA{0, 0, 0, 0}) // set pixel x,y to transparent
 		}
 	}
 }

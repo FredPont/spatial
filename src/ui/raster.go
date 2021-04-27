@@ -71,10 +71,9 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 	}
 	r.points = nil                             // reset polygone coordinates
 	r.allpoints = append(r.allpoints, alldots) // store new edges and lines pixels
-	fmt.Println(r.allpoints)
-	r.clearPolygon(r.allpoints)
-	//r.edit.img = image.NewRGBA(image.Rect(0, 0, 600, 600))
-	//r.edit.img.Refresh()
+	//fmt.Println(r.allpoints)
+	//r.clearPolygon(r.allpoints)
+
 }
 
 func (r *interactiveRaster) locationForPosition(pos fyne.Position) (int, int) {
