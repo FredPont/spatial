@@ -16,10 +16,9 @@ import (
 
 type editor struct {
 	drawSurface *interactiveRaster
-	fgPreview   *canvas.Rectangle
 	img         *image.RGBA
 	microscop   *canvas.Image
-	fg          color.Color
+	min         fyne.Size
 	layer       *fyne.Container
 	win         fyne.Window
 }
@@ -30,27 +29,27 @@ func (e *editor) draw(w, h int) image.Image {
 
 // NewEditor creates a new pixel editor that is ready to have a file loaded
 func NewEditor() *editor {
-	micro := canvas.NewImageFromFile("tissue_lowres_image.png")
+	imgFile, w, h := ImgSize()
+	micro := canvas.NewImageFromFile(imgFile)
 	micro.FillMode = canvas.ImageFillOriginal
-	fgCol := color.Transparent
-	edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
+	//fgCol := color.Transparent
+	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
+	edit := &editor{img: image.NewRGBA(image.Rect(0, 0, w, h)), microscop: micro, min: fyne.Size{float32(w), float32(h)}}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit
 }
 
-// BuildUI creates the main window of our pixel edit application
+// BuildUI creates the main window of our application
 func (e *editor) BuildUI(w fyne.Window) {
 	e.win = w
 	e.layer = container.NewMax(e.drawSurface, e.microscop, canvas.NewImageFromImage(e.img))
-
 	w.SetContent(container.NewScroll(e.layer))
-	//w.SetContent(container.NewMax(e.buildUI(), canvas.NewImageFromImage(e.img)))
 }
 
-func (e *editor) buildUI() fyne.CanvasObject {
-	return container.NewScroll(e.drawSurface)
-}
+// func (e *editor) buildUI() fyne.CanvasObject {
+// 	return container.NewScroll(e.drawSurface)
+// }
 
 func (e *editor) SetPixelColor(x, y int, c color.RGBA) {
 	e.img.SetRGBA(x, y, c)

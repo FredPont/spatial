@@ -16,15 +16,15 @@ import (
 
 type interactiveRaster struct {
 	widget.BaseWidget
-
-	edit   *editor
-	min    fyne.Size
+	edit *editor
+	//min    fyne.Size
 	img    *canvas.Raster
 	points []fyne.Position
 }
 
 func (r *interactiveRaster) MinSize() fyne.Size {
-	return r.min
+	//fmt.Println("min size :", r.edit.min)
+	return r.edit.min
 }
 
 func (r *interactiveRaster) CreateRenderer() fyne.WidgetRenderer {

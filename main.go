@@ -19,6 +19,7 @@ import (
 func main() {
 	a := app.New()
 	w := a.NewWindow("Draw")
+	//ui.ImgSize()
 	e := ui.NewEditor()
 	e.BuildUI(w)
 	w.Resize(fyne.NewSize(300, 300))
