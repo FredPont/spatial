@@ -16,9 +16,9 @@ import (
 
 type editor struct {
 	drawSurface *interactiveRaster
-	img         *image.RGBA
+	img         *image.RGBA // image with polygons
 	microscop   *canvas.Image
-	min         fyne.Size
+	min         fyne.Size // size of the microscop image
 	layer       *fyne.Container
 	win         fyne.Window
 }
