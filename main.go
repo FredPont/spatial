@@ -17,6 +17,7 @@ import (
 
 func main() {
 	a := app.New()
+
 	w := a.NewWindow("image")
 	e := ui.NewEditor()
 	e.BuildUI(w)
@@ -27,6 +28,7 @@ func main() {
 	ui.BuildTools(w2, e)
 
 	w2.Show()
+
 	w2.ShowAndRun()
 	w.ShowAndRun()
 

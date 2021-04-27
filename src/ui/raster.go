@@ -53,8 +53,8 @@ func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
 	}
 
 	fmt.Println(x, y)
-	r.points = append(r.points, ev.Position)             // store new edges
-	r.alledges = append(r.alledges, r.points)            // store new edges
+	r.points = append(r.points, ev.Position) // store new edges
+
 	r.allpoints = append(r.allpoints, r.points, alldots) // store new edges and lines pixels
 	r.edit.layer.Refresh()
 }
@@ -69,6 +69,7 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 		fmt.Println(r.points)
 		r.edit.layer.Refresh()
 	}
+	r.alledges = append(r.alledges, r.points)  // store new edges
 	r.points = nil                             // reset polygone coordinates
 	r.allpoints = append(r.allpoints, alldots) // store new edges and lines pixels
 	//fmt.Println(r.allpoints)
