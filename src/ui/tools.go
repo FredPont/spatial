@@ -3,6 +3,7 @@ package ui
 import (
 	"encoding/csv"
 	"fmt"
+	"image/png"
 	"log"
 	"os"
 	"strconv"
@@ -18,7 +19,7 @@ func checkError(message string, err error) {
 	}
 }
 
-func BuildTools(w2 fyne.Window, e *editor) {
+func BuildTools(w2, w fyne.Window, e *editor) {
 	gatename := widget.NewEntry()
 	gatename.SetPlaceHolder("Selection name...")
 
@@ -29,6 +30,12 @@ func BuildTools(w2 fyne.Window, e *editor) {
 		}),
 		widget.NewButton("Clear all gates", func() {
 			clearDots(e)
+		}),
+		widget.NewButton("Screen shot", func() {
+			screenShot(w, gatename.Text)
+		}),
+		widget.NewButton("Exit", func() {
+			os.Exit(0)
 		}),
 	)
 
@@ -43,6 +50,7 @@ func clearDots(e *editor) {
 	initAlledges(e) // reset alledges
 }
 
+// save the gates to csv files
 func saveGates(gateName string, e *editor) {
 	fmt.Println("save gates")
 	for i, poly := range e.drawSurface.alledges {
@@ -53,6 +61,29 @@ func saveGates(gateName string, e *editor) {
 
 }
 
+// save image to file
+// credits https://www.devdungeon.com/content/working-images-go
+func screenShot(w fyne.Window, filename string) {
+	out := w.Canvas().Capture()
+
+	// outputFile is a File type which satisfies Writer interface
+	path := "plots/" + filename + ".png"
+	outputFile, err := os.Create(path)
+	if err != nil {
+		// Handle error
+		fmt.Println("The image cannot be saved to the file")
+	}
+
+	// Encode takes a writer interface and an image interface
+	// We pass it the File and the RGBA
+	png.Encode(outputFile, out)
+
+	// Don't forget to close files
+	outputFile.Close()
+
+}
+
+// write polygon edge to file
 func writeCSV(filename string, poly []fyne.Position) {
 	path := "gates/" + filename + ".csv"
 	file, err := os.Create(path)

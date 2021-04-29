@@ -25,7 +25,7 @@ func main() {
 	w.Show()
 
 	w2 := a.NewWindow("Tool Box")
-	ui.BuildTools(w2, e)
+	ui.BuildTools(w2, w, e)
 
 	w2.Show()
 
