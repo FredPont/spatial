@@ -33,11 +33,26 @@ func BuildPref(a fyne.App) {
 	b, _ := r.Get()
 	rot := widget.NewCheck("rotate coordinates +90°", func(value bool) {})
 	rot.SetChecked(b)
+
+	// X coordinates
+	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
+	xc, _ := xcor.Get()
+	xSel := widget.NewSelect([]string{"Item 1", "Item 2", "Item 3"}, func(value string) {})
+	xSel.SetSelected(xc)
+
+	// y coordinates
+	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for rotation
+	yc, _ := ycor.Get()
+	ySel := widget.NewSelect([]string{"Item 1", "Item 2", "Item 3"}, func(value string) {})
+	ySel.SetSelected(yc)
+
 	// create form
 	form := &widget.Form{
 		Items: []*widget.FormItem{ // we can specify items in the constructor
 			{Text: "Scaling Factor", Widget: scalingFactor},
 			{Text: "Rotate", Widget: rot},
+			{Text: "X coordinates", Widget: xSel},
+			{Text: "Y coordinates", Widget: ySel},
 		},
 		OnSubmit: func() { // optional, handle form submission
 
@@ -54,6 +69,12 @@ func BuildPref(a fyne.App) {
 
 			// coordinates +90° rotation
 			pref.SetBool("rotate", rot.Checked)
+
+			// X coordinates
+			pref.SetString("xcor", xSel.Selected)
+
+			// Y coordinates
+			pref.SetString("ycor", ySel.Selected)
 
 			log.Println("Form submitted:", scalingFactor.Text)
 
