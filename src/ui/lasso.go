@@ -2,13 +2,12 @@ package ui
 
 import (
 	"image/color"
+	"lasso/src/filter"
 	"math"
-
-	"fyne.io/fyne/v2"
 )
 
-func (r *interactiveRaster) drawline(x, y, x1, y1 int) []fyne.Position {
-	var alldots []fyne.Position // store all line pixels
+func (r *interactiveRaster) drawline(x, y, x1, y1 int) []filter.Point {
+	var alldots []filter.Point // store all line pixels
 	if x1 == x {
 		if y1 < y {
 			y, y1 = swap(y, y1)
@@ -17,7 +16,7 @@ func (r *interactiveRaster) drawline(x, y, x1, y1 int) []fyne.Position {
 			j := x
 			//fmt.Println("i=", i, "j=", j)
 			r.edit.SetPixelColor(j, i, color.RGBA{255, 0, 0, 255}) // set pixel x,y to red
-			alldots = append(alldots, fyne.Position{float32(j), float32(i)})
+			alldots = append(alldots, filter.Point{j, i})
 		}
 		return alldots
 	}
@@ -35,7 +34,7 @@ func (r *interactiveRaster) drawline(x, y, x1, y1 int) []fyne.Position {
 			j := int(math.Round(a*float64(i) + b))
 			//fmt.Println("i=", i, "j=", j)
 			r.edit.SetPixelColor(i, j, color.RGBA{255, 0, 0, 255}) // set pixel x,y to red
-			alldots = append(alldots, fyne.Position{float32(i), float32(j)})
+			alldots = append(alldots, filter.Point{i, j})
 		}
 	} else {
 		if y1 < y {
@@ -46,7 +45,7 @@ func (r *interactiveRaster) drawline(x, y, x1, y1 int) []fyne.Position {
 			j := int(math.Round((float64(i) - b) / a))
 			//fmt.Println("i=", i, "j=", j)
 			r.edit.SetPixelColor(j, i, color.RGBA{255, 0, 0, 255}) // set pixel x,y to red
-			alldots = append(alldots, fyne.Position{float32(j), float32(i)})
+			alldots = append(alldots, filter.Point{j, i})
 		}
 	}
 	return alldots
@@ -69,7 +68,7 @@ func swap(a, b int) (int, int) {
 	return a, b
 }
 
-func (r *interactiveRaster) clearPolygon(p [][]fyne.Position) {
+func (r *interactiveRaster) clearPolygon(p [][]filter.Point) {
 
 	for _, fps := range p {
 		for _, fp := range fps {

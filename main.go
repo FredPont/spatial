@@ -16,8 +16,9 @@ import (
 )
 
 func main() {
-	a := app.New()
+	a := app.NewWithID("SpatialGate")
 
+	//pref.SetPref(a) // set user preferences for the application
 	w := a.NewWindow("image")
 	e := ui.NewEditor()
 	e.BuildUI(w)
@@ -25,7 +26,7 @@ func main() {
 	w.Show()
 
 	w2 := a.NewWindow("Tool Box")
-	ui.BuildTools(w2, w, e)
+	ui.BuildTools(a, w2, w, e)
 
 	w2.Show()
 

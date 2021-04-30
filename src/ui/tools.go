@@ -4,6 +4,8 @@ import (
 	"encoding/csv"
 	"fmt"
 	"image/png"
+	"lasso/src/filter"
+	"lasso/src/pref"
 	"log"
 	"os"
 	"strconv"
@@ -19,9 +21,13 @@ func checkError(message string, err error) {
 	}
 }
 
-func BuildTools(w2, w fyne.Window, e *editor) {
+func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 	gatename := widget.NewEntry()
 	gatename.SetPlaceHolder("Selection name...")
+
+	// scalingFactor := widget.NewEntry()
+
+	// scalingFactor.SetPlaceHolder(a.Preferences().Float("scaleFactor"))
 
 	content := container.NewVBox(
 		gatename,
@@ -33,6 +39,9 @@ func BuildTools(w2, w fyne.Window, e *editor) {
 		}),
 		widget.NewButton("Screen shot", func() {
 			screenShot(w, gatename.Text)
+		}),
+		widget.NewButton("Preferences", func() {
+			pref.BuildPref(a)
 		}),
 		widget.NewButton("Exit", func() {
 			os.Exit(0)
@@ -84,7 +93,7 @@ func screenShot(w fyne.Window, filename string) {
 }
 
 // write polygon edge to file
-func writeCSV(filename string, poly []fyne.Position) {
+func writeCSV(filename string, poly []filter.Point) {
 	path := "gates/" + filename + ".csv"
 	file, err := os.Create(path)
 	checkError("Cannot create file", err)
@@ -95,9 +104,17 @@ func writeCSV(filename string, poly []fyne.Position) {
 	writer.Comma = '\t'
 
 	for _, value := range poly {
-		err := writer.Write(fynPosToStr(value))
+		err := writer.Write(filterPtToStr(value))
 		checkError("Cannot write to file", err)
 	}
+}
+
+// convert one filter.Point to one []string
+func filterPtToStr(p filter.Point) []string {
+	x := strconv.Itoa(p.X)
+	y := strconv.Itoa(p.Y)
+	str := []string{x, y}
+	return str
 }
 
 // convert one fyne position to one []string
