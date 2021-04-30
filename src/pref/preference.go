@@ -2,6 +2,7 @@ package pref
 
 import (
 	"fmt"
+	"lasso/src/filter"
 	"log"
 	"strconv"
 
@@ -35,16 +36,17 @@ func BuildPref(a fyne.App) {
 	rot.SetChecked(b)
 
 	// X coordinates
+	head := filter.ReadHeader("data/H_Exp_Spatial_seuratv3.tsv")
 	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
 	xc, _ := xcor.Get()
-	xSel := widget.NewSelect([]string{"Item 1", "Item 2", "Item 3"}, func(value string) {})
-	xSel.SetSelected(xc)
+	xSel := widget.NewSelectEntry(head)
+	xSel.SetText(xc)
 
 	// y coordinates
 	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for rotation
 	yc, _ := ycor.Get()
-	ySel := widget.NewSelect([]string{"Item 1", "Item 2", "Item 3"}, func(value string) {})
-	ySel.SetSelected(yc)
+	ySel := widget.NewSelectEntry(head)
+	ySel.SetText(yc)
 
 	// create form
 	form := &widget.Form{
@@ -58,7 +60,7 @@ func BuildPref(a fyne.App) {
 
 			// scaling factor
 			sftxt := scalingFactor.Text
-			log.Println("SF stored:", scalingFactor.Text)
+
 			if sftxt != "" {
 				sffloat, err := strconv.ParseFloat(sftxt, 64)
 				if err == nil {
@@ -71,10 +73,10 @@ func BuildPref(a fyne.App) {
 			pref.SetBool("rotate", rot.Checked)
 
 			// X coordinates
-			pref.SetString("xcor", xSel.Selected)
+			pref.SetString("xcor", xSel.Entry.Text)
 
 			// Y coordinates
-			pref.SetString("ycor", ySel.Selected)
+			pref.SetString("ycor", ySel.Entry.Text)
 
 			log.Println("Form submitted:", scalingFactor.Text)
 
