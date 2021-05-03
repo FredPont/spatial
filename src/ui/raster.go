@@ -105,11 +105,11 @@ type rasterWidgetRender struct {
 }
 
 func bgPattern(x, y, _, _ int) color.Color {
-	const boxSize = 25
+	//const boxSize = 25
 
-	if (x/boxSize)%2 == (y/boxSize)%2 {
-		return color.Gray{Y: 58}
-	}
+	// if (x/boxSize)%2 == (y/boxSize)%2 {
+	// 	return color.Gray{Y: 58}
+	// }
 
 	return color.Gray{Y: 84}
 }

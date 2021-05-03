@@ -28,7 +28,7 @@ func (e *editor) draw(w, h int) image.Image {
 }
 
 // NewEditor creates a new pixel editor that is ready to have a file loaded
-func NewEditor() *editor {
+func NewEditor() (*editor, int, int) {
 	imgFile, w, h := ImgSize()
 	micro := canvas.NewImageFromFile(imgFile)
 	micro.FillMode = canvas.ImageFillOriginal
@@ -37,7 +37,7 @@ func NewEditor() *editor {
 	edit := &editor{img: image.NewRGBA(image.Rect(0, 0, w, h)), microscop: micro, min: fyne.Size{float32(w), float32(h)}}
 	edit.drawSurface = newInteractiveRaster(edit)
 
-	return edit
+	return edit, w, h
 }
 
 // BuildUI creates the main window of our application
