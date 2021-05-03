@@ -2,7 +2,6 @@ package pref
 
 import (
 	"fmt"
-	"lasso/src/filter"
 	"log"
 	"strconv"
 
@@ -18,8 +17,9 @@ import (
 // 	fmt.Println("scaleFactor is:", val)
 // }
 
-func BuildPref(a fyne.App) {
+func BuildPref(a fyne.App, head []string) {
 	pref := a.Preferences()
+
 	myWindow := a.NewWindow("Preferences")
 
 	// scaling factor
@@ -36,7 +36,6 @@ func BuildPref(a fyne.App) {
 	rot.SetChecked(b)
 
 	// X coordinates
-	head := filter.ReadHeader("data/H_Exp_Spatial_seuratv3.tsv")
 	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
 	xc, _ := xcor.Get()
 	xSel := widget.NewSelectEntry(head)

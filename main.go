@@ -36,6 +36,8 @@ func main() {
 
 }
 
+// set the windows size of the image. If the image is larger than the user
+// preferences, the image is displayed with scroll bars.
 func setImageWinSize(a fyne.App, w fyne.Window, imgW, imgH int) {
 	finalWidth := float32(imgW)
 	finalHeight := float32(imgH)
