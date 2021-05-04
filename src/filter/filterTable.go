@@ -19,8 +19,22 @@
 package filter
 
 import (
+	"bufio"
+	"encoding/csv"
+	"io"
 	"log"
+	"math"
+	"os"
+	"strconv"
+	"strings"
 )
+
+// Conf store user preferences
+type Conf struct {
+	X, Y   string
+	Scale  float64
+	Rotate bool
+}
 
 // detect columns to select
 // test :
@@ -70,19 +84,17 @@ func selByIndex(row []string, indexes []int) []string {
 	return selection
 }
 
-/*
-func filterTable(dataFile string, polygon []Point, param Conf, gateFile string) {
+func FilterTable(dataFile, outfile string, polygon []Point, param Conf) {
 
 	path := "data/" + dataFile
-	gf, _ := remExt(gateFile)
 	// open result file for write filtered table
-	fout := "results/filtered_" + gf + "_" + dataFile
+	fout := "results/filtered_" + outfile
 	out, err1 := os.Create(fout)
 	check(err1)
 	defer out.Close()
 
 	// open result file for write cell names
-	fout2 := "results/cells_" + gf + "_" + dataFile
+	fout2 := "results/cells_" + outfile
 	out2, err1 := os.Create(fout2)
 	check(err1)
 	defer out2.Close()
@@ -97,7 +109,7 @@ func filterTable(dataFile string, polygon []Point, param Conf, gateFile string) 
 	// read table header
 	header, err := reader.Read()                       //read first line of pathway
 	writeOneLine(out, strings.Join(header, "\t")+"\n") // write header in result file
-	XYindex := getColIndex(header, []string{param.x, param.y})
+	XYindex := getColIndex(header, []string{param.X, param.Y})
 	//fmt.Println(XYindex)
 	for {
 		// Read in a row. Check if we are at the end of the file.
@@ -118,8 +130,8 @@ func filterTable(dataFile string, polygon []Point, param Conf, gateFile string) 
 }
 
 func filterRow(record []string, XYindex []int, polygon []Point, param Conf) bool {
-	scaleFactor := param.scale
-	rotate := param.rotate
+	scaleFactor := param.Scale
+	rotate := param.Rotate
 
 	XYstr := selByIndex(record, XYindex) // []string with XY coordinates
 	//fmt.Println(XYstr)
@@ -146,6 +158,6 @@ func filterRow(record []string, XYindex []int, polygon []Point, param Conf) bool
 }
 
 func inGate(x, y int64, polygon []Point) bool {
-	return isInside(polygon, Point{x, y})
+	// convert x,y to int
+	return isInside(polygon, Point{int(x), int(y)})
 }
-*/

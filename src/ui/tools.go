@@ -37,7 +37,9 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 	content := container.NewVBox(
 		gatename,
 		widget.NewButton("Filter tables with active gates", func() {
-			saveGates(gatename.Text, e)
+			alledges := e.drawSurface.alledges
+			go filterActiveGates(alledges, dataFiles, gatename.Text, a.Preferences())
+			go saveGates(gatename.Text, e)
 		}),
 		widget.NewButton("Clear all gates", func() {
 			clearDots(e)

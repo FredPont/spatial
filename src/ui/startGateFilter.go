@@ -18,8 +18,51 @@
 
 package ui
 
-import "lasso/src/filter"
+import (
+	"fmt"
+	"lasso/src/filter"
+	"strconv"
 
-func filterActiveGates(alledges [][]filter.Point) {
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/data/binding"
+)
+
+func filterActiveGates(alledges [][]filter.Point, dataFiles []string, gatename string, pref fyne.Preferences) {
+	// get parameters from preferences
+	param := prefToConf(pref, gatename)
+
+	// filter all data files with all active gates
+	for gateNumber, polygon := range alledges {
+		fmt.Println("polygon ", polygon)
+		if len(polygon) < 3 {
+			return
+		}
+		for _, dataFile := range dataFiles {
+			outFile := strconv.Itoa(gateNumber) + "_" + gatename + "_" + dataFile
+			filter.FilterTable(dataFile, outFile, polygon, param)
+		}
+
+	}
+}
+
+// retreive conf data from fyne pref
+func prefToConf(pref fyne.Preferences, gatename string) filter.Conf {
+	// get // X coordinates
+	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
+	x, _ := xcor.Get()
+
+	// get y coordinates
+	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for rotation
+	y, _ := ycor.Get()
+
+	// get scaling factor
+	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
+	scale, _ := sf.Get()
+
+	// get coordinates +90° rotation : necessary for 10x Genomics
+	r := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	rotate, _ := r.Get()
+
+	return filter.Conf{x, y, scale, rotate}
 
 }
