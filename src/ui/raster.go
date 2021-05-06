@@ -50,7 +50,7 @@ func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
 	var alldots []filter.Point // store all line pixels
 	x, y := r.locationForPosition(ev.Position)
 
-	r.edit.SetPixelColor(x, y, color.RGBA{255, 0, 0, 255}) // set pixel x,y to red
+	//r.edit.SetPixelColor(x, y, color.RGBA{255, 0, 0, 255}) // set pixel x,y to red
 
 	lp := len(r.points)
 	if lp >= 1 {

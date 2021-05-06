@@ -16,11 +16,12 @@ import (
 
 type editor struct {
 	drawSurface *interactiveRaster
-	img         *image.RGBA // image with polygons
-	microscop   *canvas.Image
-	min         fyne.Size // size of the microscop image
-	layer       *fyne.Container
-	win         fyne.Window
+	//img           *image.RGBA // image with polygons
+	microscop     *canvas.Image
+	min           fyne.Size       // size of the microscop image
+	layer         *fyne.Container // container with image and interactive drawsurface
+	win           fyne.Window
+	gateContainer *fyne.Container
 }
 
 func (e *editor) draw(w, h int) image.Image {
@@ -32,11 +33,12 @@ func NewEditor() (*editor, int, int) {
 	imgFile, w, h := ImgSize()
 
 	micro := canvas.NewImageFromFile(imgDir + "/" + imgFile)
-
 	micro.FillMode = canvas.ImageFillOriginal
+
+	gc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
-	edit := &editor{img: image.NewRGBA(image.Rect(0, 0, w, h)), microscop: micro, min: fyne.Size{float32(w), float32(h)}}
+	edit := &editor{microscop: micro, min: fyne.Size{float32(w), float32(h)}, gateContainer: gc}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit, w, h
@@ -45,7 +47,7 @@ func NewEditor() (*editor, int, int) {
 // BuildUI creates the main window of our application
 func (e *editor) BuildUI(w fyne.Window) {
 	e.win = w
-	e.layer = container.NewMax(e.drawSurface, e.microscop, canvas.NewImageFromImage(e.img))
+	e.layer = container.NewMax(e.drawSurface, e.microscop, e.gateContainer)
 
 	w.SetContent(container.NewScroll(e.layer))
 }
@@ -54,6 +56,6 @@ func (e *editor) BuildUI(w fyne.Window) {
 // 	return container.NewScroll(e.drawSurface)
 // }
 
-func (e *editor) SetPixelColor(x, y int, c color.RGBA) {
-	e.img.SetRGBA(x, y, c)
-}
+// func (e *editor) SetPixelColor(x, y int, c color.RGBA) {
+// 	e.img.SetRGBA(x, y, c)
+// }
