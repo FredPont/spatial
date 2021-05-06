@@ -11,20 +11,20 @@ import (
 	"path/filepath"
 )
 
-const dirToScan string = "image/"
+const imgDir string = "image/"
 
 func ImgSize() (string, int, int) {
 	// read files in "image" dir
-	fmt.Println("reading", dirToScan)
-	files, _ := ioutil.ReadDir(dirToScan)
+	fmt.Println("reading", imgDir)
+	files, _ := ioutil.ReadDir(imgDir)
 	if len(files) == 0 {
-		fmt.Println("image not found in", dirToScan)
+		fmt.Println("image not found in", imgDir)
 		os.Exit(1)
 	}
 
 	for _, imgFile := range files {
 
-		if reader, err := os.Open(filepath.Join(dirToScan, imgFile.Name())); err == nil {
+		if reader, err := os.Open(filepath.Join(imgDir, imgFile.Name())); err == nil {
 			defer reader.Close()
 			im, _, err := image.DecodeConfig(reader)
 			if err != nil {

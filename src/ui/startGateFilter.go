@@ -35,7 +35,7 @@ func filterActiveGates(alledges [][]filter.Point, dataFiles []string, gatename s
 	for gateNumber, polygon := range alledges {
 		fmt.Println("polygon ", polygon)
 		if len(polygon) < 3 {
-			return
+			continue
 		}
 		for _, dataFile := range dataFiles {
 			outFile := strconv.Itoa(gateNumber) + "_" + gatename + "_" + dataFile

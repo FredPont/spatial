@@ -30,7 +30,9 @@ func (e *editor) draw(w, h int) image.Image {
 // NewEditor creates a new pixel editor that is ready to have a file loaded
 func NewEditor() (*editor, int, int) {
 	imgFile, w, h := ImgSize()
-	micro := canvas.NewImageFromFile(imgFile)
+
+	micro := canvas.NewImageFromFile(imgDir + "/" + imgFile)
+
 	micro.FillMode = canvas.ImageFillOriginal
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
@@ -44,6 +46,7 @@ func NewEditor() (*editor, int, int) {
 func (e *editor) BuildUI(w fyne.Window) {
 	e.win = w
 	e.layer = container.NewMax(e.drawSurface, e.microscop, canvas.NewImageFromImage(e.img))
+
 	w.SetContent(container.NewScroll(e.layer))
 }
 
