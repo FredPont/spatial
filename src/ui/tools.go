@@ -70,6 +70,9 @@ func clearDots(e *editor) {
 func saveGates(gateName string, e *editor) {
 	fmt.Println("save gates")
 	for i, poly := range e.drawSurface.alledges {
+		if len(poly) < 3 {
+			continue
+		}
 		fmt.Println(i, " ", poly)
 		out := strconv.Itoa(i) + "_" + gateName
 		writeCSV(out, poly)
@@ -87,12 +90,13 @@ func screenShot(w fyne.Window, filename string) {
 	outputFile, err := os.Create(path)
 	if err != nil {
 		// Handle error
-		fmt.Println("The image cannot be saved to the file")
+		log.Println("The image cannot be saved to the file")
 	}
 
 	// Encode takes a writer interface and an image interface
 	// We pass it the File and the RGBA
 	png.Encode(outputFile, out)
+	log.Println("Saving image to ", path)
 
 	// Don't forget to close files
 	outputFile.Close()

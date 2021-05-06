@@ -1,25 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"lasso/src/ui"
-
-	//"fmt"
-	//"image"
-	//"image/color"
-
-	//"math"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/data/binding"
-	//"fyne.io/fyne/v2/canvas"
-	//"fyne.io/fyne/v2/theme"
 )
 
 func main() {
+	title()
 	a := app.NewWithID("SpatialGate")
 
-	//pref.SetPref(a) // set user preferences for the application
 	w := a.NewWindow("image")
 	e, imgW, imgH := ui.NewEditor()
 	e.BuildUI(w)
@@ -58,4 +51,12 @@ func setImageWinSize(a fyne.App, w fyne.Window, imgW, imgH int) {
 	}
 
 	w.Resize(fyne.NewSize(finalWidth, finalHeight))
+}
+
+func title() {
+
+	fmt.Println("   ┌───────────────────────────────────────────────────┐") // unicode U+250C
+	fmt.Println("   │   single cell Spatial Gate (c)Frederic PONT 2021  │")
+	fmt.Println("   │       Free Software GNU General Public License    │")
+	fmt.Println("   └───────────────────────────────────────────────────┘")
 }
