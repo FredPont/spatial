@@ -28,12 +28,11 @@ import (
 
 type interactiveRaster struct {
 	widget.BaseWidget
-	edit *editor
-	//min    fyne.Size
-	img       *canvas.Raster
-	points    []filter.Point   // points of current polygone edges
-	alledges  [][]filter.Point // points of all current polygones  edges
-	allpoints [][]filter.Point // points of all current polygones including lines between edges
+	edit       *editor
+	img        *canvas.Raster
+	points     []filter.Point      // points of current polygone edges
+	alledges   [][]filter.Point    // points of all current polygones  edges
+	gatesLines []fyne.CanvasObject // line (fyne canvas object) of all current polygones
 }
 
 func (r *interactiveRaster) MinSize() fyne.Size {
@@ -47,39 +46,36 @@ func (r *interactiveRaster) CreateRenderer() fyne.WidgetRenderer {
 
 // this function draw the lasso and store the lasso coordinates in r.points
 func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
-	var alldots []filter.Point // store all line pixels
+	var line fyne.CanvasObject // store all line pixels
 	x, y := r.locationForPosition(ev.Position)
-
-	//r.edit.SetPixelColor(x, y, color.RGBA{255, 0, 0, 255}) // set pixel x,y to red
 
 	lp := len(r.points)
 	if lp >= 1 {
 		x2, y2 := r.points[lp-1].X, r.points[lp-1].Y // get last coordinates stored
-		alldots = r.drawline(x2, y2, x, y)           // draw a line between the new pixel cliked and the last one stored in r.points
+		line = r.drawline(x2, y2, x, y)              // draw a line between the new pixel cliked and the last one stored in r.points
 	}
 
 	fmt.Println(x, y)
 	r.points = append(r.points, filter.Point{x, y}) // store new edges
 
-	r.allpoints = append(r.allpoints, r.points, alldots) // store new edges and lines pixels
-	r.edit.layer.Refresh()
+	r.gatesLines = append(r.gatesLines, line) // store new lines objects
+	//r.edit.layer.Refresh() // slow
+	r.edit.gateContainer.Refresh() // refresh only the gate container, faster than refresh layer
 }
 
 func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
-	var alldots []filter.Point // store all line pixels
+	var line fyne.CanvasObject // store all line objects
 	lp := len(r.points)
 	if lp >= 1 {
 		x, y := r.points[lp-1].X, r.points[lp-1].Y
 		x2, y2 := r.points[0].X, r.points[0].Y // get first coordinates stored
-		alldots = r.drawline(x2, y2, x, y)
+		line = r.drawline(x2, y2, x, y)
 		fmt.Println(r.points)
 		r.edit.layer.Refresh()
 	}
-	r.alledges = append(r.alledges, r.points)  // store new edges
-	r.points = nil                             // reset polygone coordinates
-	r.allpoints = append(r.allpoints, alldots) // store new edges and lines pixels
-	//fmt.Println(r.allpoints)
-	//r.clearPolygon(r.allpoints)
+	r.alledges = append(r.alledges, r.points) // store new edges
+	r.points = nil                            // reset polygone coordinates
+	r.gatesLines = append(r.gatesLines, line) // store new line object
 
 }
 

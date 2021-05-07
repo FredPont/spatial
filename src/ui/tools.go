@@ -61,8 +61,8 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 
 // clear all gates on draw surface and init all edges
 func clearDots(e *editor) {
-	e.drawSurface.clearPolygon(e.drawSurface.allpoints)
-	e.layer.Refresh()
+	e.drawSurface.clearPolygon(e.drawSurface.gatesLines)
+	e.gateContainer.Refresh()
 	initAlledges(e) // reset alledges
 }
 

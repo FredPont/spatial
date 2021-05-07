@@ -21,7 +21,7 @@ type editor struct {
 	min           fyne.Size       // size of the microscop image
 	layer         *fyne.Container // container with image and interactive drawsurface
 	win           fyne.Window
-	gateContainer *fyne.Container
+	gateContainer *fyne.Container // container with the gates lines
 }
 
 func (e *editor) draw(w, h int) image.Image {
@@ -51,11 +51,3 @@ func (e *editor) BuildUI(w fyne.Window) {
 
 	w.SetContent(container.NewScroll(e.layer))
 }
-
-// func (e *editor) buildUI() fyne.CanvasObject {
-// 	return container.NewScroll(e.drawSurface)
-// }
-
-// func (e *editor) SetPixelColor(x, y int, c color.RGBA) {
-// 	e.img.SetRGBA(x, y, c)
-// }
