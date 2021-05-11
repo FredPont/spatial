@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"lasso/src/ui"
+	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -17,6 +18,7 @@ func main() {
 	e, imgW, imgH := ui.NewEditor()
 	e.BuildUI(w)
 	setImageWinSize(a, w, imgW, imgH)
+	w.SetFixedSize(true) // fix win size
 	w.Show()
 
 	w2 := a.NewWindow("Tool Box")
@@ -31,6 +33,7 @@ func main() {
 
 // set the windows size of the image. If the image is larger than the user
 // preferences, the image is displayed with scroll bars.
+// if the size in pref is < 500 at first start, the minimal size will be 500x500
 func setImageWinSize(a fyne.App, w fyne.Window, imgW, imgH int) {
 	finalWidth := float32(imgW)
 	finalHeight := float32(imgH)
@@ -43,14 +46,27 @@ func setImageWinSize(a fyne.App, w fyne.Window, imgW, imgH int) {
 	winH := binding.BindPreferenceFloat("winH", pref) // set the link to preferences for win width
 	wH, _ := winH.Get()
 
-	if float64(imgW) > wW {
-		finalWidth = float32(wW)
-	}
-	if float64(imgH) > wH {
-		finalHeight = float32(wH)
-	}
-
+	finalWidth = setMinWindow(wW, imgW)
+	finalHeight = setMinWindow(wH, imgH)
 	w.Resize(fyne.NewSize(finalWidth, finalHeight))
+}
+
+// image size must be at least 500x500
+// set the minimal windows size to minSize = 500 if the size in pref is < minSize
+func setMinWindow(prefSize float64, imgSize int) float32 {
+	const minSize = 50
+	finalSize := float32(minSize)
+
+	if float64(imgSize) < float64(minSize) { // if image too small
+		log.Println("Caution ! image must be at least 500x500 ! results will be wrong !")
+	} else if prefSize == 0 { // if pref not set return 500
+		return 500.
+	} else if float64(imgSize) > prefSize && prefSize >= float64(minSize) {
+		finalSize = float32(prefSize)
+	} else if float64(imgSize) < prefSize && prefSize >= float64(minSize) {
+		finalSize = float32(imgSize)
+	}
+	return finalSize
 }
 
 func title() {

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestgetColIndex(t *testing.T) {
+func TestGetColIndex(t *testing.T) {
 	tests := []struct {
 		header []string
 		list   []string
