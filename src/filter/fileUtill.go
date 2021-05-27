@@ -50,6 +50,16 @@ func ReadHeader(path string) []string {
 	return record
 }
 
+// IndexHeader create a map with column names => row number
+// func indexHeader(header []string) map[string]int {
+// 	index := make(map[string]int)
+
+// 	for i := 0; i < len(header); i++ {
+// 		index[header[i]] = i //
+// 	}
+// 	return index
+// }
+
 // remove file extension
 func remExt(filename string) (string, string) {
 	var extension = filepath.Ext(filename)

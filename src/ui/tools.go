@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image/png"
 	"lasso/src/filter"
+	"lasso/src/plot"
 	"lasso/src/pref"
 	"log"
 	"os"
@@ -49,6 +50,12 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		}),
 		widget.NewButton("Preferences", func() {
 			pref.BuildPref(a, header)
+		}),
+		// widget.NewSelect(header, func(s string) {
+		// 	fmt.Println("Selected", s)
+		// }),
+		widget.NewButton("plot", func() {
+			plot.Plotform(a, w, header)
 		}),
 		widget.NewButton("Exit", func() {
 			os.Exit(0)
