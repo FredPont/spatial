@@ -28,7 +28,7 @@ func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string) {
 			widget.NewFormItem("Y", y),
 			widget.NewFormItem("col", unselcol),
 			widget.NewFormItem("dot size", plotdot)},
-		func(bool) { makeplot(header, firstTable, x.Text, y.Text, plotName.Text) }, win)
+		func(bool) { makeplot(a, header, firstTable, x.Text, y.Text, plotName.Text) }, win)
 }
 
 // color picker for the plot background (unselected) dots color

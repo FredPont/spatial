@@ -10,18 +10,27 @@ import (
 	"os"
 	"strconv"
 
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
 	"gonum.org/v1/plot/vg/draw"
 )
 
-func makeplot(header []string, filename, colX, colY, plotName string) {
+func makeplot(a fyne.App, header []string, filename, colX, colY, plotName string) {
 	colIndexes := filter.GetColIndex(header, []string{colX, colY})
 	xy := filter.ReadColumns(filename, colIndexes)
 	scatterData := strToplot(xy)
 
 	makeScatter(scatterData, 2, plotName, colX, colY, plotName)
+
+	plotWindow := a.NewWindow("Plot")
+	img := canvas.NewImageFromFile("plots/" + plotName + ".png")
+	plotWindow.SetContent(img)
+	plotWindow.Resize(fyne.NewSize(800, 800))
+	plotWindow.SetFixedSize(true)
+	plotWindow.Show()
 
 }
 
