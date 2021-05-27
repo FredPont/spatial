@@ -25,8 +25,9 @@ func checkError(message string, err error) {
 // build tools window with buttons and text entry
 func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 	// get informations from data files to be used with buttons
-	dataFiles := filter.ListFiles("data/")              // list all tables in data dir
-	header := filter.ReadHeader("data/" + dataFiles[0]) // header of 1st table found in data
+	dataFiles := filter.ListFiles("data/") // list all tables in data dir
+	firstTable := dataFiles[0]
+	header := filter.ReadHeader("data/" + firstTable) // header of 1st table found in data
 
 	gatename := widget.NewEntry()
 	gatename.SetPlaceHolder("Selection name...")
@@ -55,7 +56,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		// 	fmt.Println("Selected", s)
 		// }),
 		widget.NewButton("plot", func() {
-			plot.Plotform(a, w, header)
+			plot.Plotform(a, w, header, firstTable)
 		}),
 		widget.NewButton("Exit", func() {
 			os.Exit(0)

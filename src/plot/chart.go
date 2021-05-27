@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"image/color"
 	"io"
+	"lasso/src/filter"
 	"log"
 	"math/rand"
 	"os"
@@ -15,23 +16,23 @@ import (
 	"gonum.org/v1/plot/vg/draw"
 )
 
-func makeplot() {
-
-	xy := readscv()
+func makeplot(header []string, filename, colX, colY, plotName string) {
+	colIndexes := filter.GetColIndex(header, []string{colX, colY})
+	xy := filter.ReadColumns(filename, colIndexes)
 	scatterData := strToplot(xy)
 
-	makeScatter(scatterData, 2, "Map", "umap1", "umap2")
+	makeScatter(scatterData, 2, plotName, colX, colY, plotName)
 
 }
 
-func makeScatter(scatterData plotter.XYs, dotsize vg.Length, title, xaxis_name, yaxis_name string) {
+func makeScatter(scatterData plotter.XYs, dotsize vg.Length, title, xaxisName, yaxisName, plotName string) {
 	// Create a new plot, set its title and
 	// axis labels.
 	p := plot.New()
 
 	p.Title.Text = title
-	p.X.Label.Text = xaxis_name
-	p.Y.Label.Text = yaxis_name
+	p.X.Label.Text = xaxisName
+	p.Y.Label.Text = yaxisName
 	p.HideAxes()
 	// Draw a grid behind the data
 	//p.Add(plotter.NewGrid())
@@ -51,7 +52,7 @@ func makeScatter(scatterData plotter.XYs, dotsize vg.Length, title, xaxis_name, 
 	addPoints(scatterData[300:500], p, 3, color.RGBA{R: 0, G: 150, B: 255, A: 255})
 	addPoints(scatterData[600:800], p, 4, color.RGBA{R: 255, G: 150, B: 30, A: 255})
 
-	savePlot(p, 800, 800, "scatter.png")
+	savePlot(p, 800, 800, "plots/"+plotName+".png")
 }
 
 func savePlot(p *plot.Plot, w, h vg.Length, filename string) {

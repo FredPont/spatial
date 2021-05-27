@@ -21,6 +21,7 @@ package filter
 import (
 	"bufio"
 	"encoding/csv"
+	"io"
 
 	//"fmt"
 	"io/ioutil"
@@ -48,6 +49,84 @@ func ReadHeader(path string) []string {
 	record, err := reader.Read() // read first line
 
 	return record
+}
+
+// detect columns to select
+// test :
+// header := []string{"a", "b", "c", "d", "e", "f"}
+// list := []string{"e", "b", "z", "c"}
+// result : [4 1 2]
+func GetColIndex(header, list []string) []int {
+	var indexes []int
+	indDic := make(map[string]int) // dic of items -> column index
+	list2 := make([]string, len(list))
+	copy(list2, list)
+
+	for i, val := range header {
+		for j, l := range list2 {
+			if val == l {
+				indDic[val] = i
+				list2 = append(list2[:j], list2[j+1:]...) // remove found item from list
+				break
+			}
+		}
+	}
+
+	//indexes = append(indexes, 0) // append the first column containing cells names
+
+	for _, v := range list {
+		value, exist := indDic[v]
+		if exist {
+			indexes = append(indexes, value)
+		}
+	}
+
+	if len(indexes) < 2 {
+		log.Fatal("XY columns not found in table !")
+	}
+	return indexes
+}
+
+// selByIndex select item in a slice according to indexes
+// we use it to select in the table X,Y columns
+// corresponding to indexes positions
+func selByIndex(row []string, indexes []int) []string {
+	var selection []string
+
+	for _, i := range indexes {
+		selection = append(selection, row[i])
+	}
+	return selection
+}
+
+// ReadColumns read only columns with positions in indexes
+func ReadColumns(filename string, colIndexes []int) [][]string {
+	var xy [][]string
+	// Open the file
+	csvfile, err := os.Open("data/" + filename)
+	if err != nil {
+		log.Fatalln("Couldn't open the csv file", err)
+	}
+
+	// Parse the file
+	r := csv.NewReader(bufio.NewReader(csvfile))
+	//r := csv.NewReader(csvfile)
+	r.Comma = '\t'
+	r.Read() // skip header
+
+	// Iterate through the records
+	for {
+		// Read each record from csv
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		xy = append(xy, selByIndex(record, colIndexes))
+	}
+	return xy
 }
 
 // IndexHeader create a map with column names => row number

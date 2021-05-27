@@ -16,7 +16,7 @@ func TestGetColIndex(t *testing.T) {
 	}
 	for i, tc := range tests {
 		t.Run(fmt.Sprintf("Index=%d", i), func(t *testing.T) {
-			got := getColIndex(tc.header, tc.list)
+			got := GetColIndex(tc.header, tc.list)
 			if !reflect.DeepEqual(got, tc.want) {
 				t.Fatalf("got %v; want %v", got, tc.want)
 			} else {

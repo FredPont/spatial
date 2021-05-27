@@ -1,7 +1,6 @@
 package plot
 
 import (
-	"fmt"
 	"image/color"
 	"log"
 
@@ -11,8 +10,9 @@ import (
 )
 
 // Plotform display a form with the plot preferences and parameters
-func Plotform(a fyne.App, win fyne.Window, header []string) {
-
+func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string) {
+	// plot name
+	plotName := widget.NewEntry()
 	// x coordinates
 	x := widget.NewSelectEntry(header)
 	// y coordinates
@@ -23,11 +23,12 @@ func Plotform(a fyne.App, win fyne.Window, header []string) {
 
 	dialog.ShowForm("Form Input", "Enter", "Cancel",
 		[]*widget.FormItem{
+			widget.NewFormItem("Plot Name", plotName),
 			widget.NewFormItem("X", x),
 			widget.NewFormItem("Y", y),
 			widget.NewFormItem("col", unselcol),
 			widget.NewFormItem("dot size", plotdot)},
-		func(bool) { fmt.Println("Selected", unselcol) }, win)
+		func(bool) { makeplot(header, firstTable, x.Text, y.Text, plotName.Text) }, win)
 }
 
 // color picker for the plot background (unselected) dots color
