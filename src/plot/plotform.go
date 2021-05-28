@@ -28,7 +28,7 @@ func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string) {
 			widget.NewFormItem("Y", y),
 			widget.NewFormItem("col", unselcol),
 			widget.NewFormItem("dot size", plotdot)},
-		func(bool) { makeplot(a, header, firstTable, x.Text, y.Text, plotName.Text) }, win)
+		func(bool) { makeplot(a, header, firstTable, x.Text, y.Text, plotName.Text, plotdot.Text) }, win)
 }
 
 // color picker for the plot background (unselected) dots color
@@ -37,11 +37,12 @@ func unseldcolor(a fyne.App, win fyne.Window) {
 
 	picker := dialog.NewColorPicker("Pick a Color", "What is your favorite color?", func(c color.Color) {
 		log.Println("Color picked:", c)
-		r, g, b, a := colorToRGBA(c)
-		pref.SetInt("unselR", r)
-		pref.SetInt("unselG", g)
-		pref.SetInt("unselB", b)
-		pref.SetInt("unselA", a)
+		R, G, B, A := colorToRGBA(c)
+		log.Println("Color RGBA picked:", R, G, B, A)
+		pref.SetInt("unselR", R)
+		pref.SetInt("unselG", G)
+		pref.SetInt("unselB", B)
+		pref.SetInt("unselA", A)
 	},
 		win)
 	picker.Advanced = true

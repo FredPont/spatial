@@ -12,19 +12,27 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/data/binding"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
 	"gonum.org/v1/plot/vg/draw"
 )
 
-func makeplot(a fyne.App, header []string, filename, colX, colY, plotName string) {
+func check(e error) {
+	if e != nil {
+		log.Println("plot error !", e)
+	}
+}
+
+func makeplot(a fyne.App, header []string, filename, colX, colY, plotName, bkgDotSize string) {
 	colIndexes := filter.GetColIndex(header, []string{colX, colY})
 	xy := filter.ReadColumns(filename, colIndexes)
 	scatterData := strToplot(xy)
+	mapDotSize, _ := vg.ParseLength(bkgDotSize)
+	makeScatter(a, scatterData, mapDotSize, plotName, colX, colY, plotName)
 
-	makeScatter(scatterData, 2, plotName, colX, colY, plotName)
-
+	// display plot on new window
 	plotWindow := a.NewWindow("Plot")
 	img := canvas.NewImageFromFile("plots/" + plotName + ".png")
 	plotWindow.SetContent(img)
@@ -34,7 +42,9 @@ func makeplot(a fyne.App, header []string, filename, colX, colY, plotName string
 
 }
 
-func makeScatter(scatterData plotter.XYs, dotsize vg.Length, title, xaxisName, yaxisName, plotName string) {
+func makeScatter(a fyne.App, scatterData plotter.XYs, dotsize vg.Length, title, xaxisName, yaxisName, plotName string) {
+	mapR, mapG, mapB, mapA := getPrefColorRGBA(a, "unselR", "unselG", "unselB", "unselA")
+
 	// Create a new plot, set its title and
 	// axis labels.
 	p := plot.New()
@@ -42,7 +52,7 @@ func makeScatter(scatterData plotter.XYs, dotsize vg.Length, title, xaxisName, y
 	p.Title.Text = title
 	p.X.Label.Text = xaxisName
 	p.Y.Label.Text = yaxisName
-	p.HideAxes()
+	//p.HideAxes()
 	// Draw a grid behind the data
 	//p.Add(plotter.NewGrid())
 
@@ -53,7 +63,7 @@ func makeScatter(scatterData plotter.XYs, dotsize vg.Length, title, xaxisName, y
 	}
 	s.GlyphStyle.Shape = draw.CircleGlyph{}
 	s.GlyphStyle.Radius = dotsize
-	s.GlyphStyle.Color = color.RGBA{R: 211, G: 211, B: 211, A: 255} // background
+	s.GlyphStyle.Color = color.RGBA{R: uint8(mapR), G: uint8(mapG), B: uint8(mapB), A: uint8(mapA)} // background dots color
 	p.Add(s)
 
 	// add new points
@@ -62,6 +72,25 @@ func makeScatter(scatterData plotter.XYs, dotsize vg.Length, title, xaxisName, y
 	addPoints(scatterData[600:800], p, 4, color.RGBA{R: 255, G: 150, B: 30, A: 255})
 
 	savePlot(p, 800, 800, "plots/"+plotName+".png")
+}
+
+func getPrefColorRGBA(a fyne.App, R, G, B, A string) (int, int, int, int) {
+	pref := a.Preferences()
+	// map dots color - read RGBA from preferences
+	unselR := binding.BindPreferenceInt("unselR", pref)
+	mapR, e := unselR.Get()
+	check(e)
+	unselG := binding.BindPreferenceInt("unselG", pref)
+	mapG, e := unselG.Get()
+	check(e)
+	unselB := binding.BindPreferenceInt("unselB", pref)
+	mapB, e := unselB.Get()
+	check(e)
+	unselA := binding.BindPreferenceInt("unselA", pref)
+	mapA, e := unselA.Get()
+	check(e)
+	log.Println("color in pref", mapR, mapG, mapB, mapA)
+	return mapR, mapG, mapB, mapA
 }
 
 func savePlot(p *plot.Plot, w, h vg.Length, filename string) {
