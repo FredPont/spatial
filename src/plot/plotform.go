@@ -2,6 +2,7 @@ package plot
 
 import (
 	"image/color"
+	"lasso/src/filter"
 	"log"
 
 	"fyne.io/fyne/v2"
@@ -10,7 +11,7 @@ import (
 )
 
 // Plotform display a form with the plot preferences and parameters
-func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string) {
+func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string, alledges [][]filter.Point) {
 	// plot name
 	plotName := widget.NewEntry()
 	// x coordinates
@@ -28,7 +29,7 @@ func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string) {
 			widget.NewFormItem("Y", y),
 			widget.NewFormItem("col", unselcol),
 			widget.NewFormItem("dot size", plotdot)},
-		func(bool) { makeplot(a, header, firstTable, x.Text, y.Text, plotName.Text, plotdot.Text) }, win)
+		func(bool) { makeplot(a, header, firstTable, x.Text, y.Text, plotName.Text, plotdot.Text, alledges) }, win)
 }
 
 // color picker for the plot background (unselected) dots color

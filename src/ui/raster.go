@@ -31,7 +31,7 @@ type interactiveRaster struct {
 	edit       *editor
 	img        *canvas.Raster
 	points     []filter.Point      // points of current polygone edges
-	alledges   [][]filter.Point    // points of all current polygones  edges
+	alledges   [][]filter.Point    // points of all current polygones edges
 	gatesLines []fyne.CanvasObject // line (fyne canvas object) of all current polygones
 }
 

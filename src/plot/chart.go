@@ -2,11 +2,11 @@ package plot
 
 import (
 	"encoding/csv"
+	"fmt"
 	"image/color"
 	"io"
 	"lasso/src/filter"
 	"log"
-	"math/rand"
 	"os"
 	"strconv"
 
@@ -25,12 +25,21 @@ func check(e error) {
 	}
 }
 
-func makeplot(a fyne.App, header []string, filename, colX, colY, plotName, bkgDotSize string) {
-	colIndexes := filter.GetColIndex(header, []string{colX, colY})
-	xy := filter.ReadColumns(filename, colIndexes)
-	scatterData := strToplot(xy)
+func makeplot(a fyne.App, header []string, filename, colX, colY, plotName, bkgDotSize string, alledges [][]filter.Point) {
+	// index of the 2 columns to plot and the XY columns with the image coordinates (to be able to filter the gates)
+	// get parameters from preferences
+	param := prefToConf(a.Preferences())
+	// index of the 2 columns to plot and the XY columns with the image coordinates (to be able to filter the gates)
+	colIndexes := filter.GetColIndex(header, []string{colX, colY, param.X, param.Y})
+	mapAndGates := filter.ReadColumns(filename, colIndexes)
+
+	// get the two first columns of mapAndGates to get map coordinates
+	scatterData := strToplot(extract2cols(mapAndGates, 0, 1))
+	// extract dots in all gates
+	alldotsInGates := extractGateDots(a, mapAndGates, alledges, colX, colY)
+	fmt.Println(alldotsInGates)
 	mapDotSize, _ := vg.ParseLength(bkgDotSize)
-	makeScatter(a, scatterData, mapDotSize, plotName, colX, colY, plotName)
+	makeScatter(a, alldotsInGates, scatterData, mapDotSize, plotName, colX, colY, plotName)
 
 	// display plot on new window
 	plotWindow := a.NewWindow("Plot")
@@ -42,7 +51,25 @@ func makeplot(a fyne.App, header []string, filename, colX, colY, plotName, bkgDo
 
 }
 
-func makeScatter(a fyne.App, scatterData plotter.XYs, dotsize vg.Length, title, xaxisName, yaxisName, plotName string) {
+func extractGateDots(a fyne.App, tableXYxy [][]string, alledges [][]filter.Point, colX, colY string) [][][]string {
+
+	var allXY [][][]string // all xy coordinates of dots in all gates
+	param := prefToConf(a.Preferences())
+	gateNB := len(alledges)
+	log.Println("all edges", alledges)
+	ch1 := make(chan [][]string, gateNB) // ch1 store the xy coordinates of dots in one gate
+	for _, polygon := range alledges {
+		go filter.TablePlot(tableXYxy, polygon, param, colX, colY, ch1)
+	}
+	for i := 0; i < gateNB; i++ {
+		msg := <-ch1
+		allXY = append(allXY, msg)
+	}
+	//log.Println("all gates gates", allXY)
+	return allXY
+}
+
+func makeScatter(a fyne.App, alldotsInGates [][][]string, scatterData plotter.XYs, dotsize vg.Length, title, xaxisName, yaxisName, plotName string) {
 	mapR, mapG, mapB, mapA := getPrefColorRGBA(a, "unselR", "unselG", "unselB", "unselA")
 
 	// Create a new plot, set its title and
@@ -67,11 +94,20 @@ func makeScatter(a fyne.App, scatterData plotter.XYs, dotsize vg.Length, title, 
 	p.Add(s)
 
 	// add new points
-	addPoints(scatterData[30:100], p, 5, color.RGBA{R: 75, G: 0, B: 130, A: 255})
-	addPoints(scatterData[300:500], p, 3, color.RGBA{R: 0, G: 150, B: 255, A: 255})
-	addPoints(scatterData[600:800], p, 4, color.RGBA{R: 255, G: 150, B: 30, A: 255})
+	showGates(alldotsInGates, p, dotsize)
+	// addPoints(scatterData[30:100], p, 5, color.RGBA{R: 75, G: 0, B: 130, A: 255})
+	// addPoints(scatterData[300:500], p, 3, color.RGBA{R: 0, G: 150, B: 255, A: 255})
+	// addPoints(scatterData[600:800], p, 4, color.RGBA{R: 255, G: 150, B: 30, A: 255})
 
 	savePlot(p, 800, 800, "plots/"+plotName+".png")
+}
+
+func showGates(alldotsInGates [][][]string, p *plot.Plot, dotsize vg.Length) {
+	for _, gate := range alldotsInGates {
+		scatterData := strToplot(gate)
+		addPoints(scatterData, p, dotsize, color.RGBA{R: 75, G: 0, B: 130, A: 255})
+	}
+
 }
 
 func getPrefColorRGBA(a fyne.App, R, G, B, A string) (int, int, int, int) {
@@ -112,20 +148,6 @@ func addPoints(pts plotter.XYs, p *plot.Plot, dotsize vg.Length, clr color.Color
 	s2.GlyphStyle.Radius = dotsize
 	s2.GlyphStyle.Color = clr
 	p.Add(s2)
-}
-
-// randomPoints returns some random x, y points.
-func randomPoints(n int) plotter.XYs {
-	pts := make(plotter.XYs, n)
-	for i := range pts {
-		if i == 0 {
-			pts[i].X = rand.Float64()
-		} else {
-			pts[i].X = pts[i-1].X + rand.Float64()
-		}
-		pts[i].Y = pts[i].X + 10*rand.Float64()
-	}
-	return pts
 }
 
 func readscv() [][]string {
@@ -173,4 +195,34 @@ func strFloat(s string) float64 {
 		log.Fatal(err)
 	}
 	return f
+}
+
+func extract2cols(cols [][]string, idx1, idx2 int) [][]string {
+	var two [][]string
+	for i := 0; i < len(cols); i++ {
+		two = append(two, []string{cols[i][idx1], cols[i][idx2]})
+	}
+	return two
+}
+
+// PrefToConf retreive conf data from fyne pref
+func prefToConf(pref fyne.Preferences) filter.Conf {
+	// get // X coordinates
+	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
+	x, _ := xcor.Get()
+
+	// get y coordinates
+	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for rotation
+	y, _ := ycor.Get()
+
+	// get scaling factor
+	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
+	scale, _ := sf.Get()
+
+	// get coordinates +90° rotation : necessary for 10x Genomics
+	r := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	rotate, _ := r.Get()
+
+	return filter.Conf{x, y, scale, rotate}
+
 }

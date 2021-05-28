@@ -114,3 +114,67 @@ func inGate(x, y int64, polygon []Point) bool {
 	// convert x,y to int
 	return isInside(polygon, Point{int(x), int(y)})
 }
+
+// TablePlot filter the scRNAseq table XY coordinates to extract cells in polygon to draw a plot and return XY coordinates
+func TablePlot(tableXYxy [][]string, polygon []Point, param Conf, columnX, columnY string, ch1 chan<- [][]string) {
+	var xy [][]string
+	scaleFactor := param.Scale
+	rotate := param.Rotate
+	log.Println("start extract gates", polygon)
+	for _, dot := range tableXYxy {
+		x, _ := strconv.ParseFloat(dot[2], 64)
+		y, _ := strconv.ParseFloat(dot[3], 64)
+
+		xScaled := int64(math.Round(x * scaleFactor))
+		yScaled := int64(math.Round(y * scaleFactor))
+
+		if rotate == true {
+			xRot := yScaled
+			yRot := xScaled
+			if inGate(xRot, yRot, polygon) {
+				xy = append(xy, []string{dot[0], dot[1]})
+			}
+		} else {
+			if inGate(xScaled, yScaled, polygon) {
+				xy = append(xy, []string{dot[0], dot[1]})
+			}
+		}
+	}
+	//log.Println("xy extract gates", xy)
+	ch1 <- xy
+	//return xy
+}
+
+func TablePlot3(dataFile string, polygon []Point, param Conf, columnX, columnY string, ch1 chan<- [][]string) {
+	var xy [][]string
+	path := "data/" + dataFile
+
+	csvFile, err := os.Open(path)
+	check(err)
+	defer csvFile.Close()
+	reader := csv.NewReader(bufio.NewReader(csvFile))
+	reader.Comma = '\t'
+	reader.FieldsPerRecord = -1
+
+	// read table header
+	header, err := reader.Read() //read first line of pathway
+
+	// get the index of the columns with the XY coordinates of the microscopie image
+	XYindex := GetColIndex(header, []string{param.X, param.Y})
+	// get the index of the columns with the XY coordinates of the gate dots
+	gateidx := GetColIndex(header, []string{columnX, columnY})
+	//fmt.Println(XYindex)
+	for {
+		// Read in a row. Check if we are at the end of the file.
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+
+		if filterRow(record, XYindex, polygon, param) {
+			xy = append(xy, []string{record[gateidx[0]], record[gateidx[1]]})
+		}
+
+	}
+	ch1 <- xy
+}

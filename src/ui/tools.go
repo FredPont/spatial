@@ -6,6 +6,8 @@ import (
 	"image/png"
 	"lasso/src/filter"
 	"lasso/src/plot"
+
+	//"lasso/src/plot"
 	"lasso/src/pref"
 	"log"
 	"os"
@@ -22,7 +24,7 @@ func checkError(message string, err error) {
 	}
 }
 
-// build tools window with buttons and text entry
+// BuildTools build tools window with buttons and text entry
 func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 	// get informations from data files to be used with buttons
 	dataFiles := filter.ListFiles("data/") // list all tables in data dir
@@ -39,6 +41,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 	content := container.NewVBox(
 		gatename,
 		widget.NewButton("Filter tables with active gates", func() {
+			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
 			go filterActiveGates(alledges, dataFiles, gatename.Text, a.Preferences())
 			go saveGates(gatename.Text, e)
@@ -56,7 +59,9 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		// 	fmt.Println("Selected", s)
 		// }),
 		widget.NewButton("plot", func() {
-			plot.Plotform(a, w, header, firstTable)
+			// get the edges of all selected polygons
+			alledges := e.drawSurface.alledges
+			plot.Plotform(a, w, header, firstTable, alledges)
 		}),
 		widget.NewButton("Exit", func() {
 			os.Exit(0)

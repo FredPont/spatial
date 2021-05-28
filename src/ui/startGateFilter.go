@@ -29,8 +29,8 @@ import (
 
 func filterActiveGates(alledges [][]filter.Point, dataFiles []string, gatename string, pref fyne.Preferences) {
 	// get parameters from preferences
-	param := prefToConf(pref, gatename)
-
+	param := prefToConf(pref)
+	fmt.Println("start filtering...", alledges)
 	// filter all data files with all active gates
 	for gateNumber, polygon := range alledges {
 		fmt.Println("polygon ", polygon)
@@ -45,8 +45,8 @@ func filterActiveGates(alledges [][]filter.Point, dataFiles []string, gatename s
 	}
 }
 
-// retreive conf data from fyne pref
-func prefToConf(pref fyne.Preferences, gatename string) filter.Conf {
+// PrefToConf retreive conf data from fyne pref
+func prefToConf(pref fyne.Preferences) filter.Conf {
 	// get // X coordinates
 	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
 	x, _ := xcor.Get()
