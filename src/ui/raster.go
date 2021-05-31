@@ -73,7 +73,10 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 		fmt.Println(r.points)
 		r.edit.layer.Refresh()
 	}
-	r.alledges = append(r.alledges, r.points) // store new edges
+	// avoid to add a void polygon :
+	if len(r.points) > 2 {
+		r.alledges = append(r.alledges, r.points) // store new edges
+	}
 	r.points = nil                            // reset polygone coordinates
 	r.gatesLines = append(r.gatesLines, line) // store new line object
 

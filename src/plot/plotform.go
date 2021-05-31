@@ -20,6 +20,8 @@ func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string, a
 	y := widget.NewSelectEntry(header)
 	// dot size
 	plotdot := widget.NewEntry()
+	// dots color
+	gateDotscol := widget.NewButton("color", func() { gateDotscolor(a, win) })
 	unselcol := widget.NewButton("color", func() { unseldcolor(a, win) })
 
 	dialog.ShowForm("Form Input", "Enter", "Cancel",
@@ -27,7 +29,8 @@ func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string, a
 			widget.NewFormItem("Plot Name", plotName),
 			widget.NewFormItem("X", x),
 			widget.NewFormItem("Y", y),
-			widget.NewFormItem("col", unselcol),
+			widget.NewFormItem("Dots in Gate color", gateDotscol),
+			widget.NewFormItem("Dots in Bkgd color", unselcol),
 			widget.NewFormItem("dot size", plotdot)},
 		func(bool) { makeplot(a, header, firstTable, x.Text, y.Text, plotName.Text, plotdot.Text, alledges) }, win)
 }
@@ -44,6 +47,24 @@ func unseldcolor(a fyne.App, win fyne.Window) {
 		pref.SetInt("unselG", G)
 		pref.SetInt("unselB", B)
 		pref.SetInt("unselA", A)
+	},
+		win)
+	picker.Advanced = true
+	picker.Show()
+}
+
+// color picker for the plot dots color in gate
+func gateDotscolor(a fyne.App, win fyne.Window) {
+	pref := a.Preferences()
+
+	picker := dialog.NewColorPicker("Pick a Color", "What is your favorite color?", func(c color.Color) {
+		log.Println("Color picked:", c)
+		R, G, B, A := colorToRGBA(c)
+		log.Println("Color RGBA picked:", R, G, B, A)
+		pref.SetInt("gateDotsR", R)
+		pref.SetInt("gateDotsG", G)
+		pref.SetInt("gateDotsB", B)
+		pref.SetInt("gateDotsA", A)
 	},
 		win)
 	picker.Advanced = true

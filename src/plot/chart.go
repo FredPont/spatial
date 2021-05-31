@@ -2,7 +2,6 @@ package plot
 
 import (
 	"encoding/csv"
-	"fmt"
 	"image/color"
 	"io"
 	"lasso/src/filter"
@@ -37,7 +36,7 @@ func makeplot(a fyne.App, header []string, filename, colX, colY, plotName, bkgDo
 	scatterData := strToplot(extract2cols(mapAndGates, 0, 1))
 	// extract dots in all gates
 	alldotsInGates := extractGateDots(a, mapAndGates, alledges, colX, colY)
-	fmt.Println(alldotsInGates)
+	//fmt.Println(alldotsInGates)
 	mapDotSize, _ := vg.ParseLength(bkgDotSize)
 	makeScatter(a, alldotsInGates, scatterData, mapDotSize, plotName, colX, colY, plotName)
 
@@ -56,7 +55,7 @@ func extractGateDots(a fyne.App, tableXYxy [][]string, alledges [][]filter.Point
 	var allXY [][][]string // all xy coordinates of dots in all gates
 	param := prefToConf(a.Preferences())
 	gateNB := len(alledges)
-	log.Println("all edges", alledges)
+	//log.Println("all edges", alledges)
 	ch1 := make(chan [][]string, gateNB) // ch1 store the xy coordinates of dots in one gate
 	for _, polygon := range alledges {
 		go filter.TablePlot(tableXYxy, polygon, param, colX, colY, ch1)
@@ -94,7 +93,7 @@ func makeScatter(a fyne.App, alldotsInGates [][][]string, scatterData plotter.XY
 	p.Add(s)
 
 	// add new points
-	showGates(alldotsInGates, p, dotsize)
+	showGates(a, alldotsInGates, p, dotsize)
 	// addPoints(scatterData[30:100], p, 5, color.RGBA{R: 75, G: 0, B: 130, A: 255})
 	// addPoints(scatterData[300:500], p, 3, color.RGBA{R: 0, G: 150, B: 255, A: 255})
 	// addPoints(scatterData[600:800], p, 4, color.RGBA{R: 255, G: 150, B: 30, A: 255})
@@ -102,10 +101,13 @@ func makeScatter(a fyne.App, alldotsInGates [][][]string, scatterData plotter.XY
 	savePlot(p, 800, 800, "plots/"+plotName+".png")
 }
 
-func showGates(alldotsInGates [][][]string, p *plot.Plot, dotsize vg.Length) {
+func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg.Length) {
+	gatedotsR, gatedotsG, gatedotsB, gatedotsA := getPrefColorRGBA(a, "gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA")
+
 	for _, gate := range alldotsInGates {
 		scatterData := strToplot(gate)
-		addPoints(scatterData, p, dotsize, color.RGBA{R: 75, G: 0, B: 130, A: 255})
+		addPoints(scatterData, p, dotsize, color.RGBA{R: uint8(gatedotsR), G: uint8(gatedotsG), B: uint8(gatedotsB), A: uint8(gatedotsA)})
+		//addPoints(scatterData, p, dotsize, color.RGBA{R: 75, G: 0, B: 130, A: 255})
 	}
 
 }
@@ -113,17 +115,17 @@ func showGates(alldotsInGates [][][]string, p *plot.Plot, dotsize vg.Length) {
 func getPrefColorRGBA(a fyne.App, R, G, B, A string) (int, int, int, int) {
 	pref := a.Preferences()
 	// map dots color - read RGBA from preferences
-	unselR := binding.BindPreferenceInt("unselR", pref)
-	mapR, e := unselR.Get()
+	dotsR := binding.BindPreferenceInt(R, pref)
+	mapR, e := dotsR.Get()
 	check(e)
-	unselG := binding.BindPreferenceInt("unselG", pref)
-	mapG, e := unselG.Get()
+	dotsG := binding.BindPreferenceInt(G, pref)
+	mapG, e := dotsG.Get()
 	check(e)
-	unselB := binding.BindPreferenceInt("unselB", pref)
-	mapB, e := unselB.Get()
+	dotsB := binding.BindPreferenceInt(B, pref)
+	mapB, e := dotsB.Get()
 	check(e)
-	unselA := binding.BindPreferenceInt("unselA", pref)
-	mapA, e := unselA.Get()
+	dotsA := binding.BindPreferenceInt(A, pref)
+	mapA, e := dotsA.Get()
 	check(e)
 	log.Println("color in pref", mapR, mapG, mapB, mapA)
 	return mapR, mapG, mapB, mapA
