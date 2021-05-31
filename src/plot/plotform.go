@@ -6,20 +6,39 @@ import (
 	"log"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 )
 
 // Plotform display a form with the plot preferences and parameters
 func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string, alledges [][]filter.Point) {
+	pref := a.Preferences()
+
 	// plot name
+	plotFileTitle := binding.BindPreferenceString("plotName", pref) // set the link to preferences for rotation
+	plotFT, _ := plotFileTitle.Get()
 	plotName := widget.NewEntry()
+	plotName.SetText(plotFT)
+
 	// x coordinates
+	xplot := binding.BindPreferenceString("xPlot", pref) // set the link to preferences for rotation
+	xp, _ := xplot.Get()
 	x := widget.NewSelectEntry(header)
+	x.SetText(xp)
+
 	// y coordinates
+	yplot := binding.BindPreferenceString("yPlot", pref) // set the link to preferences for rotation
+	yp, _ := yplot.Get()
 	y := widget.NewSelectEntry(header)
+	y.SetText(yp)
+
 	// dot size
+	dotsize := binding.BindPreferenceString("dotsize", pref) // set the link to preferences for rotation
+	ds, _ := dotsize.Get()
 	plotdot := widget.NewEntry()
+	plotdot.SetText(ds)
+
 	// dots color
 	gateDotscol := widget.NewButton("color", func() { gateDotscolor(a, win) })
 	unselcol := widget.NewButton("color", func() { unseldcolor(a, win) })
@@ -32,7 +51,30 @@ func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string, a
 			widget.NewFormItem("Dots in Gate color", gateDotscol),
 			widget.NewFormItem("Dots in Bkgd color", unselcol),
 			widget.NewFormItem("dot size", plotdot)},
-		func(bool) { makeplot(a, header, firstTable, x.Text, y.Text, plotName.Text, plotdot.Text, alledges) }, win)
+		func(input bool) {
+			log.Println("input = ", input)
+			if input {
+				makeplot(a, header, firstTable, x.Text, y.Text, plotName.Text, plotdot.Text, alledges)
+				savePlotPrefs(a, x.Text, y.Text, plotName.Text, plotdot.Text)
+			}
+
+		}, win)
+}
+
+// save preference of the plot
+func savePlotPrefs(a fyne.App, x, y, plotName, dotsize string) {
+	pref := a.Preferences()
+	// X coordinates
+	pref.SetString("xPlot", x)
+
+	// Y coordinates
+	pref.SetString("yPlot", y)
+
+	// plotName
+	pref.SetString("plotName", plotName)
+
+	//dot size
+	pref.SetString("dotsize", dotsize)
 }
 
 // color picker for the plot background (unselected) dots color
