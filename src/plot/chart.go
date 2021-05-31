@@ -36,6 +36,10 @@ func makeplot(a fyne.App, header []string, filename, colX, colY, plotName, bkgDo
 	scatterData := strToplot(extract2cols(mapAndGates, 0, 1))
 	// extract dots in all gates
 	alldotsInGates := extractGateDots(a, mapAndGates, alledges, colX, colY)
+	if len(alldotsInGates) < 1 {
+		log.Println("Plot canceled or no dots in gate !")
+		return
+	}
 	//fmt.Println(alldotsInGates)
 	mapDotSize, _ := vg.ParseLength(bkgDotSize)
 	makeScatter(a, alldotsInGates, scatterData, mapDotSize, plotName, colX, colY, plotName)
@@ -62,7 +66,9 @@ func extractGateDots(a fyne.App, tableXYxy [][]string, alledges [][]filter.Point
 	}
 	for i := 0; i < gateNB; i++ {
 		msg := <-ch1
-		allXY = append(allXY, msg)
+		if len(msg) > 0 {
+			allXY = append(allXY, msg)
+		}
 	}
 	//log.Println("all gates gates", allXY)
 	return allXY

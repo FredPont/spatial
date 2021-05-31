@@ -117,11 +117,18 @@ func inGate(x, y int64, polygon []Point) bool {
 
 // TablePlot filter the scRNAseq table XY coordinates to extract cells in polygon to draw a plot and return XY coordinates
 func TablePlot(tableXYxy [][]string, polygon []Point, param Conf, columnX, columnY string, ch1 chan<- [][]string) {
+	// tableXYxy contains the index of the 2 columns to plot and the XY columns with the image coordinates
+	// cf plot.makeplot() mapAndGates := filter.ReadColumns(filename, colIndexes)
 	var xy [][]string
 	scaleFactor := param.Scale
 	rotate := param.Rotate
 	log.Println("start extract gates", polygon)
 	for _, dot := range tableXYxy {
+		if len(dot) < 4 {
+			ch1 <- xy
+			return
+		}
+		// x,y = coordinates of the dots in gate
 		x, _ := strconv.ParseFloat(dot[2], 64)
 		y, _ := strconv.ParseFloat(dot[3], 64)
 
