@@ -43,7 +43,7 @@ func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string, a
 	gateDotscol := widget.NewButton("color", func() { gateDotscolor(a, win) })
 	unselcol := widget.NewButton("color", func() { unseldcolor(a, win) })
 
-	dialog.ShowForm("Form Input", "Enter", "Cancel",
+	dialog.ShowForm("Plot parameters", "Enter", "Cancel",
 		[]*widget.FormItem{
 			widget.NewFormItem("Plot Name", plotName),
 			widget.NewFormItem("X", x),
