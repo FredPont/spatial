@@ -17,11 +17,12 @@ import (
 type editor struct {
 	drawSurface *interactiveRaster
 	//img           *image.RGBA // image with polygons
-	microscop     *canvas.Image
-	min           fyne.Size       // size of the microscop image
-	layer         *fyne.Container // container with image and interactive drawsurface
-	win           fyne.Window
-	gateContainer *fyne.Container // container with the gates lines
+	microscop        *canvas.Image
+	min              fyne.Size       // size of the microscop image
+	layer            *fyne.Container // container with image and interactive drawsurface
+	win              fyne.Window
+	gateContainer    *fyne.Container // container with the gates lines
+	clusterContainer *fyne.Container // container with the cluster circles
 }
 
 func (e *editor) draw(w, h int) image.Image {
@@ -35,10 +36,11 @@ func NewEditor() (*editor, int, int) {
 	micro := canvas.NewImageFromFile(imgDir + "/" + imgFile)
 	micro.FillMode = canvas.ImageFillOriginal
 
-	gc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))
+	gc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // gate container
+	//cc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.Transparent))      // gate container
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
-	edit := &editor{microscop: micro, min: fyne.Size{float32(w), float32(h)}, gateContainer: gc}
+	edit := &editor{microscop: micro, min: fyne.Size{float32(w), float32(h)}, gateContainer: gc, clusterContainer: gc}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit, w, h
@@ -47,7 +49,7 @@ func NewEditor() (*editor, int, int) {
 // BuildUI creates the main window of our application
 func (e *editor) BuildUI(w fyne.Window) {
 	e.win = w
-	e.layer = container.NewMax(e.drawSurface, e.microscop, e.gateContainer)
+	e.layer = container.NewMax(e.drawSurface, e.microscop, e.clusterContainer, e.gateContainer)
 
 	w.SetContent(container.NewScroll(e.layer))
 }

@@ -62,6 +62,19 @@ func BuildPref(a fyne.App, head []string) {
 	wHtxt := fmt.Sprintf("%.0f", wH)
 	winHeight.SetPlaceHolder(wHtxt)
 
+	// cluster column
+	clustercolumn := binding.BindPreferenceString("clustcol", pref) // set the link to preferences for rotation
+	clucol, _ := clustercolumn.Get()
+	clco := widget.NewSelectEntry(head)
+	clco.SetText(clucol)
+
+	// cluster dot diameter
+	clustDotDiam := widget.NewEntry()
+	cld := binding.BindPreferenceInt("clustDotDiam", pref) // set the link to preferences for cluster diameter
+	clud, _ := cld.Get()                                   // read the preference for cluster diameter
+	cldtxt := fmt.Sprintf("%d", clud)                      // convert cluster diameter to txt
+	clustDotDiam.SetPlaceHolder(cldtxt)                    // display the prefence value for cluster diameter
+
 	// create form
 	form := &widget.Form{
 		Items: []*widget.FormItem{ // we can specify items in the constructor
@@ -71,6 +84,8 @@ func BuildPref(a fyne.App, head []string) {
 			{Text: "Y coordinates", Widget: ySel},
 			{Text: "Image windows Width", Widget: winWidth},
 			{Text: "Image windows Width", Widget: winHeight},
+			{Text: "Cluster column", Widget: clco},
+			{Text: "Cluster dots diameter", Widget: clustDotDiam},
 		},
 		OnSubmit: func() { // optional, handle form submission
 
@@ -95,6 +110,14 @@ func BuildPref(a fyne.App, head []string) {
 			winHeightTxt := winHeight.Text
 			setPrefToF64(winHeightTxt, "winH", pref)
 
+			// cluster column
+			pref.SetString("clustcol", clco.Entry.Text)
+
+			// cluster dot diameter
+			cluDiamTXT := clustDotDiam.Text
+			setPrefToInt(cluDiamTXT, "clustDotDiam", pref)
+			//pref.SetInt("clustDotDiam", cluDiam)
+
 			log.Println("Form submitted:", scalingFactor.Text)
 
 			myWindow.Close()
@@ -113,5 +136,16 @@ func setPrefToF64(s, prefId string, pref fyne.Preferences) {
 			log.Printf("unable to convert string to float ! %T, %v\n", f64, f64)
 		}
 		pref.SetFloat(prefId, f64)
+	}
+}
+
+// set pref of widget.NewEntry() to float64
+func setPrefToInt(s, prefId string, pref fyne.Preferences) {
+	if s != "" {
+		integ, err := strconv.Atoi(s)
+		if err != nil {
+			log.Printf("unable to convert string to float ! %T, %v\n", integ, integ)
+		}
+		pref.SetInt(prefId, integ)
 	}
 }

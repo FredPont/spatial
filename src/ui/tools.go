@@ -6,15 +6,17 @@ import (
 	"image/png"
 	"lasso/src/filter"
 	"lasso/src/plot"
+	"lasso/src/pref"
 
 	//"lasso/src/plot"
-	"lasso/src/pref"
+
 	"log"
 	"os"
 	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -26,6 +28,7 @@ func checkError(message string, err error) {
 
 // BuildTools build tools window with buttons and text entry
 func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
+	preference := a.Preferences()
 	// get informations from data files to be used with buttons
 	dataFiles := filter.ListFiles("data/") // list all tables in data dir
 	firstTable := dataFiles[0]
@@ -34,9 +37,13 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 	gatename := widget.NewEntry()
 	gatename.SetPlaceHolder("Selection name...")
 
-	// scalingFactor := widget.NewEntry()
-
-	// scalingFactor.SetPlaceHolder(a.Preferences().Float("scaleFactor"))
+	// cluster opacity
+	clustOpacity := binding.BindPreferenceFloat("clustOpacity", preference) // pref binding for the cluster dot opacity
+	clusDotOpacity := widget.NewSliderWithData(0, 255, clustOpacity)
+	clusDotOpacity.Step = 1
+	clusDotOpacity.OnChanged = func(v float64) {
+		preference.SetFloat("clustOpacity", v)
+	}
 
 	content := container.NewVBox(
 		gatename,
@@ -52,16 +59,17 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		widget.NewButton("Screen shot", func() {
 			screenShot(w, gatename.Text)
 		}),
-		widget.NewButton("Preferences", func() {
-			pref.BuildPref(a, header)
-		}),
-		// widget.NewSelect(header, func(s string) {
-		// 	fmt.Println("Selected", s)
-		// }),
 		widget.NewButton("plot", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
 			plot.Plotform(a, w, header, firstTable, alledges)
+		}),
+		widget.NewButton("Show Clusters", func() {
+			drawClusters(a, e)
+		}),
+		clusDotOpacity,
+		widget.NewButton("Preferences", func() {
+			pref.BuildPref(a, header)
 		}),
 		widget.NewButton("Exit", func() {
 			os.Exit(0)
