@@ -65,7 +65,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 			plot.Plotform(a, w, header, firstTable, alledges)
 		}),
 		widget.NewButton("Show Clusters", func() {
-			drawClusters(a, e)
+			drawClusters(a, e, header, firstTable)
 		}),
 		clusDotOpacity,
 		widget.NewButton("Preferences", func() {

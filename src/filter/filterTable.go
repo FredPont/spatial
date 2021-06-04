@@ -104,9 +104,8 @@ func filterRow(record []string, XYindex []int, polygon []Point, param Conf) bool
 		xRot := yScaled
 		yRot := xScaled
 		return inGate(xRot, yRot, polygon)
-	} else {
-		return inGate(xScaled, yScaled, polygon)
 	}
+	return inGate(xScaled, yScaled, polygon)
 
 }
 

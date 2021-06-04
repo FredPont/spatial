@@ -22,12 +22,17 @@ import (
 	"bufio"
 	"encoding/csv"
 	"io"
+	"math"
+	"strconv"
 
 	//"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/data/binding"
 )
 
 func check(e error) {
@@ -127,6 +132,76 @@ func ReadColumns(filename string, colIndexes []int) [][]string {
 		xy = append(xy, selByIndex(record, colIndexes))
 	}
 	return xy
+}
+
+// ReadClusters read only columns with positions in indexes and fill a map
+// cluster NB => slice of x,y coordinates
+func ReadClusters(a fyne.App, filename string, colIndexes []int) map[int][]Point {
+
+	// get scaleFactor and rotation from pref
+	pref := a.Preferences()
+
+	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
+	scaleFactor, _ := sf.Get()                             // read the preference for scaling factor
+
+	rot := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	rotate, _ := rot.Get()
+
+	// map with cluster number => slice of xy coordinates scaled
+	clusterMap := make(map[int][]Point, 0)
+	// Open the file
+	csvfile, err := os.Open("data/" + filename)
+	if err != nil {
+		log.Fatalln("Couldn't open the csv file", err)
+	}
+
+	// Parse the file
+	r := csv.NewReader(bufio.NewReader(csvfile))
+	//r := csv.NewReader(csvfile)
+	r.Comma = '\t'
+	r.Read() // skip header
+
+	// Iterate through the records
+	for {
+		// Read each record from csv
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		cxy := selByIndex(record, colIndexes)
+		xScaled, yScaled := scaleXY(cxy[1], cxy[2], scaleFactor, rotate)
+		clustNB, err := strconv.Atoi(cxy[0])
+		check(err)
+		clusterMap[clustNB] = append(clusterMap[clustNB], Point{int(xScaled), int(yScaled)})
+	}
+	return clusterMap
+}
+
+// scaleXY apply scaling factor and rotation to xy
+func scaleXY(X, Y string, scaleFactor float64, rotate bool) (int64, int64) {
+
+	x, err := strconv.ParseFloat(X, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	xScaled := int64(math.Round(x * scaleFactor))
+
+	y, err := strconv.ParseFloat(Y, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	yScaled := int64(math.Round(y * scaleFactor))
+
+	if rotate == true {
+		xRot := yScaled
+		yRot := xScaled
+		return xRot, yRot
+	}
+	return xScaled, yScaled
+
 }
 
 // IndexHeader create a map with column names => row number
