@@ -1,8 +1,10 @@
 package ui
 
 import (
+	"fmt"
 	"image/color"
 	"lasso/src/filter"
+	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -37,13 +39,19 @@ func drawClusters(a fyne.App, e *editor, header []string, filename string) {
 	diameter, _ := clustDia.Get()
 
 	clusterMap := getClusters(a, header, filename)
+	log.Println(len(clusterMap), "clusters detected")
 
-	for clusterNB, coordinates := range clusterMap {
-		_ = clusterNB
+	//clusterNB := 0
+	nbCluster := len(clusterMap)
+	clustNames := filter.KeysIntPoint(clusterMap)
+	fmt.Println("clusters names :", clustNames)
+	for c := 0; c < nbCluster; c++ {
+		coordinates := clusterMap[clustNames[c]]
+		clcolor := ClusterColors(nbCluster, c)
 		for i := 0; i < len(coordinates); i++ {
-			e.drawcircle(coordinates[i].X, coordinates[i].Y, diameter, color.NRGBA{30, 144, 255, op})
-		}
+			e.drawcircle(coordinates[i].X, coordinates[i].Y, diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 
+		}
 	}
 
 	// for x := 10; x < 1000; x += 10 {
