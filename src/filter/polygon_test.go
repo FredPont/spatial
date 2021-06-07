@@ -2,6 +2,7 @@ package filter
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -46,4 +47,27 @@ func TestIsInside(t *testing.T) {
 		})
 	}
 
+}
+
+func TestPopPoints(t *testing.T) {
+	tests := []struct {
+		polygons [][]Point
+		want     [][]Point
+	}{
+		{[][]Point{[]Point{{0, 0}, {10, 0}, {10, 10}}, []Point{{0, 0}, {10, 0}}},
+			[][]Point{[]Point{{0, 0}, {10, 0}, {10, 10}}}},
+	}
+
+	for i, tc := range tests {
+		t.Run(fmt.Sprintf("SumNumbers=%d", i), func(t *testing.T) {
+			got := PopPoints(tc.polygons)
+
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Fatalf("got %v; want %v", got, tc.want)
+			} else {
+				t.Logf("Success !")
+			}
+
+		})
+	}
 }

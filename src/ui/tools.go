@@ -53,6 +53,9 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 			go filterActiveGates(alledges, dataFiles, gatename.Text, a.Preferences())
 			go saveGates(gatename.Text, e)
 		}),
+		widget.NewButton("Clear last gate", func() {
+			clearLastGate(e)
+		}),
 		widget.NewButton("Clear all gates", func() {
 			initGates(e)
 		}),
@@ -83,11 +86,12 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 
 }
 
-// clear all gates on draw surface and init all edges
-func clearDots(e *editor) {
+// clear last gate on draw surface and init all edges
+func clearLastGate(e *editor) {
 	e.drawSurface.clearPolygon(e.drawSurface.gatesLines)
 	e.gateContainer.Refresh()
-	initAlledges(e) // reset alledges
+	initLastedges(e) // reset last edges and all points
+	//initAlledges(e) // reset alledges
 }
 
 // save the gates to csv files

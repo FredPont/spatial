@@ -2,7 +2,7 @@ package filter
 
 import "sort"
 
-// KeyStrStr return the keys of a map map[string]string
+// KeysIntPoint return the keys of a map map[string]string
 func KeysIntPoint(mymap map[int][]Point) []int {
 	keys := make([]int, 0, len(mymap))
 	for k := range mymap {
@@ -10,4 +10,12 @@ func KeysIntPoint(mymap map[int][]Point) []int {
 	}
 	sort.Ints(keys)
 	return keys
+}
+
+// PopPoints remove last element of slice [][]Point = remove last gate
+func PopPoints(slice [][]Point) [][]Point {
+	if len(slice) > 0 {
+		slice = slice[:len(slice)-1]
+	}
+	return slice
 }

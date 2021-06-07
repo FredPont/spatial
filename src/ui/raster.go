@@ -32,7 +32,8 @@ type interactiveRaster struct {
 	img        *canvas.Raster
 	points     []filter.Point      // points of current polygone edges
 	alledges   [][]filter.Point    // points of all current polygones edges
-	gatesLines []fyne.CanvasObject // line (fyne canvas object) of all current polygones
+	tmpLines   []fyne.CanvasObject // temporary slice with lines of the last gate
+	gatesLines []fyne.CanvasObject // line (fyne canvas object) of last polygone
 }
 
 func (r *interactiveRaster) MinSize() fyne.Size {
@@ -58,7 +59,7 @@ func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
 	fmt.Println(x, y)
 	r.points = append(r.points, filter.Point{x, y}) // store new edges
 
-	r.gatesLines = append(r.gatesLines, line) // store new lines objects
+	r.tmpLines = append(r.tmpLines, line) // store new lines objects
 	//r.edit.layer.Refresh() // slow
 	r.edit.gateContainer.Refresh() // refresh only the gate container, faster than refresh layer
 }
@@ -77,8 +78,10 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 	if len(r.points) > 2 {
 		r.alledges = append(r.alledges, r.points) // store new edges
 	}
-	r.points = nil                            // reset polygone coordinates
-	r.gatesLines = append(r.gatesLines, line) // store new line object
+	r.points = nil                        // reset polygone coordinates
+	r.tmpLines = append(r.tmpLines, line) // store new line object
+	r.gatesLines = r.tmpLines
+	r.tmpLines = nil // initialisation of gate lines
 
 }
 

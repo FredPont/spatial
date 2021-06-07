@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"image/color"
 
 	"fyne.io/fyne/v2"
@@ -33,8 +34,9 @@ func (r *interactiveRaster) drawline(x, y, x1, y1 int) fyne.CanvasObject {
 	return l
 }
 
-// clear the lines in the gate container
+// clear the lines of the last gate in the gate container
 func (r *interactiveRaster) clearPolygon(gatesLines []fyne.CanvasObject) {
+	fmt.Println("gate lines", gatesLines)
 	for _, gl := range gatesLines {
 		r.edit.gateContainer.Remove(gl)
 	}
