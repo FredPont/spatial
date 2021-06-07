@@ -37,10 +37,10 @@ func NewEditor() (*editor, int, int) {
 	micro.FillMode = canvas.ImageFillOriginal
 
 	gc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // gate container
-	//cc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.Transparent))      // gate container
+	cc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // cluster container should be independant of gate container for separate initialisaion
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
-	edit := &editor{microscop: micro, min: fyne.Size{float32(w), float32(h)}, gateContainer: gc, clusterContainer: gc}
+	edit := &editor{microscop: micro, min: fyne.Size{float32(w), float32(h)}, gateContainer: cc, clusterContainer: gc}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit, w, h

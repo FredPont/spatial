@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"image/color"
 	"lasso/src/filter"
 	"log"
@@ -38,13 +37,12 @@ func drawClusters(a fyne.App, e *editor, header []string, filename string) {
 	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) // cluster dot diameter
 	diameter, _ := clustDia.Get()
 
-	clusterMap := getClusters(a, header, filename)
+	clusterMap := getClusters(a, header, filename) // cluster nb => []Point
 	log.Println(len(clusterMap), "clusters detected")
 
-	//clusterNB := 0
 	nbCluster := len(clusterMap)
 	clustNames := filter.KeysIntPoint(clusterMap)
-	fmt.Println("clusters names :", clustNames)
+
 	for c := 0; c < nbCluster; c++ {
 		coordinates := clusterMap[clustNames[c]]
 		clcolor := ClusterColors(nbCluster, c)

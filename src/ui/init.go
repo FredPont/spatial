@@ -8,3 +8,13 @@ func initAlledges(e *editor) {
 func initCluster(e *editor) {
 	e.clusterContainer.Objects = nil
 }
+
+func clearCluster(e *editor) {
+	e.clusterContainer.Objects = nil
+	e.clusterContainer.Refresh()
+}
+
+func initGates(e *editor) {
+	e.gateContainer.Objects = nil
+	e.gateContainer.Refresh()
+}

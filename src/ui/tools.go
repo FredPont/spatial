@@ -54,7 +54,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 			go saveGates(gatename.Text, e)
 		}),
 		widget.NewButton("Clear all gates", func() {
-			clearDots(e)
+			initGates(e)
 		}),
 		widget.NewButton("Screen shot", func() {
 			screenShot(w, gatename.Text)
@@ -66,6 +66,9 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		}),
 		widget.NewButton("Show Clusters", func() {
 			drawClusters(a, e, header, firstTable)
+		}),
+		widget.NewButton("Clear Clusters", func() {
+			clearCluster(e)
 		}),
 		clusDotOpacity,
 		widget.NewButton("Preferences", func() {
