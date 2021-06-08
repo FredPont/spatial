@@ -54,8 +54,15 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		widget.NewButton("Filter tables with active gates", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
-			go filterActiveGates(alledges, dataFiles, gatename.Text, a.Preferences())
-			go saveGates(gatename.Text, e)
+			ch := make(chan bool, 2)
+			f.Set(0.3) // progress bar
+			go filterActiveGates(alledges, dataFiles, gatename.Text, a.Preferences(), ch)
+			f.Set(0.6) // progress bar
+			go saveGates(gatename.Text, e, ch)
+			log.Println("plot done :", <-ch)
+			log.Println("plot saved :", <-ch)
+			time.Sleep(1 * time.Second)
+			f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Clear last gate", func() {
 			clearLastGate(e)
@@ -102,7 +109,7 @@ func clearLastGate(e *editor) {
 }
 
 // save the gates to csv files
-func saveGates(gateName string, e *editor) {
+func saveGates(gateName string, e *editor, ch chan bool) {
 	fmt.Println("save gates")
 	for i, poly := range e.drawSurface.alledges {
 		if len(poly) < 3 {
@@ -112,7 +119,7 @@ func saveGates(gateName string, e *editor) {
 		out := strconv.Itoa(i) + "_" + gateName
 		writeCSV(out, poly)
 	}
-
+	ch <- true
 }
 
 // save image to file
