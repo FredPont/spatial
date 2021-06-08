@@ -7,6 +7,7 @@ import (
 	"lasso/src/filter"
 	"lasso/src/plot"
 	"lasso/src/pref"
+	"time"
 
 	//"lasso/src/plot"
 
@@ -45,6 +46,9 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		preference.SetFloat("clustOpacity", v)
 	}
 
+	// progress bar binding
+	f := binding.NewFloat()
+
 	content := container.NewVBox(
 		gatename,
 		widget.NewButton("Filter tables with active gates", func() {
@@ -68,7 +72,9 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 			plot.Plotform(a, w, header, firstTable, alledges)
 		}),
 		widget.NewButton("Show Clusters", func() {
-			drawClusters(a, e, header, firstTable)
+			drawClusters(a, e, header, firstTable, f)
+			time.Sleep(1 * time.Second)
+			f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Clear Clusters", func() {
 			clearCluster(e)
@@ -80,6 +86,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		widget.NewButton("Exit", func() {
 			os.Exit(0)
 		}),
+		widget.NewProgressBarWithData(f),
 	)
 
 	w2.SetContent(content)
