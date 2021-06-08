@@ -69,7 +69,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		widget.NewButton("plot", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
-			plot.Plotform(a, w, header, firstTable, alledges)
+			plot.Plotform(a, w, header, firstTable, alledges, f)
 		}),
 		widget.NewButton("Show Clusters", func() {
 			drawClusters(a, e, header, firstTable, f)
