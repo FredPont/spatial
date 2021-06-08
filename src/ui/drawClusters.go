@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"lasso/src/filter"
 	"log"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -43,19 +44,25 @@ func drawClusters(a fyne.App, e *editor, header []string, filename string) {
 	nbCluster := len(clusterMap)
 	clustNames := filter.KeysIntPoint(clusterMap)
 
+	legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
+
 	for c := 0; c < nbCluster; c++ {
 		coordinates := clusterMap[clustNames[c]]
 		clcolor := ClusterColors(nbCluster, c)
 		for i := 0; i < len(coordinates); i++ {
 			e.drawcircle(coordinates[i].X, coordinates[i].Y, diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
-
 		}
+		// draw legend dot and name for the current cluster
+		drawLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, diameter, clustNames[c])
+		legendPosition.Y = legendPosition.Y + 30
 	}
 
-	// for x := 10; x < 1000; x += 10 {
-	// 	e.drawcircle(x, x, diameter, color.NRGBA{30, 144, 255, op})
-	// }
 	e.clusterContainer.Refresh()
+}
+
+func drawLegend(e *editor, R, G, B, op uint8, x, y, diameter, clusterName int) {
+	AbsText(e.clusterContainer, x+20, y+10, strconv.Itoa(clusterName), 20, color.NRGBA{50, 50, 50, 255})
+	e.drawcircle(x, y, diameter, color.NRGBA{R, G, B, op})
 }
 
 // credits : https://github.com/ajstarks/fc
@@ -73,4 +80,21 @@ func (e *editor) drawcircle(x, y, ray int, color color.NRGBA) fyne.CanvasObject 
 	c := iCircle(x, y, ray, color)  // draw circle rayon ray
 	e.clusterContainer.AddObject(c) // add the cicle to the cluster container
 	return c
+}
+
+// // Text places text within a container, using percent coordinates
+// func (c *Canvas) Text(x, y float64, size float64, s string, color color.RGBA) {
+// 	x, y = dimen(x, y, c.Width, c.Height)
+// 	size = pct(size, c.Width)
+// 	AbsText(c.Container, int(x), int(y), s, int(size), color)
+// }
+
+// AbsText places text within a container
+func AbsText(cont *fyne.Container, x, y int, s string, size int, color color.NRGBA) {
+	fx, fy, fsize := float32(x), float32(y), float32(size)
+	t := &canvas.Text{Text: s, Color: color, TextSize: fsize}
+	adj := fsize / 5
+	p := fyne.Position{X: fx, Y: fy - (fsize + adj)}
+	t.Move(p)
+	cont.AddObject(t)
 }
