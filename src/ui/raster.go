@@ -48,8 +48,8 @@ func (r *interactiveRaster) CreateRenderer() fyne.WidgetRenderer {
 // this function draw the lasso and store the lasso coordinates in r.points
 func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
 	var line fyne.CanvasObject // store all line pixels
-	x, y := r.locationForPosition(ev.Position)
-
+	x := int(ev.Position.X)
+	y := int(ev.Position.Y)
 	lp := len(r.points)
 	if lp >= 1 {
 		x2, y2 := r.points[lp-1].X, r.points[lp-1].Y // get last coordinates stored
