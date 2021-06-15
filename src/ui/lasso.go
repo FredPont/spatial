@@ -29,8 +29,8 @@ func iLine(x1, y1, x2, y2 int, size float32, color color.RGBA) *canvas.Line {
 
 // drawline draws a line between 2 points to the gate container
 func (r *interactiveRaster) drawline(x, y, x1, y1 int) fyne.CanvasObject {
-	l := iLine(x, y, x1, y1, 1., color.RGBA{30, 144, 255, 255}) // line between 2 points
-	r.edit.gateContainer.AddObject(l)                           // add the line to the gate container
+	l := iLine(x, y, x1, y1, 1., color.RGBA{212, 170, 0, 255}) // line between 2 points
+	r.edit.gateContainer.AddObject(l)                          // add the line to the gate container
 	return l
 }
 
