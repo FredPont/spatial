@@ -83,7 +83,7 @@ func BuildPref(a fyne.App, head []string) {
 			{Text: "X coordinates", Widget: xSel},
 			{Text: "Y coordinates", Widget: ySel},
 			{Text: "Image windows Width", Widget: winWidth},
-			{Text: "Image windows Width", Widget: winHeight},
+			{Text: "Image windows Height", Widget: winHeight},
 			{Text: "Cluster column", Widget: clco},
 			{Text: "Cluster dots diameter", Widget: clustDotDiam},
 		},

@@ -18,6 +18,8 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/driver/software"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -51,7 +53,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 
 	content := container.NewVBox(
 		gatename,
-		widget.NewButton("Filter tables with active gates", func() {
+		widget.NewButton("Filter tables with gates", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
 			ch := make(chan bool, 2)
@@ -72,6 +74,15 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		}),
 		widget.NewButton("Screen shot", func() {
 			screenShot(w, gatename.Text)
+		}),
+		widget.NewButton("Save HR image", func() {
+			f.Set(0.3) // progress bar
+			ch := make(chan bool, 2)
+			go saveimage(w, gatename.Text, ch)
+			log.Println("image saved :", <-ch)
+			f.Set(1) // progress bar
+			time.Sleep(1 * time.Second)
+			f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("plot", func() {
 			// get the edges of all selected polygons
@@ -122,7 +133,7 @@ func saveGates(gateName string, e *editor, ch chan bool) {
 	ch <- true
 }
 
-// save image to file
+// save screenshot of image to file
 // credits https://www.devdungeon.com/content/working-images-go
 func screenShot(w fyne.Window, filename string) {
 	out := w.Canvas().Capture()
@@ -143,6 +154,24 @@ func screenShot(w fyne.Window, filename string) {
 	// Don't forget to close files
 	outputFile.Close()
 
+}
+
+// save HR image to file
+// credits https://www.devdungeon.com/content/working-images-go
+func saveimage(w fyne.Window, filename string, ch chan bool) {
+	c := w.Content().(*container.Scroll).Content
+	out := software.Render(c, theme.DarkTheme())
+
+	path := "plots/" + filename + ".png"
+	outputFile, err := os.Create(path)
+	if err != nil {
+		log.Println("The image cannot be saved to the file")
+	}
+	png.Encode(outputFile, out)
+	log.Println("Saving image to ", path)
+
+	outputFile.Close()
+	ch <- true
 }
 
 // write polygon edge to file
