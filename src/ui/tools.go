@@ -104,6 +104,28 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		widget.NewButton("Exit", func() {
 			os.Exit(0)
 		}),
+		// zoom : very important : never unzom under the window size
+		// in that case the image size = window size and zoom factor is wrong !
+		newZoom(e),
+		// container.NewHBox(
+		// 	widget.NewButtonWithIcon("", theme.ZoomOutIcon(), func() {
+		// 		var z Zoom
+		// 		z.updateZoom(z.edit.zoom / 2)
+		// 	}),
+		// 	widget.NewLabel("100%"),
+		// 	//p.zoom,
+		// 	widget.NewButtonWithIcon("", theme.ZoomInIcon(), func() {
+		// 		//p.updateZoom(p.edit.zoom * 2)
+		// 	})),
+		widget.NewButton("resize", func() {
+			size := fyne.Size{Width: float32(1000), Height: float32(1000)}
+			e.min = size
+			//pixWidth, _ := e.drawSurface.locationForPosition(fyne.NewPos(size.Width, size.Height))
+			e.drawSurface.Refresh()
+			e.clusterContainer.Refresh()
+			e.gateContainer.Refresh()
+			log.Println()
+		}),
 		widget.NewProgressBarWithData(f),
 	)
 

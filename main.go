@@ -16,6 +16,7 @@ func main() {
 
 	w := a.NewWindow("image")
 	e, imgW, imgH := ui.NewEditor()
+	//e, imgW, imgH := ui.NewSmallEditor()
 	e.BuildUI(w)
 	setImageWinSize(a, w, imgW, imgH)
 	w.SetFixedSize(true) // fix win size
