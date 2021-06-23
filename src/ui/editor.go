@@ -4,13 +4,15 @@ import (
 	//"fmt"
 	"image"
 	"image/color"
-	"log"
+
+	//"log"
 
 	//"math"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	//"fyne.io/fyne/v2/data/binding"
 	//"fyne.io/fyne/v2/theme"
 	//"fyne.io/fyne/v2/widget"
 )
@@ -55,20 +57,6 @@ func (e *editor) BuildUI(w fyne.Window) {
 	e.layer = container.NewMax(e.drawSurface, e.microscop, e.clusterContainer, e.gateContainer)
 
 	w.SetContent(container.NewScroll(e.layer))
-}
-
-func (e *editor) setZoom(zoom int) {
-	e.zoom = zoom
-
-	h := float32(e.cacheHeight) * float32(zoom) / 100
-	w := float32(e.cacheWidth) * float32(zoom) / 100
-	size := fyne.Size{Width: float32(w), Height: float32(h)}
-	e.min = size
-	log.Println("zoom=", zoom, "min=", e.min, "microscope H=", e.cacheHeight)
-	//e.updateSizes()
-	e.drawSurface.Refresh()
-	e.clusterContainer.Refresh()
-	e.gateContainer.Refresh()
 }
 
 /*

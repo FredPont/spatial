@@ -106,7 +106,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		}),
 		// zoom : very important : never unzom under the window size
 		// in that case the image size = window size and zoom factor is wrong !
-		newZoom(e),
+		newZoom(e, a),
 		// container.NewHBox(
 		// 	widget.NewButtonWithIcon("", theme.ZoomOutIcon(), func() {
 		// 		var z Zoom
