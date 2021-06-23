@@ -55,7 +55,7 @@ func (e *editor) setZoom(zoom int) {
 	size := fyne.Size{Width: float32(w), Height: float32(h)}
 	e.min = size
 	log.Println("zoom=", zoom, "min=", e.min, "microscope H=", e.cacheHeight)
-	//e.updateSizes()
+
 	e.drawSurface.Refresh()
 	e.clusterContainer.Refresh()
 	e.gateContainer.Refresh()
