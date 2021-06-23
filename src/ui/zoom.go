@@ -20,9 +20,9 @@ type Zoom struct {
 
 // zoom between 10-100%
 func (z *Zoom) updateZoom(val int) {
-	log.Println("val=", val)
-	if val < 10 {
-		val = 10
+	log.Println("val=", val, "zoom Min=", z.edit.zooMin)
+	if val < z.edit.zooMin {
+		val = z.edit.zooMin // zoom must be at least the zooMin
 	} else if val > 100 {
 		val = 100
 	}
@@ -35,7 +35,7 @@ func (z *Zoom) updateZoom(val int) {
 // it is not possible to zoom more than 100% of image native size
 func newZoom(edit *editor, a fyne.App) fyne.CanvasObject {
 	z := &Zoom{edit: edit, zoom: widget.NewLabel("100%")}
-	edit.zoomMin(a)
+	edit.zoomMin(a) //compute zoom Min
 	zoom := container.NewHBox(
 		widget.NewButtonWithIcon("", theme.ZoomOutIcon(), func() {
 			z.updateZoom(z.edit.zoom - 10)
@@ -72,7 +72,8 @@ func (e *editor) zoomMin(a fyne.App) {
 	winH := binding.BindPreferenceFloat("winH", pref) // set the link to preferences for win width
 	wH, _ := winH.Get()
 
-	findMin(imgH, imgW, wH, wW)
+	e.zooMin = findMin(imgH, imgW, wH, wW)
+
 }
 
 // find zoom min between 10-100%

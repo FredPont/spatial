@@ -27,7 +27,8 @@ type editor struct {
 	gateContainer           *fyne.Container // container with the gates lines
 	clusterContainer        *fyne.Container // container with the cluster circles
 	zoom                    int             // image zoom
-	cacheWidth, cacheHeight int             // size of the window not zoomed
+	zooMin                  int             // minimal value of zoom to fit the window
+	cacheWidth, cacheHeight int             // size of the microscop picture not zoomed
 }
 
 func (e *editor) draw(w, h int) image.Image {
@@ -45,7 +46,7 @@ func NewEditor() (*editor, int, int) {
 	cc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // cluster container should be independant of gate container for separate initialisaion
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
-	edit := &editor{microscop: micro, min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: cc, clusterContainer: gc, zoom: 100, cacheWidth: w, cacheHeight: h}
+	edit := &editor{microscop: micro, min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: cc, clusterContainer: gc, zoom: 100, cacheWidth: w, cacheHeight: h, zooMin: 10}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit, w, h
