@@ -29,7 +29,7 @@ func getClusters(a fyne.App, header []string, filename string) map[int][]filter.
 	return filter.ReadClusters(a, filename, colIndexes)
 }
 
-func drawClusters(a fyne.App, e *editor, header []string, filename string, f binding.Float) {
+func drawClusters(a fyne.App, e *Editor, header []string, filename string, f binding.Float) {
 	initCluster(e) // remove all dots of the cluster container
 	pref := a.Preferences()
 	clustOp := binding.BindPreferenceFloat("clustOpacity", pref) // cluster opacity
@@ -62,7 +62,7 @@ func drawClusters(a fyne.App, e *editor, header []string, filename string, f bin
 	e.clusterContainer.Refresh()
 }
 
-func drawLegend(e *editor, R, G, B, op uint8, x, y, diameter, clusterName int) {
+func drawLegend(e *Editor, R, G, B, op uint8, x, y, diameter, clusterName int) {
 	AbsText(e.clusterContainer, x+20, y+10, strconv.Itoa(clusterName), 20, color.NRGBA{50, 50, 50, 255})
 	e.drawcircle(x, y, diameter, color.NRGBA{R, G, B, op})
 }
@@ -78,7 +78,7 @@ func iCircle(x, y, r int, color color.NRGBA) *canvas.Circle {
 }
 
 // drawline a circle at x,y position to the cluster container
-func (e *editor) drawcircle(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
+func (e *Editor) drawcircle(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
 	c := iCircle(x, y, ray, color)  // draw circle rayon ray
 	e.clusterContainer.AddObject(c) // add the cicle to the cluster container
 	return c

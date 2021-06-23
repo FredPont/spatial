@@ -28,7 +28,7 @@ import (
 
 type interactiveRaster struct {
 	widget.BaseWidget
-	edit       *editor
+	edit       *Editor
 	img        *canvas.Raster
 	points     []filter.Point      // points of current polygone edges
 	alledges   [][]filter.Point    // points of all current polygones edges
@@ -94,7 +94,7 @@ func (r *interactiveRaster) locationForPosition(pos fyne.Position) (int, int) {
 	return x, y
 }
 
-func newInteractiveRaster(edit *editor) *interactiveRaster {
+func newInteractiveRaster(edit *Editor) *interactiveRaster {
 	r := &interactiveRaster{img: canvas.NewRaster(edit.draw), edit: edit}
 
 	r.ExtendBaseWidget(r)

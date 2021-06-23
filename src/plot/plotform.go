@@ -12,7 +12,7 @@ import (
 )
 
 // Plotform display a form with the plot preferences and parameters
-func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string, alledges [][]filter.Point, f binding.Float) {
+func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable string, alledges [][]filter.Point, f binding.Float) {
 	pref := a.Preferences()
 
 	// plot name
@@ -55,7 +55,7 @@ func Plotform(a fyne.App, win fyne.Window, header []string, firstTable string, a
 			log.Println("input = ", input)
 			if input {
 				f.Set(0.3)
-				makeplot(a, header, firstTable, x.Text, y.Text, plotName.Text, plotdot.Text, alledges)
+				makeplot(a, zoom, header, firstTable, x.Text, y.Text, plotName.Text, plotdot.Text, alledges)
 				f.Set(0.6)
 				savePlotPrefs(a, x.Text, y.Text, plotName.Text, plotdot.Text)
 				f.Set(1.)

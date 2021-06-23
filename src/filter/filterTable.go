@@ -37,7 +37,7 @@ type Conf struct {
 }
 
 // FilterTable filter the scRNAseq table to extract cells in polygon
-func FilterTable(dataFile, outfile string, polygon []Point, param Conf) {
+func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf) {
 
 	path := "data/" + dataFile
 	// open result file for write filtered table
@@ -71,7 +71,7 @@ func FilterTable(dataFile, outfile string, polygon []Point, param Conf) {
 			break
 		}
 
-		if filterRow(record, XYindex, polygon, param) {
+		if filterRow(zoom, record, XYindex, polygon, param) {
 			line := strings.Join(record, "\t") + "\n"
 			//fmt.Println(line)
 			writeOneLine(out, line)
@@ -82,7 +82,7 @@ func FilterTable(dataFile, outfile string, polygon []Point, param Conf) {
 	return
 }
 
-func filterRow(record []string, XYindex []int, polygon []Point, param Conf) bool {
+func filterRow(zoom int, record []string, XYindex []int, polygon []Point, param Conf) bool {
 	scaleFactor := param.Scale
 	rotate := param.Rotate
 
@@ -103,19 +103,24 @@ func filterRow(record []string, XYindex []int, polygon []Point, param Conf) bool
 	if rotate == true {
 		xRot := yScaled
 		yRot := xScaled
-		return inGate(xRot, yRot, polygon)
+		return inGate(zoom, xRot, yRot, polygon)
 	}
-	return inGate(xScaled, yScaled, polygon)
+	return inGate(zoom, xScaled, yScaled, polygon)
 
 }
 
-func inGate(x, y int64, polygon []Point) bool {
+func inGate(zoom int, x, y int64, polygon []Point) bool {
+	// apply zoom to polygon
+	if zoom != 100 {
+		polygon = zoomPolygon(zoom, polygon)
+		//log.Println("zoomPolygon=", polygon)
+	}
 	// convert x,y to int
 	return isInside(polygon, Point{int(x), int(y)})
 }
 
 // TablePlot filter the scRNAseq table XY coordinates to extract cells in polygon to draw a plot and return XY coordinates
-func TablePlot(tableXYxy [][]string, polygon []Point, param Conf, columnX, columnY string, ch1 chan<- [][]string) {
+func TablePlot(zoom int, tableXYxy [][]string, polygon []Point, param Conf, columnX, columnY string, ch1 chan<- [][]string) {
 	// tableXYxy contains the index of the 2 columns to plot and the XY columns with the image coordinates
 	// cf plot.makeplot() mapAndGates := filter.ReadColumns(filename, colIndexes)
 	var xy [][]string
@@ -137,11 +142,11 @@ func TablePlot(tableXYxy [][]string, polygon []Point, param Conf, columnX, colum
 		if rotate == true {
 			xRot := yScaled
 			yRot := xScaled
-			if inGate(xRot, yRot, polygon) {
+			if inGate(zoom, xRot, yRot, polygon) {
 				xy = append(xy, []string{dot[0], dot[1]})
 			}
 		} else {
-			if inGate(xScaled, yScaled, polygon) {
+			if inGate(zoom, xScaled, yScaled, polygon) {
 				xy = append(xy, []string{dot[0], dot[1]})
 			}
 		}
@@ -151,6 +156,24 @@ func TablePlot(tableXYxy [][]string, polygon []Point, param Conf, columnX, colum
 	//return xy
 }
 
+func zoomPolygon(zoom int, polygon []Point) []Point {
+	var zoomPoly []Point
+	for _, p := range polygon {
+		zoomPoly = append(zoomPoly, Point{p.X * 100 / zoom, p.Y * 100 / zoom})
+	}
+	return zoomPoly
+}
+
+/*
+// applyZoomInt64 correct the input integer by the current zoom factor
+func applyZoomInt64(zoom int, val int64) int64 {
+	if zoom == 100 {
+		return val
+	}
+	return val * int64(zoom) / 100
+}
+*/
+/*
 func TablePlot3(dataFile string, polygon []Point, param Conf, columnX, columnY string, ch1 chan<- [][]string) {
 	var xy [][]string
 	path := "data/" + dataFile
@@ -184,3 +207,4 @@ func TablePlot3(dataFile string, polygon []Point, param Conf, columnX, columnY s
 	}
 	ch1 <- xy
 }
+*/

@@ -24,7 +24,7 @@ func check(e error) {
 	}
 }
 
-func makeplot(a fyne.App, header []string, filename, colX, colY, plotName, bkgDotSize string, alledges [][]filter.Point) {
+func makeplot(a fyne.App, zoom int, header []string, filename, colX, colY, plotName, bkgDotSize string, alledges [][]filter.Point) {
 	// index of the 2 columns to plot and the XY columns with the image coordinates (to be able to filter the gates)
 	// get parameters from preferences
 	param := prefToConf(a.Preferences())
@@ -35,7 +35,7 @@ func makeplot(a fyne.App, header []string, filename, colX, colY, plotName, bkgDo
 	// get the two first columns of mapAndGates to get map coordinates
 	scatterData := strToplot(extract2cols(mapAndGates, 0, 1))
 	// extract dots in all gates
-	alldotsInGates := extractGateDots(a, mapAndGates, alledges, colX, colY)
+	alldotsInGates := extractGateDots(a, zoom, mapAndGates, alledges, colX, colY)
 	if len(alldotsInGates) < 1 {
 		log.Println("Plot canceled or no dots in gate !")
 		return
@@ -54,7 +54,7 @@ func makeplot(a fyne.App, header []string, filename, colX, colY, plotName, bkgDo
 
 }
 
-func extractGateDots(a fyne.App, tableXYxy [][]string, alledges [][]filter.Point, colX, colY string) [][][]string {
+func extractGateDots(a fyne.App, zoom int, tableXYxy [][]string, alledges [][]filter.Point, colX, colY string) [][][]string {
 
 	var allXY [][][]string // all xy coordinates of dots in all gates
 	param := prefToConf(a.Preferences())
@@ -62,7 +62,7 @@ func extractGateDots(a fyne.App, tableXYxy [][]string, alledges [][]filter.Point
 	//log.Println("all edges", alledges)
 	ch1 := make(chan [][]string, gateNB) // ch1 store the xy coordinates of dots in one gate
 	for _, polygon := range alledges {
-		go filter.TablePlot(tableXYxy, polygon, param, colX, colY, ch1)
+		go filter.TablePlot(zoom, tableXYxy, polygon, param, colX, colY, ch1)
 	}
 	for i := 0; i < gateNB; i++ {
 		msg := <-ch1

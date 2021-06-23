@@ -13,7 +13,7 @@ import (
 
 // Zoom objet to record the %zoom and change editor min size
 type Zoom struct {
-	edit *editor
+	edit *Editor
 	zoom *widget.Label
 }
 
@@ -32,7 +32,7 @@ func (z *Zoom) updateZoom(val int) {
 
 // create a zoom widget to increase/decrease size by 10%
 // it is not possible to zoom more than 100% of image native size
-func newZoom(edit *editor, a fyne.App) fyne.CanvasObject {
+func newZoom(edit *Editor, a fyne.App) fyne.CanvasObject {
 	z := &Zoom{edit: edit, zoom: widget.NewLabel("Zoom : 100%")}
 	edit.zoomMin(a) //compute zoom Min
 	zoom := container.NewHBox(
@@ -46,7 +46,7 @@ func newZoom(edit *editor, a fyne.App) fyne.CanvasObject {
 	return zoom
 }
 
-func (e *editor) setZoom(zoom int) {
+func (e *Editor) setZoom(zoom int) {
 	e.zoom = zoom
 
 	h := float32(e.microOrigHeight) * float32(zoom) / 100
@@ -61,7 +61,7 @@ func (e *editor) setZoom(zoom int) {
 }
 
 // compute the minimal value of the zoom to fit the windows size
-func (e *editor) zoomMin(a fyne.App) {
+func (e *Editor) zoomMin(a fyne.App) {
 	pref := a.Preferences()
 	// image native size
 	imgH, imgW := e.microOrigHeight, e.microOrigWidth
@@ -103,7 +103,7 @@ func findMin(imgH, imgW int, wH, wW float64) int {
 }
 
 // ApplyZoomInt correct the input integer by the current zoom factor
-func ApplyZoomInt(e *editor, val int) int {
+func ApplyZoomInt(e *Editor, val int) int {
 	if e.zoom == 100 {
 		return val
 	}

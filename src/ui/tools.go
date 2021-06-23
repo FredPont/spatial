@@ -30,7 +30,7 @@ func checkError(message string, err error) {
 }
 
 // BuildTools build tools window with buttons and text entry
-func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
+func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 	preference := a.Preferences()
 	// get informations from data files to be used with buttons
 	dataFiles := filter.ListFiles("data/") // list all tables in data dir
@@ -58,7 +58,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 			alledges := e.drawSurface.alledges
 			ch := make(chan bool, 2)
 			f.Set(0.3) // progress bar
-			go filterActiveGates(alledges, dataFiles, gatename.Text, a.Preferences(), ch)
+			go filterActiveGates(e, alledges, dataFiles, gatename.Text, a.Preferences(), ch)
 			f.Set(0.6) // progress bar
 			go saveGates(gatename.Text, e, ch)
 			log.Println("plot done :", <-ch)
@@ -87,7 +87,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 		widget.NewButton("plot", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
-			plot.Plotform(a, w, header, firstTable, alledges, f)
+			plot.Plotform(a, w, e.zoom, header, firstTable, alledges, f)
 		}),
 		widget.NewButton("Show Clusters", func() {
 			drawClusters(a, e, header, firstTable, f)
@@ -115,7 +115,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *editor) {
 }
 
 // clear last gate on draw surface and init all edges
-func clearLastGate(e *editor) {
+func clearLastGate(e *Editor) {
 	e.drawSurface.clearPolygon(e.drawSurface.gatesLines)
 	e.gateContainer.Refresh()
 	initLastedges(e) // reset last edges and all points
@@ -123,7 +123,7 @@ func clearLastGate(e *editor) {
 }
 
 // save the gates to csv files
-func saveGates(gateName string, e *editor, ch chan bool) {
+func saveGates(gateName string, e *Editor, ch chan bool) {
 	fmt.Println("save gates")
 	for i, poly := range e.drawSurface.alledges {
 		if len(poly) < 3 {
