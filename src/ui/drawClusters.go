@@ -37,6 +37,7 @@ func drawClusters(a fyne.App, e *editor, header []string, filename string, f bin
 	op := uint8(opacity)
 	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) // cluster dot diameter
 	diameter, _ := clustDia.Get()
+	diameter = ApplyZoomInt(e, diameter)
 
 	clusterMap := getClusters(a, header, filename) // cluster nb => []Point
 	log.Println(len(clusterMap), "clusters detected")
@@ -51,7 +52,7 @@ func drawClusters(a fyne.App, e *editor, header []string, filename string, f bin
 		coordinates := clusterMap[clustNames[c]]
 		clcolor := ClusterColors(nbCluster, c)
 		for i := 0; i < len(coordinates); i++ {
-			e.drawcircle(coordinates[i].X, coordinates[i].Y, diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+			e.drawcircle(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 		}
 		// draw legend dot and name for the current cluster
 		drawLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, diameter, clustNames[c])

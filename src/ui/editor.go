@@ -18,17 +18,16 @@ import (
 )
 
 type editor struct {
-	drawSurface *interactiveRaster
-	//img           *image.RGBA // image with polygons
-	microscop               *canvas.Image
-	min                     fyne.Size       // size of the microscop image and the gate/clusters containers
-	layer                   *fyne.Container // container with image and interactive drawsurface
-	win                     fyne.Window
-	gateContainer           *fyne.Container // container with the gates lines
-	clusterContainer        *fyne.Container // container with the cluster circles
-	zoom                    int             // image zoom
-	zooMin                  int             // minimal value of zoom to fit the window
-	cacheWidth, cacheHeight int             // size of the microscop picture not zoomed
+	drawSurface                     *interactiveRaster
+	microscop                       *canvas.Image
+	min                             fyne.Size       // size of the microscop image and the gate/clusters containers
+	layer                           *fyne.Container // container with image and interactive drawsurface
+	win                             fyne.Window
+	gateContainer                   *fyne.Container // container with the gates lines
+	clusterContainer                *fyne.Container // container with the cluster circles
+	zoom                            int             // image zoom
+	zooMin                          int             // minimal value of zoom to fit the window
+	microOrigWidth, microOrigHeight int             // size of the microscop picture not zoomed
 }
 
 func (e *editor) draw(w, h int) image.Image {
@@ -46,7 +45,7 @@ func NewEditor() (*editor, int, int) {
 	cc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // cluster container should be independant of gate container for separate initialisaion
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
-	edit := &editor{microscop: micro, min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: cc, clusterContainer: gc, zoom: 100, cacheWidth: w, cacheHeight: h, zooMin: 10}
+	edit := &editor{microscop: micro, min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: cc, clusterContainer: gc, zoom: 100, microOrigWidth: w, microOrigHeight: h, zooMin: 10}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit, w, h
@@ -59,24 +58,3 @@ func (e *editor) BuildUI(w fyne.Window) {
 
 	w.SetContent(container.NewScroll(e.layer))
 }
-
-/*
-func (e *editor) updateSizes() {
-	if e.microscop == nil {
-		return
-	}
-	e.cacheWidth = e.microscop.Bounds().Dx() * e.zoom
-	e.cacheHeight = e.microscop.Bounds().Dy() * e.zoom
-
-	c := fyne.CurrentApp().Driver().CanvasForObject(e.status)
-	scale := float32(1.0)
-	if c != nil {
-		scale = c.Scale()
-	}
-	e.drawSurface.SetMinSize(fyne.NewSize(
-		float32(e.cacheWidth)/scale,
-		float32(e.cacheHeight)/scale))
-
-	e.renderCache()
-}
-*/

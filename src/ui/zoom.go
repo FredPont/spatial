@@ -14,7 +14,6 @@ import (
 // Zoom objet to record the %zoom and change editor min size
 type Zoom struct {
 	edit *editor
-
 	zoom *widget.Label
 }
 
@@ -28,13 +27,13 @@ func (z *Zoom) updateZoom(val int) {
 	}
 	z.edit.setZoom(val)
 
-	z.zoom.SetText(fmt.Sprintf("%d%%", z.edit.zoom))
+	z.zoom.SetText(fmt.Sprintf("Zoom : %d%%", z.edit.zoom))
 }
 
 // create a zoom widget to increase/decrease size by 10%
 // it is not possible to zoom more than 100% of image native size
 func newZoom(edit *editor, a fyne.App) fyne.CanvasObject {
-	z := &Zoom{edit: edit, zoom: widget.NewLabel("100%")}
+	z := &Zoom{edit: edit, zoom: widget.NewLabel("Zoom : 100%")}
 	edit.zoomMin(a) //compute zoom Min
 	zoom := container.NewHBox(
 		widget.NewButtonWithIcon("", theme.ZoomOutIcon(), func() {
@@ -50,11 +49,11 @@ func newZoom(edit *editor, a fyne.App) fyne.CanvasObject {
 func (e *editor) setZoom(zoom int) {
 	e.zoom = zoom
 
-	h := float32(e.cacheHeight) * float32(zoom) / 100
-	w := float32(e.cacheWidth) * float32(zoom) / 100
+	h := float32(e.microOrigHeight) * float32(zoom) / 100
+	w := float32(e.microOrigWidth) * float32(zoom) / 100
 	size := fyne.Size{Width: float32(w), Height: float32(h)}
 	e.min = size
-	log.Println("zoom=", zoom, "min=", e.min, "microscope H=", e.cacheHeight)
+	log.Println("zoom=", zoom, "min=", e.min, "microscope H=", e.microOrigHeight)
 
 	e.drawSurface.Refresh()
 	e.clusterContainer.Refresh()
@@ -65,7 +64,7 @@ func (e *editor) setZoom(zoom int) {
 func (e *editor) zoomMin(a fyne.App) {
 	pref := a.Preferences()
 	// image native size
-	imgH, imgW := e.cacheHeight, e.cacheWidth
+	imgH, imgW := e.microOrigHeight, e.microOrigWidth
 	// windows size
 	winW := binding.BindPreferenceFloat("winW", pref) // set the link to preferences for win width
 	wW, _ := winW.Get()
@@ -77,6 +76,7 @@ func (e *editor) zoomMin(a fyne.App) {
 }
 
 // find zoom min between 10-100%
+// image and un-zoomed image must be larger than the window
 func findMin(imgH, imgW int, wH, wW float64) int {
 	zH := 100 * wH / float64(imgH)
 	zW := 100 * wW / float64(imgW)
@@ -100,4 +100,12 @@ func findMin(imgH, imgW int, wH, wW float64) int {
 
 	//log.Println("zoom min", zH, zW)
 	return 10
+}
+
+// ApplyZoomInt correct the input integer by the current zoom factor
+func ApplyZoomInt(e *editor, val int) int {
+	if e.zoom == 100 {
+		return val
+	}
+	return val * e.zoom / 100
 }

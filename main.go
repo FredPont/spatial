@@ -18,6 +18,8 @@ func main() {
 	e, imgW, imgH := ui.NewEditor()
 	//e, imgW, imgH := ui.NewSmallEditor()
 	e.BuildUI(w)
+	// set the windows size to at least 500x500 and adjust the windows size
+	// to the size of the microscopy image if the pref size are below.
 	setImageWinSize(a, w, imgW, imgH)
 	w.SetFixedSize(true) // fix win size
 	w.Show()
@@ -55,7 +57,7 @@ func setImageWinSize(a fyne.App, w fyne.Window, imgW, imgH int) {
 // image size must be at least 500x500
 // set the minimal windows size to minSize = 500 if the size in pref is < minSize
 func setMinWindow(prefSize float64, imgSize int) float32 {
-	const minSize = 50
+	const minSize = 500
 	finalSize := float32(minSize)
 
 	if float64(imgSize) < float64(minSize) { // if image too small
