@@ -48,6 +48,7 @@ func newZoom(edit *Editor, a fyne.App) fyne.CanvasObject {
 }
 
 func (e *Editor) setZoom(zoom int) {
+	initAllLayers(e) // remove clusters and gates 
 	e.zoom = zoom
 
 	h := float32(e.microOrigHeight) * float32(zoom) / 100

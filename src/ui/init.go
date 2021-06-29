@@ -27,3 +27,8 @@ func initGates(e *Editor) {
 	e.gateContainer.Refresh()
 	initAlledges(e) // reset alledges
 }
+
+func initAllLayers(e *Editor) {
+	initCluster(e)
+	initGates(e)
+}
