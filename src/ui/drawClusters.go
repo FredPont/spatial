@@ -64,7 +64,7 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 
 func drawLegend(e *Editor, R, G, B, op uint8, x, y, diameter, clusterName int) {
 	AbsText(e.clusterContainer, x+20, y+10, strconv.Itoa(clusterName), 20, color.NRGBA{50, 50, 50, 255})
-	e.drawcircle(x, y, diameter, color.NRGBA{R, G, B, op})
+	e.drawcircle(x, y, diameter*100/e.zoom, color.NRGBA{R, G, B, op})
 }
 
 // credits : https://github.com/ajstarks/fc
@@ -84,14 +84,8 @@ func (e *Editor) drawcircle(x, y, ray int, color color.NRGBA) fyne.CanvasObject 
 	return c
 }
 
-// // Text places text within a container, using percent coordinates
-// func (c *Canvas) Text(x, y float64, size float64, s string, color color.RGBA) {
-// 	x, y = dimen(x, y, c.Width, c.Height)
-// 	size = pct(size, c.Width)
-// 	AbsText(c.Container, int(x), int(y), s, int(size), color)
-// }
-
 // AbsText places text within a container
+// credits : https://github.com/ajstarks/fc
 func AbsText(cont *fyne.Container, x, y int, s string, size int, color color.NRGBA) {
 	fx, fy, fsize := float32(x), float32(y), float32(size)
 	t := &canvas.Text{Text: s, Color: color, TextSize: fsize}
