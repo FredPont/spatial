@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"log"
+	"math"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -17,13 +18,13 @@ type Zoom struct {
 	zoom *widget.Label
 }
 
-// zoom between 10-100%
+// zoom between 10-200%
 func (z *Zoom) updateZoom(val int) {
 	log.Println("val=", val, "zoom Min=", z.edit.zooMin)
 	if val < z.edit.zooMin {
 		val = z.edit.zooMin // zoom must be at least the zooMin
-	} else if val > 100 {
-		val = 100
+	} else if val > 200 {
+		val = 200 //zoom Max
 	}
 	z.edit.setZoom(val)
 
@@ -75,30 +76,24 @@ func (e *Editor) zoomMin(a fyne.App) {
 
 }
 
-// find zoom min between 10-100%
-// image and un-zoomed image must be larger than the window
+// find zoom min between 10-200%
+// image and zoomed image must be larger than the window
 func findMin(imgH, imgW int, wH, wW float64) int {
 	zH := 100 * wH / float64(imgH)
 	zW := 100 * wW / float64(imgW)
+	zMax := math.Max(zH, zW)
 
 	// image and un-zoomed image must be larger than the window
 
-	for i := 10.; i < 100.; i += 10. {
-		if zH == i || zW == i {
+	for i := 10.; i < 200.; i += 10. {
+		if zMax == i {
 			return int(i)
+		} else if zMax > i && zMax < i+10 {
+			return int(i + 10)
 		}
-		if zH >= zW {
-			if zH > i && zH < i+10 {
-				return int(i + 10)
-			}
-		} else {
-			if zW > i && zW < i+10 {
-				return int(i + 10)
-			}
-		}
+
 	}
 
-	//log.Println("zoom min", zH, zW)
 	return 10
 }
 

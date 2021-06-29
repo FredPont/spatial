@@ -20,6 +20,7 @@ func TestFindMin(t *testing.T) {
 		{1000, 2000, 290, 500, 30},
 		{1000, 2000, 310, 500, 40},
 		{2000, 1000, 500, 310, 40},
+		{2000, 2000, 1000, 1800, 90},
 	}
 	for i, tc := range tests {
 		t.Run(fmt.Sprintf("Index=%d", i), func(t *testing.T) {
