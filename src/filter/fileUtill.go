@@ -204,18 +204,103 @@ func scaleXY(X, Y string, scaleFactor float64, rotate bool) (int64, int64) {
 
 }
 
-// IndexHeader create a map with column names => row number
-// func indexHeader(header []string) map[string]int {
-// 	index := make(map[string]int)
+// ReadImportedCells read cell names into []string
+func ReadImportedCells(filename string) []string {
+	var cellnames []string
+	// Open the file
+	csvfile, err := os.Open("import_cells/" + filename)
+	if err != nil {
+		log.Fatalln("Couldn't open the file", err)
+	}
 
-// 	for i := 0; i < len(header); i++ {
-// 		index[header[i]] = i //
-// 	}
-// 	return index
-// }
+	// Parse the file
+	r := csv.NewReader(bufio.NewReader(csvfile))
+	//r := csv.NewReader(csvfile)
+	//r.Comma = '\t'
 
-// remove file extension
-func remExt(filename string) (string, string) {
+	// Iterate through the records
+	for {
+		// Read each record from csv
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		cellnames = append(cellnames, record[0])
+	}
+	return cellnames
+}
+
+// ClustersByCells read only columns with specific cell names and positions in indexes and fill a map
+// cluster NB => slice of x,y coordinates
+func ClustersByCells(a fyne.App, filename string, colIndexes []int, cellImport map[string]bool) map[int][]Point {
+
+	// get scaleFactor and rotation from pref
+	pref := a.Preferences()
+
+	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
+	scaleFactor, _ := sf.Get()                             // read the preference for scaling factor
+
+	rot := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	rotate, _ := rot.Get()
+
+	// map with cluster number => slice of xy coordinates scaled
+	clusterMap := make(map[int][]Point, 0)
+	// Open the file
+	csvfile, err := os.Open("data/" + filename)
+	if err != nil {
+		log.Fatalln("Couldn't open the csv file", err)
+	}
+
+	// Parse the file
+	r := csv.NewReader(bufio.NewReader(csvfile))
+	//r := csv.NewReader(csvfile)
+	r.Comma = '\t'
+	r.Read() // skip header
+
+	// Iterate through the records
+	for {
+		// Read each record from csv
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		ncxy := selByIndex(record, colIndexes)
+		// continue if cell name is not in the cellnames map keys
+		if strInMap(ncxy[0], cellImport) == false {
+			continue
+		}
+		xScaled, yScaled := scaleXY(ncxy[2], ncxy[3], scaleFactor, rotate)
+		clustNB, err := strconv.Atoi(ncxy[1])
+		check(err)
+		clusterMap[clustNB] = append(clusterMap[clustNB], Point{int(xScaled), int(yScaled)})
+	}
+	return clusterMap
+}
+
+// search str in m keys
+func strInMap(str string, m map[string]bool) bool {
+	_, found := m[str]
+	return found
+}
+
+// StrToMap convert an array of string to map[string]bool
+func StrToMap(a []string) map[string]bool {
+	dic := make(map[string]bool, len(a))
+
+	for _, x := range a {
+		dic[x] = true
+	}
+	return dic
+}
+
+// RemExt remove file extension
+func RemExt(filename string) (string, string) {
 	var extension = filepath.Ext(filename)
 	var name = filename[0 : len(filename)-len(extension)]
 	return name, extension

@@ -48,6 +48,10 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 		preference.SetFloat("clustOpacity", v)
 	}
 
+	// import column file index. This index is =0 at the beginning and then incremented by 1
+	iCellFI := binding.BindPreferenceInt("imported file index", preference)
+	impCellFindex, _ := iCellFI.Get()
+
 	// progress bar binding
 	f := binding.NewFloat()
 
@@ -98,6 +102,12 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 			clearCluster(e)
 		}),
 		clusDotOpacity,
+		widget.NewButton("Import cells", func() {
+			buttonImportCells(a, e, preference, iCellFI, f, impCellFindex, header, firstTable)
+
+			time.Sleep(1 * time.Second)
+			f.Set(0.) // reset progress bar
+		}),
 		widget.NewButton("Preferences", func() {
 			pref.BuildPref(a, header)
 		}),
