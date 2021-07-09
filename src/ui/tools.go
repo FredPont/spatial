@@ -7,7 +7,6 @@ import (
 	"lasso/src/filter"
 	"lasso/src/plot"
 	"lasso/src/pref"
-	"time"
 
 	//"lasso/src/plot"
 
@@ -67,7 +66,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 			go saveGates(gatename.Text, e, ch)
 			log.Println("plot done :", <-ch)
 			log.Println("plot saved :", <-ch)
-			time.Sleep(1 * time.Second)
+			//time.Sleep(1 * time.Second)
 			f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Clear last gate", func() {
@@ -84,8 +83,8 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 			ch := make(chan bool, 2)
 			go saveimage(w, gatename.Text, ch)
 			log.Println("image saved :", <-ch)
-			f.Set(1) // progress bar
-			time.Sleep(1 * time.Second)
+			//f.Set(1) // progress bar
+			//time.Sleep(1 * time.Second)
 			f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("plot", func() {
@@ -94,8 +93,9 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 			plot.Plotform(a, w, e.zoom, header, firstTable, alledges, f)
 		}),
 		widget.NewButton("Show Clusters", func() {
+			f.Set(0.5) // progress bar
 			drawClusters(a, e, header, firstTable, f)
-			time.Sleep(1 * time.Second)
+			//time.Sleep(10 * time.Millisecond)
 			f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Clear Clusters", func() {
@@ -103,9 +103,9 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 		}),
 		clusDotOpacity,
 		widget.NewButton("Import cells", func() {
+			f.Set(0.5) // progress bar
 			buttonImportCells(a, e, preference, iCellFI, f, impCellFindex, header, firstTable)
-
-			time.Sleep(1 * time.Second)
+			//time.Sleep(1 * time.Second)
 			f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Preferences", func() {
