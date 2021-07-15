@@ -84,11 +84,19 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		}),
 		widget.NewButton("Previous Slide", func() {
 			startIdx, _ := curPathwayIndex.Get()
+			if startIdx < 2 {
+				log.Println("Column", startIdx-1, "cannot be accessed !")
+				return
+			}
 			curPathwayIndex.Set(startIdx - 1)
 			drawExp(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex)
 		}),
 		widget.NewButton("Next Slide", func() {
 			startIdx, _ := curPathwayIndex.Get()
+			if startIdx > len(header)-2 {
+				log.Println("Data table have", len(header)-1, "columns ! Column", startIdx+1, "cannot be accessed !")
+				return
+			}
 			curPathwayIndex.Set(startIdx + 1)
 			drawExp(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex)
 		}),
@@ -111,7 +119,7 @@ func startSlideShow(a fyne.App, e *Editor, header []string, firstTable, grad str
 			drawExp(a, e, header, firstTable, header[i], grad, f, curPathwayIndex)
 			pause, _ := slideDelay.Get()
 			time.Sleep(time.Duration(1000*pause) * time.Millisecond)
-			log.Println("current pathway :", header[i])
+			log.Println(i, "/", m-1, " column :", header[i])
 		}
 
 	}
@@ -169,10 +177,10 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	nbPts := len(pts)
 
 	for c := 0; c < nbPts; c++ {
-		// // progress bar with 100 points
-		// if c%int(nbPts/100) == 0 {
-		// 	f.Set(float64(c) / float64(nbPts)) // % progression for progress bar
-		// }
+		// progress bar increases when 50% of points are loaded
+		if c == int(nbPts/2) {
+			f.Set(0.5) // 50 % progression for progress bar
+		}
 
 		clcolor := grad(gradien)(scaleExp[c])
 
