@@ -102,6 +102,10 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 			clearCluster(e)
 		}),
 		clusDotOpacity,
+		widget.NewButton("Show Expression", func() {
+			buttonDrawExpress(a, e, preference, f, header, firstTable)
+			f.Set(0.) // reset progress bar
+		}),
 		widget.NewButton("Import cells", func() {
 			f.Set(0.5) // progress bar
 			buttonImportCells(a, e, preference, iCellFI, f, impCellFindex, header, firstTable)

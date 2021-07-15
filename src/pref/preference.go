@@ -17,10 +17,11 @@ import (
 // 	fmt.Println("scaleFactor is:", val)
 // }
 
+// BuildPref create a form where all preferences can be set
 func BuildPref(a fyne.App, head []string) {
 	pref := a.Preferences()
-
-	myWindow := a.NewWindow("Preferences")
+	//myWindow := a.NewWindow("Preferences")
+	myWindow := fyne.CurrentApp().NewWindow("Preferences")
 
 	// scaling factor
 	scalingFactor := widget.NewEntry()
@@ -118,7 +119,7 @@ func BuildPref(a fyne.App, head []string) {
 			setPrefToInt(cluDiamTXT, "clustDotDiam", pref)
 			//pref.SetInt("clustDotDiam", cluDiam)
 
-			log.Println("Form submitted:", scalingFactor.Text)
+			//log.Println("Form submitted:", scalingFactor.Text)
 
 			myWindow.Close()
 		},

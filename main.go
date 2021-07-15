@@ -24,7 +24,8 @@ func main() {
 	w.SetFixedSize(true) // fix win size
 	w.Show()
 
-	w2 := a.NewWindow("Tool Box")
+	//w2 := a.NewWindow("Tool Box")
+	w2 := fyne.CurrentApp().NewWindow("Tool Box")
 	ui.BuildTools(a, w2, w, e)
 
 	w2.Show()

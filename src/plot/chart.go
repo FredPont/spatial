@@ -45,7 +45,8 @@ func makeplot(a fyne.App, zoom int, header []string, filename, colX, colY, plotN
 	makeScatter(a, alldotsInGates, scatterData, mapDotSize, plotName, colX, colY, plotName)
 
 	// display plot on new window
-	plotWindow := a.NewWindow("Plot")
+	//plotWindow := a.NewWindow("Plot")
+	plotWindow := fyne.CurrentApp().NewWindow("Plot")
 	img := canvas.NewImageFromFile("plots/" + plotName + ".png")
 	plotWindow.SetContent(img)
 	plotWindow.Resize(fyne.NewSize(800, 800))

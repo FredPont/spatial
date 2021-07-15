@@ -3,7 +3,6 @@ package ui
 import (
 	"image/color"
 	"lasso/src/filter"
-	"log"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -73,7 +72,7 @@ func drawImportCells(a fyne.App, e *Editor, header []string, filename string, f 
 	diameter = ApplyZoomInt(e, diameter)
 
 	clusterMap := getImportedCells(a, header, filename, cellImport) // cluster nb => []Point
-	log.Println(len(clusterMap), "clusters detected")
+	//log.Println(len(clusterMap), "clusters detected")
 
 	nbCluster := len(clusterMap)
 	clustNames := filter.KeysIntPoint(clusterMap)

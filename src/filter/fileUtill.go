@@ -283,6 +283,102 @@ func ClustersByCells(a fyne.App, filename string, colIndexes []int, cellImport m
 	return clusterMap
 }
 
+// // Express contains expression value associated with x,y coordinates
+// type Express struct {
+// 	e float64
+// 	p Point
+// }
+
+// ReadExpress read only columns with positions in indexes and fill a a map
+// of expression normalized between 0-1 => slice of x,y coordinates
+func ReadExpress(a fyne.App, filename string, colIndexes []int) ([]float64, []Point) {
+
+	// get scaleFactor and rotation from pref
+	pref := a.Preferences()
+
+	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
+	scaleFactor, _ := sf.Get()                             // read the preference for scaling factor
+
+	rot := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	rotate, _ := rot.Get()
+
+	// array of expression valules and xy coordinates scaled
+	var expressions []float64
+	var pts []Point
+	// Open the file
+	csvfile, err := os.Open("data/" + filename)
+	if err != nil {
+		log.Fatalln("Couldn't open the csv file", err)
+	}
+
+	// Parse the file
+	r := csv.NewReader(bufio.NewReader(csvfile))
+	//r := csv.NewReader(csvfile)
+	r.Comma = '\t'
+	r.Read() // skip header
+
+	// Iterate through the records
+	for {
+		// Read each record from csv
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		cxy := selByIndex(record, colIndexes)
+		xScaled, yScaled := scaleXY(cxy[1], cxy[2], scaleFactor, rotate)
+		exp, err := strconv.ParseFloat(cxy[0], 64)
+		if err != nil {
+			//log.Println("column number", colIndexes[0]+1, "does not contain a number", err)
+			continue
+		}
+
+		pts = append(pts, Point{int(xScaled), int(yScaled)})
+		expressions = append(expressions, exp)
+	}
+	return expressions, pts
+}
+
+// func checkFloat(err error, colIndexes []int) {
+// 	if err != nil {
+// 		log.Println("column number", colIndexes[0]+1, "does not contain a number", err)
+// 	}
+// 	continue
+// }
+
+// scale a slice between 0-1
+func ScaleSlice01(s []float64) ([]float64, float64, float64) {
+	var norm []float64
+	min, max := findMinAndMax(s)
+	for _, v := range s {
+		if max != min {
+			z := (v - min) / (max - min)
+			norm = append(norm, z)
+		} else {
+			norm = append(norm, 0.)
+		}
+	}
+
+	return norm, min, max
+}
+
+// credit : https://learningprogramming.net/golang/golang-golang/find-max-and-min-of-array-in-golang/
+func findMinAndMax(a []float64) (min, max float64) {
+	min = a[0]
+	max = a[0]
+	for _, value := range a {
+		if value < min {
+			min = value
+		}
+		if value > max {
+			max = value
+		}
+	}
+	return min, max
+}
+
 // search str in m keys
 func strInMap(str string, m map[string]bool) bool {
 	_, found := m[str]
