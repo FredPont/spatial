@@ -22,15 +22,15 @@ func main() {
 	// to the size of the microscopy image if the pref size are below.
 	setImageWinSize(a, w, imgW, imgH)
 	w.SetFixedSize(true) // fix win size
-	w.Show()
+	//w.Show()
 
 	//w2 := a.NewWindow("Tool Box")
-	w2 := fyne.CurrentApp().NewWindow("Tool Box")
-	ui.BuildTools(a, w2, w, e)
+	//w2 := fyne.CurrentApp().NewWindow("Tool Box")
+	//ui.BuildTools(a, w2, w, e)
+	ui.BuildTools(a, w, e)
+	//w2.Show()
 
-	w2.Show()
-
-	w2.ShowAndRun()
+	//w2.ShowAndRun()
 	w.ShowAndRun()
 
 }

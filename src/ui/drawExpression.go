@@ -15,7 +15,7 @@ import (
 )
 
 func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, firstTable string) {
-	ExpressWindow := fyne.CurrentApp().NewWindow("Expression")
+	ExpressWindow := a.NewWindow("Expression")
 
 	// select the expression to draw
 	expSel := widget.NewSelectEntry(header)
@@ -62,7 +62,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 				return // return if nothing is selected
 			}
 			log.Println(expSel.Entry.Text, grad.Selected, op)
-			drawExp(a, e, header, firstTable, expSel.Entry.Text, grad.Selected, f, curPathwayIndex)
+			go drawExp(a, e, header, firstTable, expSel.Entry.Text, grad.Selected, f, curPathwayIndex)
 		}),
 		slidePause,
 		widget.NewButton("Slide show", func() {
@@ -89,7 +89,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 				return
 			}
 			curPathwayIndex.Set(startIdx - 1)
-			drawExp(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex)
+			go drawExp(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex)
 		}),
 		widget.NewButton("Next Slide", func() {
 			startIdx, _ := curPathwayIndex.Get()
@@ -98,8 +98,9 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 				return
 			}
 			curPathwayIndex.Set(startIdx + 1)
-			drawExp(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex)
+			go drawExp(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex)
 		}),
+		widget.NewButton("Close", func() { ExpressWindow.Close() }),
 	)
 	ExpressWindow.SetContent(content)
 	ExpressWindow.Show()

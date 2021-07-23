@@ -27,7 +27,8 @@ import (
 	"fyne.io/fyne/v2/data/binding"
 )
 
-func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string, gatename string, pref fyne.Preferences, ch chan bool) {
+func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string, gatename string, pref fyne.Preferences, f binding.Float) {
+	f.Set(0.3) // progress bar
 	// get parameters from preferences
 	param := prefToConf(pref)
 	fmt.Println("start filtering...", alledges)
@@ -43,7 +44,7 @@ func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string,
 		}
 
 	}
-	ch <- true
+	f.Set(0.) // progress bar
 }
 
 // PrefToConf retreive conf data from fyne pref

@@ -29,7 +29,8 @@ func checkError(message string, err error) {
 }
 
 // BuildTools build tools window with buttons and text entry
-func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
+func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
+	w2 := fyne.CurrentApp().NewWindow("Tool Box")
 	preference := a.Preferences()
 	// get informations from data files to be used with buttons
 	dataFiles := filter.ListFiles("data/") // list all tables in data dir
@@ -59,15 +60,15 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 		widget.NewButton("Filter tables with gates", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
-			ch := make(chan bool, 2)
-			f.Set(0.3) // progress bar
-			go filterActiveGates(e, alledges, dataFiles, gatename.Text, a.Preferences(), ch)
-			f.Set(0.6) // progress bar
-			go saveGates(gatename.Text, e, ch)
-			log.Println("plot done :", <-ch)
-			log.Println("plot saved :", <-ch)
+			//ch := make(chan bool, 2)
+			//f.Set(0.3) // progress bar
+			go filterActiveGates(e, alledges, dataFiles, gatename.Text, a.Preferences(), f)
+			//f.Set(0.6) // progress bar
+			go saveGates(gatename.Text, e)
+			//log.Println("filter done :", <-ch)
+			//log.Println("gate saved :", <-ch)
 			//time.Sleep(1 * time.Second)
-			f.Set(0.) // reset progress bar
+			//f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Clear last gate", func() {
 			clearLastGate(e)
@@ -76,16 +77,19 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 			initGates(e)
 		}),
 		widget.NewButton("Screen shot", func() {
-			screenShot(w, gatename.Text)
+			//f.Set(0.3) // progress bar
+			go screenShot(w, gatename.Text, f)
+			//f.Set(0.) // reset progress bar
 		}),
-		widget.NewButton("Save HR image", func() {
-			f.Set(0.3) // progress bar
-			ch := make(chan bool, 2)
-			go saveimage(w, gatename.Text, ch)
-			log.Println("image saved :", <-ch)
+		widget.NewButton("Save zoomed image", func() {
+			//f.Set(0.3) // progress bar
+			//ch := make(chan bool, 2)
+			startSaveImage(w, gatename.Text, f)
+			//go saveimage(w, gatename.Text, ch)
+			//log.Println("image saved :", <-ch)
 			//f.Set(1) // progress bar
 			//time.Sleep(1 * time.Second)
-			f.Set(0.) // reset progress bar
+			//f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("plot", func() {
 			// get the edges of all selected polygons
@@ -104,7 +108,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 		clusDotOpacity,
 		widget.NewButton("Show Expression", func() {
 			buttonDrawExpress(a, e, preference, f, header, firstTable)
-			f.Set(0.) // reset progress bar
+			//f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Import cells", func() {
 			f.Set(0.5) // progress bar
@@ -125,7 +129,7 @@ func BuildTools(a fyne.App, w2, w fyne.Window, e *Editor) {
 	)
 
 	w2.SetContent(content)
-
+	w2.Show()
 }
 
 // clear last gate on draw surface and init all edges
@@ -137,7 +141,7 @@ func clearLastGate(e *Editor) {
 }
 
 // save the gates to csv files
-func saveGates(gateName string, e *Editor, ch chan bool) {
+func saveGates(gateName string, e *Editor) {
 	fmt.Println("save gates")
 	for i, poly := range e.drawSurface.alledges {
 		if len(poly) < 3 {
@@ -147,14 +151,14 @@ func saveGates(gateName string, e *Editor, ch chan bool) {
 		out := strconv.Itoa(i) + "_" + gateName
 		writeCSV(out, poly)
 	}
-	ch <- true
 }
 
 // save screenshot of image to file
 // credits https://www.devdungeon.com/content/working-images-go
-func screenShot(w fyne.Window, filename string) {
+func screenShot(w fyne.Window, filename string, f binding.Float) {
+	f.Set(0.3) // progress bar
 	out := w.Canvas().Capture()
-
+	f.Set(0.5) // progress bar
 	// outputFile is a File type which satisfies Writer interface
 	path := "plots/" + filename + ".png"
 	outputFile, err := os.Create(path)
@@ -168,14 +172,24 @@ func screenShot(w fyne.Window, filename string) {
 	png.Encode(outputFile, out)
 	log.Println("Saving image to ", path)
 
-	// Don't forget to close files
+	// close files
 	outputFile.Close()
+	f.Set(0.) // progress bar
+}
 
+// start the save image goroutine
+func startSaveImage(w fyne.Window, filename string, f binding.Float) {
+	f.Set(0.3) // progress bar
+	//ch := make(chan bool, 1)
+	//go saveimage(w, filename, ch)
+	go saveimage2(w, filename, f)
+	//log.Println("image saved :", <-ch)
 }
 
 // save HR image to file
 // credits https://www.devdungeon.com/content/working-images-go
 func saveimage(w fyne.Window, filename string, ch chan bool) {
+
 	c := w.Content().(*container.Scroll).Content
 	out := software.Render(c, theme.DarkTheme())
 
@@ -184,11 +198,34 @@ func saveimage(w fyne.Window, filename string, ch chan bool) {
 	if err != nil {
 		log.Println("The image cannot be saved to the file")
 	}
-	png.Encode(outputFile, out)
+	err = png.Encode(outputFile, out)
+	if err != nil {
+		log.Println("png encoding error : ", err)
+	}
 	log.Println("Saving image to ", path)
 
 	outputFile.Close()
 	ch <- true
+}
+
+func saveimage2(w fyne.Window, filename string, f binding.Float) {
+	log.Print("Saving image...")
+	c := w.Content().(*container.Scroll).Content
+	out := software.Render(c, theme.DarkTheme())
+
+	path := "plots/" + filename + ".png"
+	outputFile, err := os.Create(path)
+	if err != nil {
+		log.Println("The image cannot be saved to the file")
+	}
+	f.Set(0.5) // progress bar
+	err = png.Encode(outputFile, out)
+	if err != nil {
+		log.Println("png encoding error : ", err)
+	}
+	log.Println("image saved to ", path)
+	outputFile.Close()
+	f.Set(0.) // progress bar
 }
 
 // write polygon edge to file
