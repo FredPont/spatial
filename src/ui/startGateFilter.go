@@ -65,6 +65,6 @@ func prefToConf(pref fyne.Preferences) filter.Conf {
 	r := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
 	rotate, _ := r.Get()
 
-	return filter.Conf{x, y, scale, rotate}
+	return filter.Conf{X: x, Y: y, Scale: scale, Rotate: rotate}
 
 }

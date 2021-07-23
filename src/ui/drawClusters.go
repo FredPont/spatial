@@ -60,6 +60,7 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 	}
 
 	e.clusterContainer.Refresh()
+	f.Set(0.) // reset progress bar
 }
 
 func drawLegend(e *Editor, R, G, B, op uint8, x, y, diameter, clusterName int) {

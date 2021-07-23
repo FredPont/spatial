@@ -60,15 +60,8 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		widget.NewButton("Filter tables with gates", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
-			//ch := make(chan bool, 2)
-			//f.Set(0.3) // progress bar
 			go filterActiveGates(e, alledges, dataFiles, gatename.Text, a.Preferences(), f)
-			//f.Set(0.6) // progress bar
 			go saveGates(gatename.Text, e)
-			//log.Println("filter done :", <-ch)
-			//log.Println("gate saved :", <-ch)
-			//time.Sleep(1 * time.Second)
-			//f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Clear last gate", func() {
 			clearLastGate(e)
@@ -82,14 +75,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			//f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Save zoomed image", func() {
-			//f.Set(0.3) // progress bar
-			//ch := make(chan bool, 2)
 			startSaveImage(w, gatename.Text, f)
-			//go saveimage(w, gatename.Text, ch)
-			//log.Println("image saved :", <-ch)
-			//f.Set(1) // progress bar
-			//time.Sleep(1 * time.Second)
-			//f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("plot", func() {
 			// get the edges of all selected polygons
@@ -97,10 +83,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			plot.Plotform(a, w, e.zoom, header, firstTable, alledges, f)
 		}),
 		widget.NewButton("Show Clusters", func() {
-			f.Set(0.5) // progress bar
-			drawClusters(a, e, header, firstTable, f)
-			//time.Sleep(10 * time.Millisecond)
-			f.Set(0.) // reset progress bar
+			go drawClusters(a, e, header, firstTable, f)
 		}),
 		widget.NewButton("Clear Clusters", func() {
 			clearCluster(e)
@@ -111,17 +94,14 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			//f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Import cells", func() {
-			f.Set(0.5) // progress bar
-			buttonImportCells(a, e, preference, iCellFI, f, impCellFindex, header, firstTable)
-			//time.Sleep(1 * time.Second)
-			f.Set(0.) // reset progress bar
+			go buttonImportCells(a, e, preference, iCellFI, f, impCellFindex, header, firstTable)
 		}),
 		widget.NewButton("Preferences", func() {
 			pref.BuildPref(a, header)
 		}),
 		// zoom : very important : never unzom under the window size
 		// in that case the image size = window size and zoom factor is wrong !
-		newZoom(e, a),
+		newZoom(e, a, f),
 		widget.NewButton("Exit", func() {
 			os.Exit(0)
 		}),

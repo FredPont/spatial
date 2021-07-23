@@ -19,7 +19,8 @@ type Zoom struct {
 }
 
 // zoom between 10-200%
-func (z *Zoom) updateZoom(val int) {
+func (z *Zoom) updateZoom(val int, f binding.Float) {
+	f.Set(0.3) // progress bar
 	log.Println("val=", val, "zoom Min=", z.edit.zooMin)
 	if val < z.edit.zooMin {
 		val = z.edit.zooMin // zoom must be at least the zooMin
@@ -27,28 +28,29 @@ func (z *Zoom) updateZoom(val int) {
 		val = 200 //zoom Max
 	}
 	z.edit.setZoom(val)
-
+	//f.Set(0.5) // progress bar
 	z.zoom.SetText(fmt.Sprintf("Zoom : %d%%", z.edit.zoom))
+	f.Set(0.) // progress bar
 }
 
 // create a zoom widget to increase/decrease size by 10%
 // it is not possible to zoom more than 100% of image native size
-func newZoom(edit *Editor, a fyne.App) fyne.CanvasObject {
+func newZoom(edit *Editor, a fyne.App, f binding.Float) fyne.CanvasObject {
 	z := &Zoom{edit: edit, zoom: widget.NewLabel("Zoom : 100%")}
 	edit.zoomMin(a) //compute zoom Min
 	zoom := container.NewHBox(
 		widget.NewButtonWithIcon("", theme.ZoomOutIcon(), func() {
-			z.updateZoom(z.edit.zoom - 10)
+			go z.updateZoom(z.edit.zoom-10, f)
 		}),
 		z.zoom,
 		widget.NewButtonWithIcon("", theme.ZoomInIcon(), func() {
-			z.updateZoom(z.edit.zoom + 10)
+			go z.updateZoom(z.edit.zoom+10, f)
 		}))
 	return zoom
 }
 
 func (e *Editor) setZoom(zoom int) {
-	initAllLayers(e) // remove clusters and gates 
+	initAllLayers(e) // remove clusters and gates
 	e.zoom = zoom
 
 	h := float32(e.microOrigHeight) * float32(zoom) / 100
@@ -58,8 +60,8 @@ func (e *Editor) setZoom(zoom int) {
 	log.Println("zoom=", zoom, "min=", e.min, "microscope H=", e.microOrigHeight)
 
 	e.drawSurface.Refresh()
-	e.clusterContainer.Refresh()
-	e.gateContainer.Refresh()
+	//e.clusterContainer.Refresh()
+	//e.gateContainer.Refresh()
 }
 
 // compute the minimal value of the zoom to fit the windows size

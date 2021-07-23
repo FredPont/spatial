@@ -10,7 +10,9 @@ import (
 )
 
 func buttonImportCells(a fyne.App, e *Editor, preference fyne.Preferences, iCellFI binding.Int, f binding.Float, impCellFindex int, header []string, firstTable string) {
+	f.Set(0.3) // progress bar
 	importedCells, files := importCells()
+	f.Set(0.5) // progress bar
 	iCellFI = binding.BindPreferenceInt("imported file index", preference)
 	impCellFindex, _ = iCellFI.Get()
 	if impCellFindex > len(importedCells)-1 {
@@ -26,6 +28,7 @@ func buttonImportCells(a fyne.App, e *Editor, preference fyne.Preferences, iCell
 	} else {
 		preference.SetInt("imported file index", 0)
 	}
+	f.Set(0.) // reset progress bar
 }
 
 // importCells import all cells in all files in import_cells.
