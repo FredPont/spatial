@@ -96,6 +96,13 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		widget.NewButton("Import cells", func() {
 			go buttonImportCells(a, e, preference, iCellFI, f, impCellFindex, header, firstTable)
 		}),
+		widget.NewButton("Compare gates", func() {
+			// map that store the check boxes state
+			headerMap := make(map[string]interface{}, len(header[1:]))
+			buildMapTrue(header[1:], headerMap)
+			boxes := binding.BindUntypedMap(&headerMap)
+			buttonCompare(a, e, preference, f, header, boxes, headerMap)
+		}),
 		widget.NewButton("Preferences", func() {
 			pref.BuildPref(a, header)
 		}),
