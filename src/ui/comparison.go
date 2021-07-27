@@ -15,14 +15,22 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 	compWindow := a.NewWindow("Compare")
 
 	content := container.New(layout.
-		NewGridLayoutWithColumns(2),
+		NewGridLayoutWithColumns(2), container.NewVBox(
+		widget.NewLabel("Groups to compare"),
+		widget.NewLabel("Group 1"),
+		widget.NewRadioGroup([]string{"Item 1", "Item 2"}, func(s string) {
+			log.Println("Selected", s)
+		}),
+		widget.NewLabel("Group 2"),
+		widget.NewRadioGroup([]string{"Item 1", "Item 2"}, func(s string) {
+			log.Println("Selected", s)
+		}),
 		widget.NewLabel("Columns to compare"),
 		widget.NewButton("Select all", func() {
 			buildMapTrue(header[1:], headerMap)
 			boxes := binding.BindUntypedMap(&headerMap)
 			boxes.Reload()
 			compWindow.Content().Refresh()
-
 		}),
 		widget.NewButton("unSelect all", func() {
 			buildMapFalse(header[1:], headerMap)
@@ -30,6 +38,10 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 			boxes.Reload()
 			compWindow.Content().Refresh()
 		}),
+		widget.NewButton("Close", func() {
+			compWindow.Close()
+		}),
+	),
 		listColums(header[1:], headerMap, boxes),
 	)
 	//content := listColums(header, headerMap, boxes)
@@ -38,6 +50,7 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 	compWindow.Show()
 }
 
+// list with all columns in header except column 1 with cell names
 func listColums(header []string, headerMap map[string]interface{}, boxes binding.ExternalUntypedMap) fyne.CanvasObject {
 	strings := binding.BindStringList(&header)
 	l := widget.NewListWithData(strings,
