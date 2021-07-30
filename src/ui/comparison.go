@@ -262,7 +262,7 @@ func foldChangePV(table1, table2 [][]string, colnames []string) []PVrecord {
 			continue
 		}
 		pv, _ := filter.PvMannWhitney(v1, v2)
-		pvTable = append(pvTable, PVrecord{colnames[c], fc, pv, pv * float64(nc)})
+		pvTable = append(pvTable, PVrecord{colnames[c], fc, pv, pv * float64(nc-1)})
 	}
 	return pvTable
 }
