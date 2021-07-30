@@ -91,12 +91,15 @@ func filterRow(zoom int, record []string, XYindex []int, polygon []Point, param 
 
 	x, err := strconv.ParseFloat(XYstr[0], 64)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(x, "cannot be converted to XY coordinate", err)
+		return false
 	}
 	xScaled := int64(math.Round(x * scaleFactor))
+	
 	y, err := strconv.ParseFloat(XYstr[1], 64)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(y, "cannot be converted to XY coordinate", err)
+		return false
 	}
 	yScaled := int64(math.Round(y * scaleFactor))
 

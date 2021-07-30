@@ -100,8 +100,8 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			// map that store the check boxes state
 			headerMap := make(map[string]interface{}, len(header[1:]))
 			buildMapTrue(header[1:], headerMap)
-			boxes := binding.BindUntypedMap(&headerMap)
-			buttonCompare(a, e, preference, f, header, boxes, headerMap)
+
+			buttonCompare(a, e, preference, f, header, headerMap, firstTable)
 		}),
 		widget.NewButton("Preferences", func() {
 			pref.BuildPref(a, header)
