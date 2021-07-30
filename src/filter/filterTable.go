@@ -61,7 +61,7 @@ func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf
 
 	// read table header
 	header, err := reader.Read()                       //read first line of pathway
-	writeOneLine(out, strings.Join(header, "\t")+"\n") // write header in result file
+	WriteOneLine(out, strings.Join(header, "\t")+"\n") // write header in result file
 	XYindex := GetColIndex(header, []string{param.X, param.Y})
 	//fmt.Println(XYindex)
 	for {
@@ -74,8 +74,8 @@ func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf
 		if filterRow(zoom, record, XYindex, polygon, param) {
 			line := strings.Join(record, "\t") + "\n"
 			//fmt.Println(line)
-			writeOneLine(out, line)
-			writeOneLine(out2, record[0]+"\n")
+			WriteOneLine(out, line)
+			WriteOneLine(out2, record[0]+"\n")
 		}
 
 	}
@@ -95,7 +95,7 @@ func filterRow(zoom int, record []string, XYindex []int, polygon []Point, param 
 		return false
 	}
 	xScaled := int64(math.Round(x * scaleFactor))
-	
+
 	y, err := strconv.ParseFloat(XYstr[1], 64)
 	if err != nil {
 		log.Println(y, "cannot be converted to XY coordinate", err)

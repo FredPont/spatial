@@ -29,6 +29,11 @@ func TestFoldChangePV(t *testing.T) {
 			[]string{"id", "item1"},
 			[]PVrecord{{"item1", 1188.5057471264367, 0.028571428571428577, 0.028571428571428577}},
 		},
+		// {[][]string{{"cell1", "0"}, {"cell2", "0"}, {"cell3", "0"}},
+		// 	[][]string{{"cell5", "3"}, {"cell6", "2.5"}, {"cell7", "2.2"}},
+		// 	[]string{"id", "item1"},
+		// 	[]PVrecord{},
+		// },
 	}
 	for i, tc := range tests {
 		t.Run(fmt.Sprintf("Index=%d", i), func(t *testing.T) {

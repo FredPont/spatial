@@ -417,8 +417,13 @@ func ListFiles(dir string) []string {
 	return filesList
 }
 
-//###########################################
-func writeOneLine(f *os.File, line string) {
+//WriteOneLine write line to file
+func WriteOneLine(f *os.File, line string) {
 	_, err := f.WriteString(line)
 	check(err)
+}
+
+//FLstr convert float to string
+func FLstr(f float64) string {
+	return strconv.FormatFloat(f, 'f', 5, 64)
 }

@@ -3,7 +3,9 @@ package ui
 import (
 	"lasso/src/filter"
 	"log"
+	"os"
 	"strconv"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -184,8 +186,7 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 		log.Println("Error detected in XY coordinates ! Comparison aborted !")
 		return
 	}
-	_ = table1
-	_ = table2
+
 	f.Set(.5)
 	pvfcTable := foldChangePV(table1, table2, colnames)
 
@@ -193,6 +194,7 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	log.Println(table1)
 	log.Println(table2)
 	log.Println(pvfcTable)
+	writePV("comparison.tsv", pvfcTable)
 	f.Set(0.)
 }
 
@@ -287,7 +289,7 @@ func folchange(x1, x2 []float64) (float64, bool) {
 	if s1 != 0 {
 		return sumFloat(x2) / s1, true
 	}
-	log.Println("division by zero in foldchang caculation !")
+	log.Println("division by zero in fold-change caculation !")
 	return 1., false
 }
 
@@ -297,4 +299,24 @@ func sumFloat(array []float64) float64 {
 		result += v
 	}
 	return result
+}
+
+func writePV(filename string, pvTable []PVrecord) {
+	path := "comparison/" + filename
+	// open result file for write filtered table
+	out, err1 := os.Create(path)
+	if err1 != nil {
+		log.Println(path, "cannot be written ! The file is not saved !")
+		return
+	}
+	defer out.Close()
+
+	// write header to file
+	header := []string{"item", "FoldChange", "PV_Wilcoxon", "PV_Bonferroni\n"}
+	filter.WriteOneLine(out, strings.Join(header, "\t"))
+
+	for _, rec := range pvTable {
+		line := []string{rec.item, filter.FLstr(rec.fc), filter.FLstr(rec.pv), filter.FLstr(rec.pvcorr) + "\n"}
+		filter.WriteOneLine(out, strings.Join(line, "\t"))
+	}
 }
