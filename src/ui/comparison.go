@@ -12,6 +12,12 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+// PVrecord is the gene/pathway name and the corresponding FC and Pvalue, Pvalue corrected
+type PVrecord struct {
+	item           string
+	fc, pv, pvcorr float64
+}
+
 func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, headerMap map[string]interface{}, firstTable string) {
 
 	compWindow := a.NewWindow("Compare")
@@ -169,6 +175,7 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	param := prefToConf(pref) // get xy rotation zoom factor from pref
 	// group1, group2  = polygone coordinates of gates in group 1 and 2
 	group1, group2 := gatesInGroup(e, g1Map, g2Map)
+	// index and colnames of selected colum + XY coordinates for filtering
 	index, colnames, XYindex := selColIndex(header, headerMap, pref) // colnames : cellsId, colum selected, X,Y
 	log.Println(index)
 	// to save RAM each line of the table is filtered when reading the table
@@ -180,14 +187,18 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	_ = table1
 	_ = table2
 	f.Set(.5)
+	pvfcTable := foldChangePV(table1, table2, colnames)
 
 	log.Println(colnames, group1, group2)
 	log.Println(table1)
 	log.Println(table2)
+	log.Println(pvfcTable)
 	f.Set(0.)
 }
 
-// get column indexes of selected column from header map (checkboxes = true) . The cells names and XY coordinated are required for gate filtration and included from preferences
+// get column indexes of selected column from header map (checkboxes = true)
+// The cells names are the first column folowed by the columns selected by the user.
+// The XY columns are not included in the table but the XY indexes are caclulated for gate filtration
 func selColIndex(header []string, headerMap map[string]interface{}, pref fyne.Preferences) ([]int, []string, []int) {
 	// XY indexes in header
 	var xidx, yidx int
@@ -210,15 +221,15 @@ func selColIndex(header []string, headerMap map[string]interface{}, pref fyne.Pr
 			index = append(index, i)
 			colnames = append(colnames, header[i])
 		}
-		// add xy columns
+		// search xy columns
 		if v == xc {
-			index = append(index, i)
-			colnames = append(colnames, header[i])
+			// index = append(index, i)
+			// colnames = append(colnames, header[i])
 			xidx = i
 		}
 		if v == yc {
-			index = append(index, i)
-			colnames = append(colnames, header[i])
+			// index = append(index, i)
+			// colnames = append(colnames, header[i])
 			yidx = i
 		}
 	}
@@ -236,4 +247,54 @@ func gatesInGroup(e *Editor, g1Map, g2Map map[string]interface{}) ([][]filter.Po
 		}
 	}
 	return group1, group2
+}
+
+func foldChangePV(table1, table2 [][]string, colnames []string) []PVrecord {
+	var pvTable []PVrecord
+	nc := len(table1[0]) // col number
+	//var fc, pv float64   //foldchange pvalue
+	for c := 1; c < nc; c++ {
+		v1 := getColum(c, table1)
+		v2 := getColum(c, table2)
+		fc, t := folchange(v1, v2)
+		if t == false {
+			// the data point is skiped
+			continue
+		}
+		pv, _ := filter.PvMannWhitney(v1, v2)
+		pvTable = append(pvTable, PVrecord{colnames[c], fc, pv, pv * float64(nc)})
+	}
+	return pvTable
+}
+
+// extract column c from table and convert it to float
+func getColum(c int, table [][]string) []float64 {
+	var col []float64
+	l := len(table)
+	for i := 0; i < l; i++ {
+		x, err := strconv.ParseFloat(table[i][c], 64)
+		if err != nil {
+			log.Println(x, "cannot be converted to float", err)
+			return []float64{}
+		}
+		col = append(col, x)
+	}
+	return col
+}
+
+func folchange(x1, x2 []float64) (float64, bool) {
+	s1 := sumFloat(x1)
+	if s1 != 0 {
+		return sumFloat(x2) / s1, true
+	}
+	log.Println("division by zero in foldchang caculation !")
+	return 1., false
+}
+
+func sumFloat(array []float64) float64 {
+	result := 0.
+	for _, v := range array {
+		result += v
+	}
+	return result
 }

@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-// pvalue for MannWhitney test
+// PvMannWhitney pvalue for MannWhitney test
 func PvMannWhitney(x1, x2 []float64) (float64, bool) {
 	s, err := stats.MannWhitneyUTest(x1, x2, 0)
 	if err != nil {
