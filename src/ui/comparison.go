@@ -55,7 +55,7 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 			compWindow.Content().Refresh()
 		}),
 		widget.NewButton("Compare", func() {
-			log.Println(g1Map, g2Map)
+			//log.Println(g1Map, g2Map)
 			//log.Println(headerMap)
 			if !chkGates(g1Map, g2Map) {
 				return
@@ -191,10 +191,10 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	f.Set(.5)
 	pvfcTable := foldChangePV(table1, table2, colnames)
 
-	log.Println(colnames, group1, group2)
-	log.Println(table1)
-	log.Println(table2)
-	log.Println(pvfcTable)
+	// log.Println(colnames, group1, group2)
+	// log.Println(table1)
+	// log.Println(table2)
+	// log.Println(pvfcTable)
 	writePV("comparison.tsv", pvfcTable)
 	f.Set(0.)
 }
@@ -280,7 +280,7 @@ func getColum(c int, table [][]string) []float64 {
 	for i := 0; i < l; i++ {
 		x, err := strconv.ParseFloat(table[i][c], 64)
 		if err != nil {
-			log.Println(x, "cannot be converted to float", err)
+			log.Println("cell=", table[i][0], "col=", c+1, " ", x, "cannot be converted to float", err)
 			return []float64{}
 		}
 		col = append(col, x)
