@@ -425,5 +425,5 @@ func WriteOneLine(f *os.File, line string) {
 
 //FLstr convert float to string
 func FLstr(f float64) string {
-	return strconv.FormatFloat(f, 'f', 5, 64)
+	return strconv.FormatFloat(f, 'e', 3, 64)
 }

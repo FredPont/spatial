@@ -3,6 +3,7 @@ package ui
 import (
 	"lasso/src/filter"
 	"log"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -16,8 +17,8 @@ import (
 
 // PVrecord is the gene/pathway name and the corresponding FC and Pvalue, Pvalue corrected
 type PVrecord struct {
-	item           string
-	fc, pv, pvcorr float64
+	item                            string
+	fc, pv, pvcorr, log2fc, log10pv float64
 }
 
 func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, headerMap map[string]interface{}, firstTable string) {
@@ -259,12 +260,15 @@ func foldChangePV(table1, table2 [][]string, colnames []string) []PVrecord {
 		v1 := getColum(c, table1)
 		v2 := getColum(c, table2)
 		fc, t := folchange(v1, v2)
+		// if undetermined fc == 0/0  the data is skiped
 		if t == false {
-			// the data point is skiped
 			continue
 		}
 		pv, _ := filter.PvMannWhitney(v1, v2)
-		pvTable = append(pvTable, PVrecord{colnames[c], fc, pv, pv * float64(nc-1)})
+		// PV corrected by Bonferroni
+		pvBonf := pvBonferroni(pv, float64(nc-1))
+
+		pvTable = append(pvTable, PVrecord{colnames[c], fc, pv, pvBonf, math.Log2(fc), log10pv(pvBonf)})
 	}
 	return pvTable
 }
@@ -286,11 +290,35 @@ func getColum(c int, table [][]string) []float64 {
 
 func folchange(x1, x2 []float64) (float64, bool) {
 	s1 := sumFloat(x1)
-	if s1 != 0 {
-		return sumFloat(x2) / s1, true
+	s2 := sumFloat(x2)
+	if s1 == 0 && s2 == 0 {
+		log.Println("fold-change undetermined (0/0) !")
+		return 1., false
+	} else if s1 != 0 && s2 != 0 {
+		return s2 / s1, true
+	} else if s2 == 0 {
+		return 1e-10, true
 	}
 	log.Println("division by zero in fold-change caculation !")
-	return 1., false
+	return 1e10, true
+}
+
+// -log10(pv)
+func log10pv(pv float64) float64 {
+	if pv == 0 {
+		return 300
+	}
+	return -math.Log10(pv)
+
+}
+
+// PV corrected by Bonferroni
+func pvBonferroni(pv, n float64) float64 {
+	pvb := pv * n
+	if pvb > 1. {
+		return 1.
+	}
+	return pvb
 }
 
 func sumFloat(array []float64) float64 {
@@ -312,11 +340,12 @@ func writePV(filename string, pvTable []PVrecord) {
 	defer out.Close()
 
 	// write header to file
-	header := []string{"item", "FoldChange", "PV_Wilcoxon", "PV_Bonferroni\n"}
+	header := []string{"item", "FoldChange", "PV_Wilcoxon", "PV_Bonferroni", "log2(FC)", "-log10(PV)\n"}
 	filter.WriteOneLine(out, strings.Join(header, "\t"))
 
 	for _, rec := range pvTable {
-		line := []string{rec.item, filter.FLstr(rec.fc), filter.FLstr(rec.pv), filter.FLstr(rec.pvcorr) + "\n"}
+		line := []string{rec.item, filter.FLstr(rec.fc), filter.FLstr(rec.pv), filter.FLstr(rec.pvcorr),
+			filter.FLstr(rec.log2fc), filter.FLstr(rec.log10pv) + "\n"}
 		filter.WriteOneLine(out, strings.Join(line, "\t"))
 	}
 }
