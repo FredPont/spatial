@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -27,6 +28,9 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 
 	gates := buildGateNames(e)
 
+	filename := widget.NewEntry()
+	filename.SetPlaceHolder("Output File name...")
+
 	// g1Map : stores the gates selected in group 1
 	g1Map := make(map[string]interface{}, len(gates))
 	buildMapFalse(gates, g1Map)
@@ -36,6 +40,7 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 
 	content := container.New(layout.
 		NewGridLayoutWithColumns(2), container.NewVBox(
+		filename,
 		widget.NewLabel("Groups to compare"),
 		widget.NewLabel("Group 1"),
 		listGates(gates, g1Map),
@@ -55,12 +60,13 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 			compWindow.Content().Refresh()
 		}),
 		widget.NewButton("Compare", func() {
-			//log.Println(g1Map, g2Map)
+			log.Println(g1Map, g2Map)
 			//log.Println(headerMap)
 			if !chkGates(g1Map, g2Map) {
 				return
 			}
-			go startComparison(e, header, headerMap, preference, firstTable, f, g1Map, g2Map)
+			outfile := filename.Text
+			go startComparison(e, header, headerMap, preference, firstTable, f, g1Map, g2Map, outfile)
 		}),
 		widget.NewButton("Close", func() {
 			compWindow.Close()
@@ -173,7 +179,7 @@ func buildGateNames(e *Editor) []string {
 }
 
 // start comparison
-func startComparison(e *Editor, header []string, headerMap map[string]interface{}, pref fyne.Preferences, firstTable string, f binding.Float, g1Map, g2Map map[string]interface{}) {
+func startComparison(e *Editor, header []string, headerMap map[string]interface{}, pref fyne.Preferences, firstTable string, f binding.Float, g1Map, g2Map map[string]interface{}, outfile string) {
 	f.Set(.3)
 	param := prefToConf(pref) // get xy rotation zoom factor from pref
 	// group1, group2  = polygone coordinates of gates in group 1 and 2
@@ -183,7 +189,7 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	log.Println(index)
 	// to save RAM each line of the table is filtered when reading the table
 	table1, table2, test := filter.ReadCompareTable(e.zoom, firstTable, index, XYindex, group1, group2, param)
-	if test == false {
+	if !test {
 		log.Println("Error detected in XY coordinates ! Comparison aborted !")
 		return
 	}
@@ -191,11 +197,12 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	f.Set(.5)
 	pvfcTable := foldChangePV(table1, table2, colnames)
 
-	// log.Println(colnames, group1, group2)
-	// log.Println(table1)
-	// log.Println(table2)
-	// log.Println(pvfcTable)
-	writePV("comparison.tsv", pvfcTable)
+	log.Println(colnames, group1, group2)
+	log.Println(table1)
+	log.Println(table2)
+	log.Println(pvfcTable)
+	fname := formatOutFile(outfile)
+	writePV(fname, pvfcTable)
 	f.Set(0.)
 }
 
@@ -261,7 +268,7 @@ func foldChangePV(table1, table2 [][]string, colnames []string) []PVrecord {
 		v2 := getColum(c, table2)
 		fc, t := folchange(v1, v2)
 		// if undetermined fc == 0/0  the data is skiped
-		if t == false {
+		if !t {
 			continue
 		}
 		pv, _ := filter.PvMannWhitney(v1, v2)
@@ -280,7 +287,7 @@ func getColum(c int, table [][]string) []float64 {
 	for i := 0; i < l; i++ {
 		x, err := strconv.ParseFloat(table[i][c], 64)
 		if err != nil {
-			log.Println("cell=", table[i][0], "col=", c+1, " ", x, "cannot be converted to float", err)
+			log.Println(x, "cannot be converted to float", err)
 			return []float64{}
 		}
 		col = append(col, x)
@@ -348,4 +355,17 @@ func writePV(filename string, pvTable []PVrecord) {
 			filter.FLstr(rec.log2fc), filter.FLstr(rec.log10pv) + "\n"}
 		filter.WriteOneLine(out, strings.Join(line, "\t"))
 	}
+}
+
+//formatOutFile add extension csv to file name or build a file name with time string when the filename is not given by the user
+func formatOutFile(name string) string {
+	var outfile string
+
+	if name == "" {
+		current_time := time.Now()
+		outfile = "comparison_" + current_time.Format("2006-01-02_150405") + ".csv"
+	} else {
+		outfile = name + ".csv"
+	}
+	return outfile
 }

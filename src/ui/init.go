@@ -32,3 +32,9 @@ func initAllLayers(e *Editor) {
 	initCluster(e)
 	initGates(e)
 }
+
+func initGatesContainer(e *Editor) {
+	e.gateContainer.Objects = nil
+	e.gateContainer.Refresh()
+
+}

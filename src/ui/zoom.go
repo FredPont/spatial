@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"lasso/src/filter"
 	"log"
 	"math"
 
@@ -19,16 +20,19 @@ type Zoom struct {
 }
 
 // zoom between 10-200%
-func (z *Zoom) updateZoom(val int, f binding.Float) {
+func (z *Zoom) updateZoom(val, zoomStep int, f binding.Float) {
 	f.Set(0.3) // progress bar
 	log.Println("val=", val, "zoom Min=", z.edit.zooMin)
 	if val < z.edit.zooMin {
 		val = z.edit.zooMin // zoom must be at least the zooMin
+		f.Set(0.)           // progress bar
+		return
 	} else if val > 200 {
 		val = 200 //zoom Max
+		f.Set(0.) // progress bar
+		return
 	}
-	z.edit.setZoom(val)
-	//f.Set(0.5) // progress bar
+	z.edit.setZoom(val, zoomStep)
 	z.zoom.SetText(fmt.Sprintf("Zoom : %d%%", z.edit.zoom))
 	f.Set(0.) // progress bar
 }
@@ -38,19 +42,22 @@ func (z *Zoom) updateZoom(val int, f binding.Float) {
 func newZoom(edit *Editor, a fyne.App, f binding.Float) fyne.CanvasObject {
 	z := &Zoom{edit: edit, zoom: widget.NewLabel("Zoom : 100%")}
 	edit.zoomMin(a) //compute zoom Min
+	step := 10      // zoom step
 	zoom := container.NewHBox(
 		widget.NewButtonWithIcon("", theme.ZoomOutIcon(), func() {
-			go z.updateZoom(z.edit.zoom-10, f)
+			go z.updateZoom(z.edit.zoom-step, -step, f)
 		}),
 		z.zoom,
 		widget.NewButtonWithIcon("", theme.ZoomInIcon(), func() {
-			go z.updateZoom(z.edit.zoom+10, f)
+			go z.updateZoom(z.edit.zoom+step, step, f)
 		}))
 	return zoom
 }
 
-func (e *Editor) setZoom(zoom int) {
-	initAllLayers(e) // remove clusters and gates
+func (e *Editor) setZoom(zoom, zoomStep int) {
+	//initAllLayers(e) // remove clusters and gates
+	initCluster(e)
+	initGatesContainer(e)
 	e.zoom = zoom
 
 	h := float32(e.microOrigHeight) * float32(zoom) / 100
@@ -59,6 +66,9 @@ func (e *Editor) setZoom(zoom int) {
 	e.min = size
 	log.Println("zoom=", zoom, "min=", e.min, "microscope H=", e.microOrigHeight)
 
+	// zoom the gates
+	zoomGates(e, zoomStep)
+	redrawGates(e)
 	e.drawSurface.Refresh()
 	//e.clusterContainer.Refresh()
 	//e.gateContainer.Refresh()
@@ -106,4 +116,68 @@ func ApplyZoomInt(e *Editor, val int) int {
 		return val
 	}
 	return val * e.zoom / 100
+}
+
+// apply zoom step to the polygon edges
+func zoomGates(e *Editor, zoomStep int) {
+
+	// update points coordinates is not usefull
+	// because points are reset when polygon is closed
+
+	// zoom factor between 2 consecutive scales. ex 90/100 -> 80/90 -> 70/80 ...
+	zf := float64(e.zoom) / (float64(e.zoom) - float64(zoomStep))
+	// update alledges coordinates
+	L := len(e.drawSurface.alledges)
+	for i := 0; i < L; i++ {
+		zoomPoints(&e.drawSurface.alledges[i], zoomStep, zf)
+	}
+
+	//log.Println(e.drawSurface.alledges)
+}
+
+// update points coordinates with zoomStep
+func zoomPoints(p *[]filter.Point, z int, zf float64) {
+	for i := 0; i < len(*p); i++ {
+		(*p)[i].X = int(float64((*p)[i].X) * zf)
+		(*p)[i].Y = int(float64((*p)[i].Y) * zf)
+	}
+}
+
+// redraw the gates
+func redrawGates(e *Editor) {
+	L := len(e.drawSurface.alledges)
+	for i := 0; i < L; i++ {
+		if i == L-1 {
+			// update the last gate coordinates
+			e.drawSurface.gatesLines = redrawlastGate(e.drawSurface, e.drawSurface.alledges[i])
+		} else {
+			redrawpolygon(e.drawSurface, e.drawSurface.alledges[i])
+		}
+
+	}
+	//e.gateContainer.Refresh()
+
+}
+
+// redraw one polygon
+func redrawpolygon(r *interactiveRaster, p []filter.Point) {
+	L := len(p)
+	for i := 0; i < L-1; i++ {
+		r.drawline(p[i].X, p[i].Y, p[i+1].X, p[i+1].Y)
+	}
+	r.drawline(p[0].X, p[0].Y, p[L-1].X, p[L-1].Y) // close the polygon
+}
+
+// redraw last gate and store it
+func redrawlastGate(r *interactiveRaster, p []filter.Point) []fyne.CanvasObject {
+	var lastGate []fyne.CanvasObject
+	var line fyne.CanvasObject
+	L := len(p)
+	for i := 0; i < L-1; i++ {
+		line = r.drawline(p[i].X, p[i].Y, p[i+1].X, p[i+1].Y)
+		lastGate = append(lastGate, line)
+	}
+	line = r.drawline(p[0].X, p[0].Y, p[L-1].X, p[L-1].Y) // close the polygon
+	lastGate = append(lastGate, line)
+	return lastGate
 }
