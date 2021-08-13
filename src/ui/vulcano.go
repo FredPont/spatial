@@ -2,6 +2,7 @@ package ui
 
 import (
 	"image/color"
+	"log"
 
 	"fyne.io/fyne/v2"
 )
@@ -87,35 +88,96 @@ func (e *Vulcano) drawcircle(x, y, ray int, color color.NRGBA) fyne.CanvasObject
 }
 
 func drawVulcano(v *Vulcano, vulcBox PlotBox) {
-	R := uint8(50)
-	G := uint8(150)
+	R := uint8(106)
+	G := uint8(90)
 	B := uint8(250)
 
 	vulcBox.Color = color.NRGBA{R, G, B, 255}
 
+	//draw axes
+	vulcBox.XAxis(v)
+	vulcBox.YAxis(v)
+
+	// draw scatter plot
 	vulcBox.Scatter(v, 3)
 
-	// for i := 0; i < 700; i += 10 {
-	// 	e.drawcircle(i, i, 3, color.NRGBA{R, G, B, 255})
-	// }
 	v.scatterContainer.Refresh()
 }
 
 // Scatter makes a scatter chart
-func (p *PlotBox) Scatter(v *Vulcano, size float64) {
+func (p *PlotBox) Scatter(v *Vulcano, dotsize int) {
 
 	for i, xplot := range p.X {
 		//x := int(MapRange(x, p.Xmin, p.Xmax, p.Left, 800-p.Right))
 		//y := int(MapRange(p.Y[i], p.Ymin, p.Ymax, p.Bottom, 800-p.Top))
-		x, y := winCoord(p, xplot, p.Y[i])
-		v.drawcircle(x, y, 3, p.Color)
+		x, y := xCoord(p, xplot), yCoord(p, p.Y[i])
+		v.drawcircle(x, y, dotsize, p.Color)
 	}
+
 }
 
-// winCoord compute the x,y windows coordinates of a dot
-// from its x,y scatter plot coordinates
-func winCoord(p *PlotBox, xplot, yplot float64) (int, int) {
+// xCoord compute the x windows coordinates of a dot
+// from its x scatter plot coordinate
+func xCoord(p *PlotBox, xplot float64) int {
 	xwin := MapRange(xplot, p.Xmin, p.Xmax, p.Left, p.winW-p.Right)
+	return int(xwin)
+}
+
+// yCoord compute the y windows coordinates of a dot
+// from its y scatter plot coordinate
+func yCoord(p *PlotBox, yplot float64) int {
 	ywin := p.winH - (MapRange(yplot, p.Ymin, p.Ymax, p.Bottom, p.winH-p.Top))
-	return int(xwin), int(ywin)
+	return int(ywin)
+}
+
+// XAxis makes the X axis
+func (p *PlotBox) XAxis(v *Vulcano) {
+	y1 := 0
+	lef := xCoord(p, p.Xmin)
+	rig := xCoord(p, p.Xmax)
+
+	if yZero(p) {
+		y1 = yCoord(p, 0.)
+	} else {
+		y1 = yCoord(p, p.Xmin)
+		log.Println("Y axis does not contain 0 value !")
+	}
+	//log.Println("y axis:", x1, bot, up)
+	c := iLine(lef, y1, rig, y1, 1, color.RGBA{0, 0, 0, 255})
+	v.scatterContainer.AddObject(c) // add the line to the cluster container
+	//v.scatterContainer.Refresh()
+}
+
+// YAxis makes the Y axis
+func (p *PlotBox) YAxis(v *Vulcano) {
+	x1 := 0
+	bot := yCoord(p, p.Ymin)
+	up := yCoord(p, p.Ymax)
+
+	if xZero(p) {
+		x1 = xCoord(p, 0.)
+	} else {
+		x1 = xCoord(p, p.Xmin)
+		log.Println("X axis does not contain 0 value !")
+	}
+	//log.Println("y axis:", x1, bot, up)
+	c := iLine(x1, bot, x1, up, 1, color.RGBA{0, 0, 0, 255})
+	v.scatterContainer.AddObject(c) // add the line to the cluster container
+	//v.scatterContainer.Refresh()
+}
+
+// test if x=0 exists
+func xZero(p *PlotBox) bool {
+	if p.Xmax >= 0 && p.Xmin <= 0 {
+		return true
+	}
+	return false
+}
+
+// test if y=0 exists
+func yZero(p *PlotBox) bool {
+	if p.Ymax >= 0 && p.Ymin <= 0 {
+		return true
+	}
+	return false
 }
