@@ -44,19 +44,20 @@ func NewVulcano() (*Vulcano, int, int) {
 	return edit, w, h
 }
 
-// buildVulc creates the  window of the vulcano plot
+// buildVulc creates the window of the vulcano plot
 func (e *Vulcano) buildVulc(w fyne.Window) {
 	e.win = w
-	//e.layer = container.NewMax(e.scatterContainer, e.selectContainer)
+	//e.layer = container.NewMax(e.scatterContainer)
 	e.layer = container.NewMax(e.drawSurface, e.scatterContainer, e.selectContainer)
 	w.SetContent(container.NewScroll(e.layer))
 }
 
-// buildVulWin creates the vulcano window
-func buildVulcWin() {
+// buildVulWin creates display vulcano window
+func buildVulcWin() *Vulcano {
 	w := fyne.CurrentApp().NewWindow("Vulcano Plot")
 	v, finalWidth, finalHeight := NewVulcano()
 	v.buildVulc(w)
 	w.Resize(fyne.NewSize(float32(finalWidth), float32(finalHeight)))
 	w.Show()
+	return v
 }

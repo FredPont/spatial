@@ -209,9 +209,10 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	// log.Println(pvfcTable)
 	fname := formatOutFile(outfile)
 	writePV(fname, pvfcTable)
-	readVulcano(fname, pvfcTable)
-	log.Println(readVulcano(fname, pvfcTable))
-	buildVulcWin()
+	buildVulanoPlot(fname, pvfcTable)
+	// readVulcano(fname, pvfcTable)
+	// log.Println(readVulcano(fname, pvfcTable))
+	// buildVulcWin()
 	f.Set(0.)
 }
 

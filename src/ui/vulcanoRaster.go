@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"image/color"
+
 	//"lasso/src/filter"
 
 	"fyne.io/fyne/v2"
@@ -38,6 +39,13 @@ func (r *vulcRaster) Tapped(ev *fyne.PointEvent) {
 	// var line fyne.CanvasObject // store all line pixels
 	x := int(ev.Position.X)
 	y := int(ev.Position.Y)
+	w, h := 10, 10 // selection rectangle size
+	R := uint8(250)
+	G := uint8(50)
+	B := uint8(50)
+
+	rect := iRect(x, y, w, h, color.RGBA{R, G, B, 255})
+	r.edit.scatterContainer.AddObject(rect)
 	// lp := len(r.points)
 	// if lp >= 1 {
 	// 	x2, y2 := r.points[lp-1].X, r.points[lp-1].Y // get last coordinates stored
@@ -48,8 +56,7 @@ func (r *vulcRaster) Tapped(ev *fyne.PointEvent) {
 	// r.points = append(r.points, filter.Point{x, y}) // store new edges
 
 	// r.tmpLines = append(r.tmpLines, line) // store new lines objects
-	// //r.edit.layer.Refresh() // slow
-	// r.edit.gateContainer.Refresh() // refresh only the gate container, faster than refresh layer
+	r.edit.scatterContainer.Refresh() // refresh only the gate container, faster than refresh layer
 }
 
 func (r *vulcRaster) TappedSecondary(*fyne.PointEvent) {
