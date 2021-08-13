@@ -15,12 +15,6 @@ import (
 // interactive raster code
 ////////////////////////////
 
-// Dot contains the x,y pixel coordinates of a dot
-// type Dot struct {
-// 	x int
-// 	y int
-// }
-
 // Point = XY coordinates of a point
 // type Point struct {
 // 	X, Y int

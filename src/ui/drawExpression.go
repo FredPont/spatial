@@ -21,7 +21,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	expSel := widget.NewSelectEntry(header)
 
 	// show choice of different gradien
-	grad := widget.NewRadioGroup([]string{"Rainbow", "White - Red", "Yellow - Red", "Purple - Red", "Inferno"}, func(s string) {
+	grad := widget.NewRadioGroup([]string{"Rainbow", "White - Red", "Yellow - Red", "Purple - Red", "Inferno", "Blue - Yellow - Red"}, func(s string) {
 
 		fmt.Println("Selected <", s, ">")
 	})
@@ -48,6 +48,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		expSel,
 		widget.NewLabel("Select your gradien"),
 		grad,
+		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,
 		widget.NewButton("Plot Expression", func() {
 			// opacity
@@ -233,6 +234,8 @@ func grad(gradien string) func(float64) RGB {
 		return func(val float64) RGB { return PuRdGradien(val) }
 	case "Inferno":
 		return func(val float64) RGB { return InferGrad(val) }
+	case "Blue - Yellow - Red":
+		return func(val float64) RGB { return BYRGradien(val) }
 	default:
 		return func(val float64) RGB { return WRgradien(val) }
 	}

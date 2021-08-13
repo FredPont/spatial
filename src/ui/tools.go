@@ -88,6 +88,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		widget.NewButton("Clear Clusters", func() {
 			clearCluster(e)
 		}),
+		widget.NewLabel("Dots Opacity [0-100%] :"),
 		clusDotOpacity,
 		widget.NewButton("Show Expression", func() {
 			buttonDrawExpress(a, e, preference, f, header, firstTable)

@@ -191,18 +191,27 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	table1, table2, test := filter.ReadCompareTable(e.zoom, firstTable, index, XYindex, group1, group2, param)
 	if !test {
 		log.Println("Error detected in XY coordinates ! Comparison aborted !")
+		f.Set(0.)
 		return
 	}
-
+	if len(table1) == 0 || len(table2) == 0 {
+		log.Println("No data points in gate ! computation aborted !")
+		f.Set(0.)
+		return
+	}
 	f.Set(.5)
+
 	pvfcTable := foldChangePV(table1, table2, colnames)
 
-	log.Println(colnames, group1, group2)
-	log.Println(table1)
-	log.Println(table2)
-	log.Println(pvfcTable)
+	// log.Println(colnames, group1, group2)
+	// log.Println(table1)
+	// log.Println(table2)
+	// log.Println(pvfcTable)
 	fname := formatOutFile(outfile)
 	writePV(fname, pvfcTable)
+	readVulcano(fname, pvfcTable)
+	log.Println(readVulcano(fname, pvfcTable))
+	buildVulcWin()
 	f.Set(0.)
 }
 
