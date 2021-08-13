@@ -2,7 +2,6 @@ package ui
 
 import (
 	"image/color"
-	"log"
 
 	"fyne.io/fyne/v2"
 )
@@ -13,9 +12,10 @@ type PlotBox struct {
 	id                       []string
 	X                        []float64
 	Y                        []float64
-	Color                    color.RGBA
+	Color                    color.NRGBA
 	Top, Bottom, Left, Right float64
 	Xmax, Xmin, Ymax, Ymin   float64
+	winH, winW               float64
 }
 
 // newHisto read the pvalue table and return a PlotBox
@@ -60,6 +60,8 @@ func readVulcano(title string, pvTable []PVrecord) PlotBox {
 		Bottom: 50.,
 		Left:   50.,
 		Right:  50.,
+		winH:   800,
+		winW:   800,
 	}
 }
 
@@ -71,10 +73,10 @@ func MapRange(value, low1, high1, low2, high2 float64) float64 {
 
 // buildVulanoPlot : create the window and the vulcano plot
 func buildVulanoPlot(fname string, pvfcTable []PVrecord) {
-	readVulcano(fname, pvfcTable)
-	log.Println(readVulcano(fname, pvfcTable))
+	vulcBox := readVulcano(fname, pvfcTable)
+	//log.Println(readVulcano(fname, pvfcTable))
 	v := buildVulcWin()
-	drawVulcano(v)
+	drawVulcano(v, vulcBox)
 }
 
 // drawline a circle at x,y position to the scatter container
@@ -84,12 +86,36 @@ func (e *Vulcano) drawcircle(x, y, ray int, color color.NRGBA) fyne.CanvasObject
 	return c
 }
 
-func drawVulcano(e *Vulcano) {
+func drawVulcano(v *Vulcano, vulcBox PlotBox) {
 	R := uint8(50)
 	G := uint8(150)
 	B := uint8(250)
-	for i := 0; i < 700; i += 10 {
-		e.drawcircle(i, i, 3, color.NRGBA{R, G, B, 255})
+
+	vulcBox.Color = color.NRGBA{R, G, B, 255}
+
+	vulcBox.Scatter(v, 3)
+
+	// for i := 0; i < 700; i += 10 {
+	// 	e.drawcircle(i, i, 3, color.NRGBA{R, G, B, 255})
+	// }
+	v.scatterContainer.Refresh()
+}
+
+// Scatter makes a scatter chart
+func (p *PlotBox) Scatter(v *Vulcano, size float64) {
+
+	for i, xplot := range p.X {
+		//x := int(MapRange(x, p.Xmin, p.Xmax, p.Left, 800-p.Right))
+		//y := int(MapRange(p.Y[i], p.Ymin, p.Ymax, p.Bottom, 800-p.Top))
+		x, y := winCoord(p, xplot, p.Y[i])
+		v.drawcircle(x, y, 3, p.Color)
 	}
-	e.scatterContainer.Refresh()
+}
+
+// winCoord compute the x,y windows coordinates of a dot
+// from its x,y scatter plot coordinates
+func winCoord(p *PlotBox, xplot, yplot float64) (int, int) {
+	xwin := MapRange(xplot, p.Xmin, p.Xmax, p.Left, p.winW-p.Right)
+	ywin := p.winH - (MapRange(yplot, p.Ymin, p.Ymax, p.Bottom, p.winH-p.Top))
+	return int(xwin), int(ywin)
 }
