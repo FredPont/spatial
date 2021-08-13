@@ -19,10 +19,6 @@ import (
 type vulcRaster struct {
 	widget.BaseWidget
 	edit *Vulcano
-	// points     []filter.Point      // points of current polygone edges
-	// alledges   [][]filter.Point    // points of all current polygones edges
-	// tmpLines   []fyne.CanvasObject // temporary slice with lines of the last gate
-	// gatesLines []fyne.CanvasObject // line (fyne canvas object) of last polygone
 }
 
 func (r *vulcRaster) MinSize() fyne.Size {
@@ -34,29 +30,23 @@ func (r *vulcRaster) CreateRenderer() fyne.WidgetRenderer {
 	return &vulcWidgetRender{raster: r, bg: canvas.NewRasterWithPixels(vbgPattern)}
 }
 
-// this function draw the lasso and store the lasso coordinates in r.points
+// this function draw a selection rectangle around dots
 func (r *vulcRaster) Tapped(ev *fyne.PointEvent) {
-	// var line fyne.CanvasObject // store all line pixels
+	r.edit.selectContainer.Objects = nil // clear previous selection
+
 	x := int(ev.Position.X)
 	y := int(ev.Position.Y)
-	w, h := 10, 10 // selection rectangle size
+	w, h := 20, 20 // selection rectangle size
 	R := uint8(250)
 	G := uint8(50)
 	B := uint8(50)
 
-	rect := iRect(x, y, w, h, color.RGBA{R, G, B, 255})
-	r.edit.scatterContainer.AddObject(rect)
-	// lp := len(r.points)
-	// if lp >= 1 {
-	// 	x2, y2 := r.points[lp-1].X, r.points[lp-1].Y // get last coordinates stored
-	// 	line = r.drawline(x2, y2, x, y)              // draw a line between the new pixel cliked and the last one stored in r.points
-	// }
+	rect := borderRect(x, y, w, h, color.NRGBA{R, G, B, 255})
+	r.edit.selectContainer.AddObject(rect)
 
 	fmt.Println(x, y)
-	// r.points = append(r.points, filter.Point{x, y}) // store new edges
 
-	// r.tmpLines = append(r.tmpLines, line) // store new lines objects
-	r.edit.scatterContainer.Refresh() // refresh only the gate container, faster than refresh layer
+	r.edit.selectContainer.Refresh() // refresh only the gate container, faster than refresh layer
 }
 
 func (r *vulcRaster) TappedSecondary(*fyne.PointEvent) {

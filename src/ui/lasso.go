@@ -18,6 +18,16 @@ func iRect(x, y, w, h int, color color.RGBA) *canvas.Rectangle {
 	return r
 }
 
+// borderRect makes a rectangle centered at x,y without filling
+func borderRect(x, y, w, h int, rcolor color.NRGBA) *canvas.Rectangle {
+	fx, fy, fw, fh := float32(x), float32(y), float32(w), float32(h)
+	bgcolor := color.NRGBA{uint8(250), uint8(250), uint8(250), 0} // transparent filling
+	r := &canvas.Rectangle{FillColor: bgcolor, StrokeColor: rcolor, StrokeWidth: 1}
+	r.Move(fyne.Position{X: fx - (fw / 2), Y: fy - (fh / 2)})
+	r.Resize(fyne.Size{Width: fw, Height: fh})
+	return r
+}
+
 // credits : https://github.com/ajstarks/fc
 // iLine draws a line between 2 points
 func iLine(x1, y1, x2, y2 int, size float32, color color.RGBA) *canvas.Line {
