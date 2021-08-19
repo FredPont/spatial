@@ -116,6 +116,9 @@ func refreshVulanoTools(v *Vulcano) {
 		pref.SetFloat("dotOpacity", v)
 	}
 
+	//legend color - the results is store in preferences
+	legendcol := widget.NewButton("Legend Text Color", func() { LegendTxtscolor(a, v.tools) })
+
 	content := container.New(layout.
 		NewGridLayoutWithColumns(2), container.NewVBox(
 		widget.NewLabel("Left click and right click on the vulcano plot to select points"),
@@ -123,6 +126,7 @@ func refreshVulanoTools(v *Vulcano) {
 		grad,
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,
+		legendcol,
 		widget.NewButton("Show Expression", func() {
 			f := binding.NewFloat() // progress bar binding
 
