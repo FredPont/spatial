@@ -213,7 +213,7 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	fname := formatOutFile(outfile)
 	go writePV(fname, pvfcTable)
 	// vulcano plot window
-	go buildVulanoPlot(e, header, fname, pvfcTable)
+	go buildVulanoPlot(e, header, fname, firstTable, pvfcTable)
 	// vulcano plot
 
 	// readVulcano(fname, pvfcTable)

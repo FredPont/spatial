@@ -43,11 +43,10 @@ type Vulcano struct {
 	selectContainer  *fyne.Container // container with the select lines
 	scatterContainer *fyne.Container // container with the scatter circles
 	tools            fyne.Window     // vulcano tools windows
+	imageEditor      *Editor         // editor of the microscopie image is embeded to allow expression plots
+	header           []string        // header of the first data table (to allow expression plots)
+	tableName        string          // name of the first data table (to allow expression plots)
 }
-
-// func (e *Editor) draw(w, h int) image.Image {
-// 	return image.NewRGBA(image.Rect(0, 0, w, h))
-// }
 
 // NewVulcano creates a new interactive vulcano plot
 func NewVulcano() (*Vulcano, int, int) {
@@ -55,8 +54,6 @@ func NewVulcano() (*Vulcano, int, int) {
 
 	sel := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))         // select container
 	sca := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{255, 255, 255, 255})) // scatter container should be independant of select container for separate initialisaion
-	//fgCol := color.Transparent
-	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
 	vulcEdit := &Vulcano{min: fyne.Size{Width: float32(w), Height: float32(h)}, selectContainer: sel, scatterContainer: sca}
 	vulcEdit.drawSurface = newVulcRaster(vulcEdit)
 
@@ -72,11 +69,12 @@ func (v *Vulcano) buildVulc(w fyne.Window) {
 }
 
 // buildVulWin creates display vulcano window
-func buildVulcWin() *Vulcano {
+func buildVulcWin(imageEditor *Editor) *Vulcano {
 	w := fyne.CurrentApp().NewWindow("Vulcano Plot")
 	v, finalWidth, finalHeight := NewVulcano()
 	v.buildVulc(w)
 	w.Resize(fyne.NewSize(float32(finalWidth), float32(finalHeight)))
 	w.Show()
+	v.imageEditor = imageEditor // store the image Editor to enable expression display from the vulcano plot
 	return v
 }

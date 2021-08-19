@@ -73,14 +73,15 @@ func MapRange(value, low1, high1, low2, high2 float64) float64 {
 }
 
 // buildVulanoPlot : create the window and the vulcano plot
-func buildVulanoPlot(e *Editor, header []string, fname string, pvfcTable []PVrecord) {
+func buildVulanoPlot(e *Editor, header []string, fname, firstTable string, pvfcTable []PVrecord) {
 	vulcBox := readVulcano(fname, pvfcTable)
 	//log.Println(readVulcano(fname, pvfcTable))
-	v := buildVulcWin()
+	v := buildVulcWin(e)
 	v.drawSurface.vulcBox = vulcBox
 	drawVulcano(v, vulcBox)
-
-	buildVulanoTools(e, header, fname, v)
+	v.header = header
+	v.tableName = firstTable
+	buildVulanoTools(v)
 
 }
 

@@ -38,14 +38,9 @@ import (
 	//"fyne.io/fyne/v2/theme"
 )
 
-func buildVulanoTools(e *Editor, header []string, fname string, v *Vulcano) {
-	selItem := binding.BindString(&v.drawSurface.selItem)
-	selRecord := v.drawSurface.selection
-	data := PVtoString(selRecord)
+func buildVulanoTools(v *Vulcano) {
 
-	if len(data) < 1 {
-		data = [][]string{{"item", "log2FC", "log10pv"}}
-	}
+	data := [][]string{{"item", "log2FC", "log10pv"}}
 
 	table := widget.NewTable(
 		func() (int, int) {
@@ -61,21 +56,12 @@ func buildVulanoTools(e *Editor, header []string, fname string, v *Vulcano) {
 	content := container.New(layout.
 		NewGridLayoutWithColumns(2), container.NewVBox(
 		widget.NewLabel("Left click and right click on the vulcano plot to select points"),
-	),
-		widget.NewButton("Show Expression", func() {
-			// progress bar binding
-			f := binding.NewFloat()
-			a := fyne.CurrentApp()
-			PathwayIndex := binding.NewInt() // column index of current pathway displayed by slide show
-			PathwayIndex.Set(1)              // start with column 1 by default
-			choosedItem, _ := selItem.Get()
-
-			go drawExp(a, e, header, "A_Kegg_Exp_rate.merge_norm.tsv", choosedItem, "Rainbow", f, PathwayIndex)
-		}),
 		widget.NewButton("Close", func() {
 			v.tools.Close()
 			v.win.Close()
 		}),
+	),
+
 		table,
 	)
 	w := fyne.CurrentApp().NewWindow("Vulcano Tools")
@@ -87,7 +73,9 @@ func buildVulanoTools(e *Editor, header []string, fname string, v *Vulcano) {
 
 //refreshVulanoTools reload the table of selected vulcano dots
 func refreshVulanoTools(v *Vulcano) {
-
+	a := fyne.CurrentApp()
+	pref := a.Preferences()
+	selItem := binding.BindString(&v.drawSurface.selItem)
 	data := [][]string{{"item", "X (log2FC)", "Y (log10pv)"}}
 	selRecord := v.drawSurface.selection
 	data = append(data, PVtoString(selRecord)...)
@@ -112,31 +100,59 @@ func refreshVulanoTools(v *Vulcano) {
 		}
 		// if user does not select the first colunm , column 0 is used anyway
 		item := data[id.Row][0]
-		log.Println("selec=", item)
+		//log.Println("selec=", item)
 		v.drawSurface.selItem = item
 	}
 
-	//content := container.New(layout.
-	//	NewGridLayoutWithColumns(2), container.NewVBox(
-	// 	widget.NewButton("Show Expression", func() {
-	// 		// progress bar binding
-	// 		//f := binding.NewFloat()
-	// 		//go drawExp(a, e, header, firstTable, expSel.Entry.Text, grad.Selected, f, 1)
-	// 	}),
-	// 	widget.NewButton("Close", func() {
-	// 		v.tools.Close()
-	// 		v.win.Close()
-	// 	}),
-	// ),
-	//	table,
-	//)
+	// show choice of different gradien
+	grad := widget.NewRadioGroup([]string{"Rainbow", "White - Red", "Yellow - Red", "Purple - Red", "Inferno", "Blue - Yellow - Red"}, func(s string) {
+	})
 
-	initialcontent := v.tools.Content()
-	content := container.NewVBox(table)
+	// Dot opacity
+	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the expression dot opacity
+	DotOpacity := widget.NewSliderWithData(0, 255, DotOp)
+	DotOpacity.Step = 1
+	DotOpacity.OnChanged = func(v float64) {
+		pref.SetFloat("dotOpacity", v)
+	}
 
-	// v.tools.SetContent(content)
+	content := container.New(layout.
+		NewGridLayoutWithColumns(2), container.NewVBox(
+		widget.NewLabel("Left click and right click on the vulcano plot to select points"),
+		widget.NewLabel("Select your gradien"),
+		grad,
+		widget.NewLabel("Dots Opacity [0-100%] :"),
+		DotOpacity,
+		widget.NewButton("Show Expression", func() {
+			f := binding.NewFloat() // progress bar binding
 
-	content.Add(initialcontent)
+			// gradien default
+			def := "White - Red"
+			if grad.Selected == "" {
+				grad.Selected = def
+			}
+
+			// PathwayIndex is needed for compatiblity with the function to draw expression but useless here because slideshow is not enable
+			PathwayIndex := binding.NewInt() // column index of current pathway displayed by slide show
+			PathwayIndex.Set(1)              // start with column 1 by default
+
+			choosedItem, _ := selItem.Get() // item selected by the user on the table
+			if choosedItem == "" {
+				log.Println("You must select one row !")
+				return
+			}
+
+			go drawExp(a, v.imageEditor, v.header, v.tableName, choosedItem, grad.Selected, f, PathwayIndex)
+		}),
+		widget.NewButton("Close", func() {
+			v.tools.Close()
+			v.win.Close()
+		}),
+	),
+
+		table,
+	)
+
 	v.tools.SetContent(content)
 }
 

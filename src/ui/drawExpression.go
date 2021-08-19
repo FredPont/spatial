@@ -27,7 +27,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	})
 
 	// Dot opacity
-	DotOp := binding.BindPreferenceFloat("dotOpacity", preference) // pref binding for the cluster dot opacity
+	DotOp := binding.BindPreferenceFloat("dotOpacity", preference) // pref binding for the expression dot opacity
 	DotOpacity := widget.NewSliderWithData(0, 255, DotOp)
 	DotOpacity.Step = 1
 	DotOpacity.OnChanged = func(v float64) {
@@ -52,8 +52,8 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		DotOpacity,
 		widget.NewButton("Plot Expression", func() {
 			// opacity
-			opacity, _ := DotOp.Get()
-			op := uint8(opacity)
+			//opacity, _ := DotOp.Get()
+			//op := uint8(opacity)
 			// gradien default
 			def := "White - Red"
 			if grad.Selected == "" {
@@ -62,7 +62,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 			if expSel.Entry.Text == "" {
 				return // return if nothing is selected
 			}
-			log.Println(expSel.Entry.Text, grad.Selected, op)
+			//log.Println(expSel.Entry.Text, grad.Selected, op)
 			go drawExp(a, e, header, firstTable, expSel.Entry.Text, grad.Selected, f, curPathwayIndex)
 		}),
 		slidePause,
