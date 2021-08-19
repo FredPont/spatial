@@ -57,18 +57,18 @@ func NewVulcano() (*Vulcano, int, int) {
 	sca := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{255, 255, 255, 255})) // scatter container should be independant of select container for separate initialisaion
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
-	edit := &Vulcano{min: fyne.Size{Width: float32(w), Height: float32(h)}, selectContainer: sel, scatterContainer: sca}
-	edit.drawSurface = newVulcRaster(edit)
+	vulcEdit := &Vulcano{min: fyne.Size{Width: float32(w), Height: float32(h)}, selectContainer: sel, scatterContainer: sca}
+	vulcEdit.drawSurface = newVulcRaster(vulcEdit)
 
-	return edit, w, h
+	return vulcEdit, w, h
 }
 
 // buildVulc creates the window of the vulcano plot
-func (e *Vulcano) buildVulc(w fyne.Window) {
-	e.win = w
+func (v *Vulcano) buildVulc(w fyne.Window) {
+	v.win = w
 	//e.layer = container.NewMax(e.scatterContainer)
-	e.layer = container.NewMax(e.drawSurface, e.scatterContainer, e.selectContainer)
-	w.SetContent(container.NewScroll(e.layer))
+	v.layer = container.NewMax(v.drawSurface, v.scatterContainer, v.selectContainer)
+	w.SetContent(container.NewScroll(v.layer))
 }
 
 // buildVulWin creates display vulcano window

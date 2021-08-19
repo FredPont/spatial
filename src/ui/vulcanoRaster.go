@@ -38,7 +38,7 @@ import (
 
 type vulcRaster struct {
 	widget.BaseWidget
-	edit      *Vulcano
+	vulcEdit  *Vulcano
 	mouseXY   filter.Point //position of the mouse click
 	selection []PVrecord   // dots selected by user in vulcano plot
 	selItem   string       // item selected by the user to draw expression
@@ -46,8 +46,8 @@ type vulcRaster struct {
 }
 
 func (r *vulcRaster) MinSize() fyne.Size {
-	//fmt.Println("min size :", r.edit.min)
-	return r.edit.min
+	//fmt.Println("min size :", r.vulcedit.min)
+	return r.vulcEdit.min
 }
 
 func (r *vulcRaster) CreateRenderer() fyne.WidgetRenderer {
@@ -56,7 +56,7 @@ func (r *vulcRaster) CreateRenderer() fyne.WidgetRenderer {
 
 // this function draw a selection rectangle around dots
 func (r *vulcRaster) Tapped(ev *fyne.PointEvent) {
-	r.edit.selectContainer.Objects = nil // clear previous selection
+	r.vulcEdit.selectContainer.Objects = nil // clear previous selection
 
 	x := int(ev.Position.X)
 	y := int(ev.Position.Y)
@@ -77,23 +77,23 @@ func (r *vulcRaster) Tapped(ev *fyne.PointEvent) {
 	B := uint8(50)
 
 	rect := borderRect(x, y, w, h, color.NRGBA{R, G, B, 255})
-	r.edit.selectContainer.Add(rect)
+	r.vulcEdit.selectContainer.Add(rect)
 
 	//fmt.Println(x, y)
 	r.mouseXY = filter.Point{X: x, Y: y}
 
-	r.edit.selectContainer.Refresh() // refresh only the gate container, faster than refresh layer
+	r.vulcEdit.selectContainer.Refresh() // refresh only the gate container, faster than refresh layer
 }
 
 func (r *vulcRaster) TappedSecondary(*fyne.PointEvent) {
-	r.edit.vulcanoSelect(&r.vulcBox, r.mouseXY)
+	r.vulcEdit.vulcanoSelect(&r.vulcBox, r.mouseXY)
 
-	refreshVulanoTools(r.edit)
+	refreshVulanoTools(r.vulcEdit)
 
 }
 
-func newVulcRaster(edit *Vulcano) *vulcRaster {
-	r := &vulcRaster{edit: edit}
+func newVulcRaster(vulcEdit *Vulcano) *vulcRaster {
+	r := &vulcRaster{vulcEdit: vulcEdit}
 
 	r.ExtendBaseWidget(r)
 	return r
