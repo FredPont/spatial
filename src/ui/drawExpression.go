@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"lasso/src/filter"
+	"lasso/src/plot"
 	"log"
 	"strconv"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -34,6 +36,9 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		preference.SetFloat("dotOpacity", v)
 	}
 
+	//legend color - the results is store in preferences
+	legendcol := widget.NewButton("Legend Text Color", func() { LegendTxtscolor(a, ExpressWindow) })
+
 	//animation
 	anim := binding.NewBool()           // if true start animation
 	curPathwayIndex := binding.NewInt() // column index of current pathway displayed by slide show
@@ -50,6 +55,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		grad,
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,
+		legendcol,
 		widget.NewButton("Plot Expression", func() {
 			// opacity
 			//opacity, _ := DotOp.Get()
@@ -190,27 +196,29 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 
 	}
 	// draw legend titel, dot and value for the current cexpression
-	titleLegend(e, expcol)
-	expLegend(e, op, diameter, gradien, min, max)
+	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
+	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
+	titleLegend(e, expcol, colorText)
+	expLegend(e, op, diameter, gradien, min, max, colorText)
 
 	e.clusterContainer.Refresh()
 	f.Set(0.) // reset progress bar
 }
 
 // print pathway name on top of image
-func titleLegend(e *Editor, title string) {
-	AbsText(e.clusterContainer, 50, 30, title, 20, color.NRGBA{50, 50, 50, 255})
+func titleLegend(e *Editor, title string, c color.NRGBA) {
+	AbsText(e.clusterContainer, 50, 30, title, 20, c)
 }
 
 // draw expression legend with dots and values
-func expLegend(e *Editor, op uint8, diameter int, gradien string, min, max float64) {
+func expLegend(e *Editor, op uint8, diameter int, gradien string, min, max float64, c color.NRGBA) {
 	x, y := 13, 30
 	sp := 25
 	//AbsText(e.clusterContainer, x+20, y+10, "toto", 20, color.NRGBA{50, 50, 50, 255})
 	for i := 5; i >= 0; i-- {
 		exp := fmt.Sprintf("%.1f", unscale(float64(i)/5., min, max))
 
-		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, color.NRGBA{50, 50, 50, 255})
+		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, c)
 		co := grad(gradien)(float64(i) / 5.)
 		e.drawcircle(x, y+150-sp*i, diameter*100/e.zoom, color.NRGBA{co.R, co.G, co.B, op})
 	}
@@ -240,4 +248,22 @@ func grad(gradien string) func(float64) RGB {
 		return func(val float64) RGB { return WRgradien(val) }
 	}
 
+}
+
+// LegendTxtscolor color picker for the legend text color
+func LegendTxtscolor(a fyne.App, win fyne.Window) {
+	pref := a.Preferences()
+
+	picker := dialog.NewColorPicker("Pick a Color", "What is your favorite color?", func(c color.Color) {
+		log.Println("Color picked:", c)
+		R, G, B, A := plot.ColorToRGBA(c)
+		log.Println("Color RGBA picked:", R, G, B, A)
+		pref.SetInt("legendColR", R)
+		pref.SetInt("legendColG", G)
+		pref.SetInt("legendColB", B)
+		pref.SetInt("legendColA", A)
+	},
+		win)
+	picker.Advanced = true
+	picker.Show()
 }

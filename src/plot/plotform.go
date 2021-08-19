@@ -40,7 +40,7 @@ func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable
 	plotdot.SetText(ds)
 
 	// dots color
-	gateDotscol := widget.NewButton("color", func() { gateDotscolor(a, win) })
+	gateDotscol := widget.NewButton("color", func() { GateDotscolor(a, win) })
 	unselcol := widget.NewButton("color", func() { unseldcolor(a, win) })
 
 	dialog.ShowForm("Plot parameters", "Enter", "Cancel",
@@ -87,7 +87,7 @@ func unseldcolor(a fyne.App, win fyne.Window) {
 
 	picker := dialog.NewColorPicker("Pick a Color", "What is your favorite color?", func(c color.Color) {
 		log.Println("Color picked:", c)
-		R, G, B, A := colorToRGBA(c)
+		R, G, B, A := ColorToRGBA(c)
 		log.Println("Color RGBA picked:", R, G, B, A)
 		pref.SetInt("unselR", R)
 		pref.SetInt("unselG", G)
@@ -99,13 +99,13 @@ func unseldcolor(a fyne.App, win fyne.Window) {
 	picker.Show()
 }
 
-// color picker for the plot dots color in gate
-func gateDotscolor(a fyne.App, win fyne.Window) {
+// GateDotscolor color picker for the plot dots color in gate
+func GateDotscolor(a fyne.App, win fyne.Window) {
 	pref := a.Preferences()
 
 	picker := dialog.NewColorPicker("Pick a Color", "What is your favorite color?", func(c color.Color) {
 		log.Println("Color picked:", c)
-		R, G, B, A := colorToRGBA(c)
+		R, G, B, A := ColorToRGBA(c)
 		log.Println("Color RGBA picked:", R, G, B, A)
 		pref.SetInt("gateDotsR", R)
 		pref.SetInt("gateDotsG", G)
@@ -117,8 +117,9 @@ func gateDotscolor(a fyne.App, win fyne.Window) {
 	picker.Show()
 }
 
+// ColorToRGBA return r,g,b,a for a color
 // credits : fyne/dialog/color.go
-func colorToRGBA(c color.Color) (r, g, b, a int) {
+func ColorToRGBA(c color.Color) (r, g, b, a int) {
 	switch col := c.(type) {
 	case color.NRGBA:
 		r = int(col.R)

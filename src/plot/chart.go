@@ -76,7 +76,7 @@ func extractGateDots(a fyne.App, zoom int, tableXYxy [][]string, alledges [][]fi
 }
 
 func makeScatter(a fyne.App, alldotsInGates [][][]string, scatterData plotter.XYs, dotsize vg.Length, title, xaxisName, yaxisName, plotName string) {
-	mapR, mapG, mapB, mapA := getPrefColorRGBA(a, "unselR", "unselG", "unselB", "unselA")
+	mapR, mapG, mapB, mapA := GetPrefColorRGBA(a, "unselR", "unselG", "unselB", "unselA")
 
 	// Create a new plot, set its title and
 	// axis labels.
@@ -109,7 +109,7 @@ func makeScatter(a fyne.App, alldotsInGates [][][]string, scatterData plotter.XY
 }
 
 func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg.Length) {
-	gatedotsR, gatedotsG, gatedotsB, gatedotsA := getPrefColorRGBA(a, "gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA")
+	gatedotsR, gatedotsG, gatedotsB, gatedotsA := GetPrefColorRGBA(a, "gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA")
 
 	for _, gate := range alldotsInGates {
 		scatterData := strToplot(gate)
@@ -119,7 +119,8 @@ func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg
 
 }
 
-func getPrefColorRGBA(a fyne.App, R, G, B, A string) (int, int, int, int) {
+// GetPrefColorRGBA get the R, G, B, A values from preferences
+func GetPrefColorRGBA(a fyne.App, R, G, B, A string) (int, int, int, int) {
 	pref := a.Preferences()
 	// map dots color - read RGBA from preferences
 	dotsR := binding.BindPreferenceInt(R, pref)
