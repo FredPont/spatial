@@ -73,17 +73,21 @@ func MapRange(value, low1, high1, low2, high2 float64) float64 {
 }
 
 // buildVulanoPlot : create the window and the vulcano plot
-func buildVulanoPlot(fname string, pvfcTable []PVrecord) {
+func buildVulanoPlot(e *Editor, header []string, fname string, pvfcTable []PVrecord) {
 	vulcBox := readVulcano(fname, pvfcTable)
 	//log.Println(readVulcano(fname, pvfcTable))
 	v := buildVulcWin()
+	v.drawSurface.vulcBox = vulcBox
 	drawVulcano(v, vulcBox)
+
+	buildVulanoTools(e, header, fname, v)
+
 }
 
 // drawline a circle at x,y position to the scatter container
 func (e *Vulcano) drawcircle(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
-	c := iCircle(x, y, ray, color)  // draw circle rayon ray
-	e.scatterContainer.AddObject(c) // add the cicle to the cluster container
+	c := iCircle(x, y, ray, color) // draw circle rayon ray
+	e.scatterContainer.Add(c)      // add the cicle to the cluster container
 	return c
 }
 
@@ -144,7 +148,7 @@ func (p *PlotBox) XAxis(v *Vulcano) {
 	}
 	//log.Println("y axis:", x1, bot, up)
 	c := iLine(lef, y1, rig, y1, 1, color.RGBA{0, 0, 0, 255})
-	v.scatterContainer.AddObject(c) // add the line to the cluster container
+	v.scatterContainer.Add(c) // add the line to the cluster container
 	//v.scatterContainer.Refresh()
 }
 
@@ -162,7 +166,7 @@ func (p *PlotBox) YAxis(v *Vulcano) {
 	}
 	//log.Println("y axis:", x1, bot, up)
 	c := iLine(x1, bot, x1, up, 1, color.RGBA{0, 0, 0, 255})
-	v.scatterContainer.AddObject(c) // add the line to the cluster container
+	v.scatterContainer.Add(c) // add the line to the cluster container
 	//v.scatterContainer.Refresh()
 }
 

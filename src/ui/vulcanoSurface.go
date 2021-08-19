@@ -1,3 +1,21 @@
+/*
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ Written by Frederic PONT.
+ (c) Frederic Pont 2021
+*/
+
 package ui
 
 import (
@@ -24,6 +42,7 @@ type Vulcano struct {
 	layer            *fyne.Container // container with plot and interactive drawsurface
 	selectContainer  *fyne.Container // container with the select lines
 	scatterContainer *fyne.Container // container with the scatter circles
+	tools            fyne.Window     // vulcano tools windows
 }
 
 // func (e *Editor) draw(w, h int) image.Image {
@@ -34,8 +53,8 @@ type Vulcano struct {
 func NewVulcano() (*Vulcano, int, int) {
 	w, h := 800, 800
 
-	sel := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))         // select container
-	sca := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{255, 255, 255, 255})) // scatter container should be independant of select container for separate initialisaion
+	sel := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))         // select container
+	sca := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{255, 255, 255, 255})) // scatter container should be independant of select container for separate initialisaion
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
 	edit := &Vulcano{min: fyne.Size{Width: float32(w), Height: float32(h)}, selectContainer: sel, scatterContainer: sca}

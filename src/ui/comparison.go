@@ -60,8 +60,9 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 			compWindow.Content().Refresh()
 		}),
 		widget.NewButton("Compare", func() {
-			log.Println(g1Map, g2Map)
+			//log.Println(g1Map, g2Map)
 			//log.Println(headerMap)
+
 			if !chkGates(g1Map, g2Map) {
 				return
 			}
@@ -207,9 +208,14 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	// log.Println(table1)
 	// log.Println(table2)
 	// log.Println(pvfcTable)
+
+	// save vulcano data to file
 	fname := formatOutFile(outfile)
-	writePV(fname, pvfcTable)
-	buildVulanoPlot(fname, pvfcTable)
+	go writePV(fname, pvfcTable)
+	// vulcano plot window
+	go buildVulanoPlot(e, header, fname, pvfcTable)
+	// vulcano plot
+
 	// readVulcano(fname, pvfcTable)
 	// log.Println(readVulcano(fname, pvfcTable))
 	// buildVulcWin()
@@ -311,13 +317,16 @@ func folchange(x1, x2 []float64) (float64, bool) {
 	if s1 == 0 && s2 == 0 {
 		log.Println("fold-change undetermined (0/0) !")
 		return 1., false
+	} else if s1 < 0 || s2 < 0 {
+		log.Println("fold-change cannot be < 0 !")
+		return 1., false
 	} else if s1 != 0 && s2 != 0 {
 		return s2 / s1, true
 	} else if s2 == 0 {
-		return 1e-10, true
+		return 1e-300, true
 	}
 	log.Println("division by zero in fold-change caculation !")
-	return 1e10, true
+	return 1e300, true
 }
 
 // -log10(pv)

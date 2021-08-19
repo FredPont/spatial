@@ -76,6 +76,17 @@ func BuildPref(a fyne.App, head []string) {
 	cldtxt := fmt.Sprintf("%d", clud)                      // convert cluster diameter to txt
 	clustDotDiam.SetPlaceHolder(cldtxt)                    // display the prefence value for cluster diameter
 
+	// vulcano selection square size in pixels
+	// record the vulcano selection square size in pixels in preferences
+	vulcSquare := widget.NewEntry()
+	vs := binding.BindPreferenceInt("vulcSelectSize", pref)
+	vsquare, err := vs.Get()
+	if err != nil {
+		log.Println("wrong selection size value !", err)
+	}
+	vstxt := fmt.Sprintf("%d", vsquare)
+	vulcSquare.SetPlaceHolder(vstxt)
+
 	// create form
 	form := &widget.Form{
 		Items: []*widget.FormItem{ // we can specify items in the constructor
@@ -87,6 +98,7 @@ func BuildPref(a fyne.App, head []string) {
 			{Text: "Image windows Height", Widget: winHeight},
 			{Text: "Cluster column", Widget: clco},
 			{Text: "Cluster dots diameter", Widget: clustDotDiam},
+			{Text: "vulcano selection square size in pixels", Widget: vulcSquare},
 		},
 		OnSubmit: func() { // optional, handle form submission
 
@@ -118,6 +130,10 @@ func BuildPref(a fyne.App, head []string) {
 			cluDiamTXT := clustDotDiam.Text
 			setPrefToInt(cluDiamTXT, "clustDotDiam", pref)
 			//pref.SetInt("clustDotDiam", cluDiam)
+
+			// vulcano selection square size in pixels
+			vulSelTXT := vulcSquare.Text
+			setPrefToInt(vulSelTXT, "vulcSelectSize", pref)
 
 			//log.Println("Form submitted:", scalingFactor.Text)
 

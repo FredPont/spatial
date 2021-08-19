@@ -1,13 +1,33 @@
+/*
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ Written by Frederic PONT.
+ (c) Frederic Pont 2021
+*/
+
 package ui
 
 import (
-	"fmt"
 	"image/color"
+	"lasso/src/filter"
+	"log"
 
 	//"lasso/src/filter"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -18,7 +38,11 @@ import (
 
 type vulcRaster struct {
 	widget.BaseWidget
-	edit *Vulcano
+	edit      *Vulcano
+	mouseXY   filter.Point //position of the mouse click
+	selection []PVrecord   // dots selected by user in vulcano plot
+	selItem   string       // item selected by the user to draw expression
+	vulcBox   PlotBox
 }
 
 func (r *vulcRaster) MinSize() fyne.Size {
@@ -36,48 +60,37 @@ func (r *vulcRaster) Tapped(ev *fyne.PointEvent) {
 
 	x := int(ev.Position.X)
 	y := int(ev.Position.Y)
-	w, h := 20, 20 // selection rectangle size
+
+	// read the vulcano selection square size in pixels from preferences
+	pref := fyne.CurrentApp().Preferences()
+	vs := binding.BindPreferenceInt("vulcSelectSize", pref)
+	vsquare, err := vs.Get()
+	if err != nil {
+		log.Println("Error reading selection size value !", err)
+	}
+	if vsquare == 0 {
+		vsquare = 10
+	}
+	w, h := vsquare, vsquare // selection rectangle size
 	R := uint8(250)
 	G := uint8(50)
 	B := uint8(50)
 
 	rect := borderRect(x, y, w, h, color.NRGBA{R, G, B, 255})
-	r.edit.selectContainer.AddObject(rect)
+	r.edit.selectContainer.Add(rect)
 
-	fmt.Println(x, y)
+	//fmt.Println(x, y)
+	r.mouseXY = filter.Point{X: x, Y: y}
 
 	r.edit.selectContainer.Refresh() // refresh only the gate container, faster than refresh layer
 }
 
 func (r *vulcRaster) TappedSecondary(*fyne.PointEvent) {
-	// var line fyne.CanvasObject // store all line objects
-	// lp := len(r.points)
-	// if lp >= 1 {
-	// 	x, y := r.points[lp-1].X, r.points[lp-1].Y
-	// 	x2, y2 := r.points[0].X, r.points[0].Y // get first coordinates stored
-	// 	line = r.drawline(x2, y2, x, y)
-	// 	fmt.Println(r.points)
-	// 	r.edit.layer.Refresh()
-	// }
-	// // avoid to add a void polygon :
-	// if len(r.points) > 2 {
-	// 	r.alledges = append(r.alledges, r.points) // store new edges
-	// }
-	// r.points = nil                        // reset polygone coordinates
-	// r.tmpLines = append(r.tmpLines, line) // store new line object
-	// r.gatesLines = r.tmpLines
-	// r.tmpLines = nil // initialisation of gate lines
+	r.edit.vulcanoSelect(&r.vulcBox, r.mouseXY)
+
+	refreshVulanoTools(r.edit)
 
 }
-
-// func (r *vulcRaster) locationForPosition(pos fyne.Position) (int, int) {
-// 	c := fyne.CurrentApp().Driver().CanvasForObject(r.img)
-// 	x, y := int(pos.X), int(pos.Y)
-// 	if c != nil {
-// 		x, y = c.PixelCoordinateForPosition(pos)
-// 	}
-// 	return x, y
-// }
 
 func newVulcRaster(edit *Vulcano) *vulcRaster {
 	r := &vulcRaster{edit: edit}
