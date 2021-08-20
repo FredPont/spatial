@@ -216,8 +216,8 @@ func expLegend(e *Editor, op uint8, diameter int, gradien string, min, max float
 	sp := 25
 	//AbsText(e.clusterContainer, x+20, y+10, "toto", 20, color.NRGBA{50, 50, 50, 255})
 	for i := 5; i >= 0; i-- {
-		exp := fmt.Sprintf("%.1f", unscale(float64(i)/5., min, max))
-
+		//exp := fmt.Sprintf("%.1f", unscale(float64(i)/5., min, max))
+		exp := TicksDecimals(unscale(float64(i)/5., min, max))
 		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, c)
 		co := grad(gradien)(float64(i) / 5.)
 		e.drawcircle(x, y+150-sp*i, diameter*100/e.zoom, color.NRGBA{co.R, co.G, co.B, op})
