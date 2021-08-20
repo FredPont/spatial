@@ -2,7 +2,9 @@ package ui
 
 import (
 	"image/color"
+	"lasso/src/filter"
 	"log"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 )
@@ -144,12 +146,13 @@ func (p *PlotBox) XAxis(v *Vulcano) {
 	if yZero(p) {
 		y1 = yCoord(p, 0.)
 	} else {
-		y1 = yCoord(p, p.Xmin)
+		y1 = yCoord(p, p.Ymin)
 		log.Println("Y axis does not contain 0 value !")
 	}
 	//log.Println("y axis:", x1, bot, up)
 	c := iLine(lef, y1, rig, y1, 1, color.RGBA{0, 0, 0, 255})
 	v.scatterContainer.Add(c) // add the line to the cluster container
+	p.Xlabel(v, y1)
 	//v.scatterContainer.Refresh()
 }
 
@@ -168,6 +171,7 @@ func (p *PlotBox) YAxis(v *Vulcano) {
 	//log.Println("y axis:", x1, bot, up)
 	c := iLine(x1, bot, x1, up, 1, color.RGBA{0, 0, 0, 255})
 	v.scatterContainer.Add(c) // add the line to the cluster container
+	p.Ylabel(v, x1)
 	//v.scatterContainer.Refresh()
 }
 
@@ -185,4 +189,69 @@ func yZero(p *PlotBox) bool {
 		return true
 	}
 	return false
+}
+
+// Xlabel makes the x axis scale text
+func (p *PlotBox) Xlabel(v *Vulcano, y int) {
+	ntic := 10
+	//var positions []int                                    // ticks position in pixels
+	labels := filter.TicInterval(p.Xmin, p.Xmax, ntic) // ticks labels with decimal
+	//log.Println("labels", labels)
+	//positions := filter.TicPixelPos(Xmin, Xmax, ntic)      // ticks position in pixels
+	for _, po := range labels {
+		str := TicksDecimals(po)
+		x := xCoord(p, po)
+		AbsText(v.scatterContainer, x-10, y+20, str, 10, color.NRGBA{0, 0, 0, 255}) // label
+		ti := iLine(x, y, x, y+5, 1, color.RGBA{0, 0, 0, 255})                      // tick
+		v.scatterContainer.Add(ti)                                                  // add the tick to the cluster container
+	}
+	AbsText(v.scatterContainer, xCoord(p, (p.Xmax+p.Xmin)/2), y+35, "log2(FC) (g2/g1)", 12, color.NRGBA{0, 0, 0, 255}) // axis title
+}
+
+// Ylabel makes the x axis scale text
+func (p *PlotBox) Ylabel(v *Vulcano, x int) {
+	ntic := 10
+	//var positions []int                                    // ticks position in pixels
+	labels := filter.TicInterval(p.Ymin, p.Ymax, ntic) // ticks labels with decimal
+	//log.Println("labels", labels)
+	//positions := filter.TicPixelPos(Xmin, Xmax, ntic)      // ticks position in pixels
+	for _, po := range labels {
+		str := TicksDecimals(po)
+		y := yCoord(p, po)
+		AbsText(v.scatterContainer, x+10, y, str, 10, color.NRGBA{0, 0, 0, 255}) // label
+		ti := iLine(x, y-5, x+5, y-5, 1, color.RGBA{0, 0, 0, 255})               // tick
+		v.scatterContainer.Add(ti)                                               // add the tick to the cluster container
+	}
+	AbsText(v.scatterContainer, x-10, yCoord(p, p.Ymax)-25, "log10(Pvalue)", 12, color.NRGBA{0, 0, 0, 255}) // axis title
+}
+
+// TicksDecimals format the number of decimals for ticks
+func TicksDecimals(po float64) string {
+	var str string
+	neg := false
+	// decimal format of ticks
+	if po < 0 {
+		po = -po // format negative numbers
+		neg = true
+	}
+	if filter.Between(1, 10, po) {
+		str = strconv.FormatFloat(po, 'f', 1, 64)
+	} else if po == 0 {
+		str = " 0"
+	} else if filter.Between(0.1, 1, po) {
+		str = strconv.FormatFloat(po, 'f', 2, 64)
+	} else if filter.Between(0.001, 0.1, po) {
+		str = strconv.FormatFloat(po, 'f', 3, 64)
+	} else if po < 0.001 {
+		str = strconv.FormatFloat(po, 'e', 1, 64)
+	} else if filter.Between(10, 1000, po) {
+		str = strconv.FormatFloat(po, 'f', 0, 64)
+	} else {
+		str = strconv.FormatFloat(po, 'e', 1, 64)
+	}
+
+	if neg {
+		str = "-" + str // add "-" to format negative numbers
+	}
+	return str
 }
