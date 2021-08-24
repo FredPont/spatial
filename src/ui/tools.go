@@ -94,7 +94,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		clusDotOpacity,
 		widget.NewButton("Show Expression", func() {
-			buttonDrawExpress(a, e, preference, f, header, firstTable)
+			go buttonDrawExpress(a, e, preference, f, header, firstTable)
 			//f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Import cells", func() {

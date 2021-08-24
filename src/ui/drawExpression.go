@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"image/color"
 	"lasso/src/filter"
 	"lasso/src/plot"
@@ -25,7 +24,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	// show choice of different gradien
 	grad := widget.NewRadioGroup([]string{"Rainbow", "White - Red", "Yellow - Red", "Purple - Red", "Inferno", "Blue - Yellow - Red"}, func(s string) {
 
-		fmt.Println("Selected <", s, ">")
+		//fmt.Println("Selected <", s, ">")
 	})
 
 	// Dot opacity
@@ -57,9 +56,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		DotOpacity,
 		legendcol,
 		widget.NewButton("Plot Expression", func() {
-			// opacity
-			//opacity, _ := DotOp.Get()
-			//op := uint8(opacity)
+
 			// gradien default
 			def := "White - Red"
 			if grad.Selected == "" {
@@ -139,7 +136,7 @@ func setDelay(slidePause *widget.Entry, slideDelay binding.Float) {
 	if slidePause != nil {
 		p, err := strconv.ParseFloat(slidePause.Text, 64)
 		if err != nil {
-			fmt.Println(p, "delay cannot be converted to float !")
+			log.Println(p, "delay cannot be converted to float !")
 		} else {
 			slideDelay.Set(p)
 		}
