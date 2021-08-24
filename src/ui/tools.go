@@ -78,7 +78,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			//f.Set(0.) // reset progress bar
 		}),
 		widget.NewButton("Save zoomed image", func() {
-			startSaveImage(w, gatename.Text, f)
+			go startSaveImage(w, gatename.Text, f)
 		}),
 		widget.NewButton("plot", func() {
 			// get the edges of all selected polygons

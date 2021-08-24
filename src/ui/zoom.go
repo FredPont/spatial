@@ -164,6 +164,9 @@ func redrawGates(e *Editor) {
 // redraw one polygon
 func redrawpolygon(r *interactiveRaster, p []filter.Point) {
 	L := len(p)
+	if L < 1 {
+		return
+	}
 	for i := 0; i < L-1; i++ {
 		r.drawline(p[i].X, p[i].Y, p[i+1].X, p[i+1].Y)
 	}

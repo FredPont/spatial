@@ -25,6 +25,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // ReadGate reads a gate in ImageJ format. The gate must be at scale 100%
@@ -45,7 +46,10 @@ func ReadGate(dir, filename string) []Point {
 	r := csv.NewReader(bufio.NewReader(csvfile))
 	//r := csv.NewReader(csvfile)
 	r.Comma = ','
-	r.Read() // skip header
+	header, _ := r.Read() // skip header
+	if !checkFormat(header, filename) {
+		return nil
+	}
 
 	// Iterate through the records
 	for {
@@ -74,4 +78,14 @@ func ReadGate(dir, filename string) []Point {
 	}
 	//fmt.Println("gate readed :", pts)
 	return pts
+}
+
+// checkFormat verify that the header of the gate file contains "X,Y"
+func checkFormat(header []string, file string) bool {
+	h := strings.Join(header, ",")
+	if h == "X,Y" {
+		return true
+	}
+	log.Println("The gate format of ", file, " is wrong, X,Y is header is missing ! cannot import the gate")
+	return false
 }
