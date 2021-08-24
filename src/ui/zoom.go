@@ -129,17 +129,19 @@ func zoomGates(e *Editor, zoomStep int) {
 	// update alledges coordinates
 	L := len(e.drawSurface.alledges)
 	for i := 0; i < L; i++ {
-		zoomPoints(&e.drawSurface.alledges[i], zoomStep, zf)
+		zoomPoints(e.drawSurface.alledges[i], zf)
 	}
 
 	//log.Println(e.drawSurface.alledges)
 }
 
-// update points coordinates with zoomStep
-func zoomPoints(p *[]filter.Point, z int, zf float64) {
-	for i := 0; i < len(*p); i++ {
-		(*p)[i].X = int(float64((*p)[i].X) * zf)
-		(*p)[i].Y = int(float64((*p)[i].Y) * zf)
+// update point coordinates with zf and modify initial point
+func zoomPoints(p []filter.Point, zf float64) {
+	for i := 0; i < len(p); i++ {
+		//(*p)[i].X = int(float64((*p)[i].X) * zf)
+		//(*p)[i].Y = int(float64((*p)[i].Y) * zf)
+		p[i].X = int(math.Round(float64(p[i].X) * zf))
+		p[i].Y = int(math.Round(float64(p[i].Y) * zf))
 	}
 }
 
@@ -181,3 +183,14 @@ func redrawlastGate(r *interactiveRaster, p []filter.Point) []fyne.CanvasObject 
 	lastGate = append(lastGate, line)
 	return lastGate
 }
+
+// // zoom polygon with zf without modifying stored polygon. function used to export gate a 100% zoom
+// func zoomPolygon(p []filter.Point, zf float64) []filter.Point {
+// 	var zoomedPoly []filter.Point
+// 	for i := 0; i < len(p); i++ {
+// 		x := int(math.Round(float64(p[i].X) * zf))
+// 		y := int(math.Round(float64(p[i].Y) * zf))
+// 		zoomedPoly = append(zoomedPoly, filter.Point{X: x, Y: y})
+// 	}
+// 	return zoomedPoly
+// }

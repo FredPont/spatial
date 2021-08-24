@@ -69,6 +69,9 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		widget.NewButton("Clear all gates", func() {
 			initGates(e)
 		}),
+		widget.NewButton("Import gates", func() {
+			go importGates(e, f)
+		}),
 		widget.NewButton("Screen shot", func() {
 			//f.Set(0.3) // progress bar
 			go screenShot(w, gatename.Text, f)
@@ -85,7 +88,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		widget.NewButton("Show Clusters", func() {
 			go drawClusters(a, e, header, firstTable, f)
 		}),
-		widget.NewButton("Clear Clusters", func() {
+		widget.NewButton("Clear Clusters/Expression", func() {
 			clearCluster(e)
 		}),
 		widget.NewLabel("Dots Opacity [0-100%] :"),
@@ -128,17 +131,40 @@ func clearLastGate(e *Editor) {
 	//initAlledges(e) // reset alledges
 }
 
-// save the gates to csv files
+// save the gates to csv files withe ImageJ format and 100% zoom
+// X,Y
+// 131,150
+// 105,189
+// 156,187
 func saveGates(gateName string, e *Editor) {
 	fmt.Println("save gates")
+	zoomFactor := 100. / float64(e.zoom)
 	for i, poly := range e.drawSurface.alledges {
 		if len(poly) < 3 {
 			continue
 		}
-		fmt.Println(i, " ", poly)
+
 		out := strconv.Itoa(i) + "_" + gateName
-		writeCSV(out, poly)
+		writeCSV(out, filter.ZoomPolygon(poly, zoomFactor))
+
 	}
+}
+
+// import the gates in csv files withe ImageJ format and 100% zoom into the e.drawSurface.alledges
+func importGates(e *Editor, f binding.Float) {
+	f.Set(0.3)
+	// clear all gates
+	initGates(e)
+	dir := "import_gates"
+	gateFiles := filter.ListFiles(dir)
+	for _, file := range gateFiles {
+		gate := filter.ZoomPolygon(filter.ReadGate(dir, file), float64(e.zoom)/100.) // import the gate file and apply current zoom to polygon coordinates
+		//fmt.Println("gate zoomed:", gate)
+		e.drawSurface.alledges = append(e.drawSurface.alledges, gate)
+		redrawpolygon(e.drawSurface, gate)
+	}
+	e.gateContainer.Refresh()
+	f.Set(0.)
 }
 
 // save screenshot of image to file
@@ -170,33 +196,35 @@ func startSaveImage(w fyne.Window, filename string, f binding.Float) {
 	f.Set(0.3) // progress bar
 	//ch := make(chan bool, 1)
 	//go saveimage(w, filename, ch)
-	go saveimage2(w, filename, f)
+	go saveimage(w, filename, f)
 	//log.Println("image saved :", <-ch)
 }
 
 // save HR image to file
 // credits https://www.devdungeon.com/content/working-images-go
-func saveimage(w fyne.Window, filename string, ch chan bool) {
+// func saveimage3(w fyne.Window, filename string, ch chan bool) {
 
-	c := w.Content().(*container.Scroll).Content
-	out := software.Render(c, theme.DarkTheme())
+// 	c := w.Content().(*container.Scroll).Content
+// 	out := software.Render(c, theme.DarkTheme())
 
-	path := "plots/" + filename + ".png"
-	outputFile, err := os.Create(path)
-	if err != nil {
-		log.Println("The image cannot be saved to the file")
-	}
-	err = png.Encode(outputFile, out)
-	if err != nil {
-		log.Println("png encoding error : ", err)
-	}
-	log.Println("Saving image to ", path)
+// 	path := "plots/" + filename + ".png"
+// 	outputFile, err := os.Create(path)
+// 	if err != nil {
+// 		log.Println("The image cannot be saved to the file")
+// 	}
+// 	err = png.Encode(outputFile, out)
+// 	if err != nil {
+// 		log.Println("png encoding error : ", err)
+// 	}
+// 	log.Println("Saving image to ", path)
 
-	outputFile.Close()
-	ch <- true
-}
+// 	outputFile.Close()
+// 	ch <- true
+// }
 
-func saveimage2(w fyne.Window, filename string, f binding.Float) {
+// save HR image to file
+// credits https://www.devdungeon.com/content/working-images-go
+func saveimage(w fyne.Window, filename string, f binding.Float) {
 	log.Print("Saving image...")
 	c := w.Content().(*container.Scroll).Content
 	out := software.Render(c, theme.DarkTheme())
@@ -216,7 +244,11 @@ func saveimage2(w fyne.Window, filename string, f binding.Float) {
 	f.Set(0.) // progress bar
 }
 
-// write polygon edge to file
+// write polygon edge to file in ImageJ format :
+// X,Y
+// 131,150
+// 105,189
+// 156,187
 func writeCSV(filename string, poly []filter.Point) {
 	path := "gates/" + filename + ".csv"
 	file, err := os.Create(path)
@@ -225,11 +257,15 @@ func writeCSV(filename string, poly []filter.Point) {
 
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
-	writer.Comma = '\t'
+	writer.Comma = ','
+
+	// write header
+	err = writer.Write([]string{"X", "Y"})
+	checkError("Cannot write to file "+filename, err)
 
 	for _, value := range poly {
 		err := writer.Write(filterPtToStr(value))
-		checkError("Cannot write to file", err)
+		checkError("Cannot write to file "+filename, err)
 	}
 }
 

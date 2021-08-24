@@ -115,7 +115,7 @@ func filterRow(zoom int, record []string, XYindex []int, polygon []Point, param 
 func inGate(zoom int, x, y int64, polygon []Point) bool {
 	// apply zoom to polygon
 	if zoom != 100 {
-		polygon = zoomPolygon(zoom, polygon)
+		polygon = ZoomPolygon(polygon, 100./float64(zoom))
 		//log.Println("zoomPolygon=", polygon)
 	}
 	// convert x,y to int
@@ -159,13 +159,24 @@ func TablePlot(zoom int, tableXYxy [][]string, polygon []Point, param Conf, colu
 	//return xy
 }
 
-func zoomPolygon(zoom int, polygon []Point) []Point {
-	var zoomPoly []Point
-	for _, p := range polygon {
-		zoomPoly = append(zoomPoly, Point{p.X * 100 / zoom, p.Y * 100 / zoom})
+// zoom polygon with zf without modifying stored polygon. function used to export gate a 100% zoom
+func ZoomPolygon(p []Point, zf float64) []Point {
+	var zoomedPoly []Point
+	for i := 0; i < len(p); i++ {
+		x := int(math.Round(float64(p[i].X) * zf))
+		y := int(math.Round(float64(p[i].Y) * zf))
+		zoomedPoly = append(zoomedPoly, Point{X: x, Y: y})
 	}
-	return zoomPoly
+	return zoomedPoly
 }
+
+// func zoomPolygon(zoom int, polygon []Point) []Point {
+// 	var zoomPoly []Point
+// 	for _, p := range polygon {
+// 		zoomPoly = append(zoomPoly, Point{p.X * 100 / zoom, p.Y * 100 / zoom})
+// 	}
+// 	return zoomPoly
+// }
 
 /*
 // applyZoomInt64 correct the input integer by the current zoom factor
