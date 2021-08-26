@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -210,7 +209,7 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	// log.Println(pvfcTable)
 
 	// save vulcano data to file
-	fname := formatOutFile(outfile)
+	fname := filter.FormatOutFile("comparison", outfile, ".csv")
 	go writePV(fname, pvfcTable)
 	// vulcano plot window
 	go buildVulanoPlot(e, header, fname, firstTable, pvfcTable)
@@ -377,14 +376,14 @@ func writePV(filename string, pvTable []PVrecord) {
 }
 
 //formatOutFile add extension csv to file name or build a file name with time string when the filename is not given by the user
-func formatOutFile(name string) string {
-	var outfile string
+// func formatOutFile(name string) string {
+// 	var outfile string
 
-	if name == "" {
-		current_time := time.Now()
-		outfile = "comparison_" + current_time.Format("2006-01-02_150405") + ".csv"
-	} else {
-		outfile = name + ".csv"
-	}
-	return outfile
-}
+// 	if name == "" {
+// 		current_time := time.Now()
+// 		outfile = "comparison_" + current_time.Format("2006-01-02_150405") + ".csv"
+// 	} else {
+// 		outfile = name + ".csv"
+// 	}
+// 	return outfile
+// }

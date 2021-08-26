@@ -24,6 +24,7 @@ import (
 	"io"
 	"math"
 	"strconv"
+	"time"
 
 	//"fmt"
 	"io/ioutil"
@@ -426,4 +427,17 @@ func WriteOneLine(f *os.File, line string) {
 //FLstr convert float to string
 func FLstr(f float64) string {
 	return strconv.FormatFloat(f, 'e', 3, 64)
+}
+
+//FormatOutFile add extension csv to file name or build a file name with time string when the filename is not given by the user
+func FormatOutFile(prefix, name string, ext string) string {
+	var outfile string
+
+	if name == "" {
+		currentTime := time.Now()
+		outfile = prefix + "_" + currentTime.Format("2006-01-02_150405") + ext
+	} else {
+		outfile = name + ext
+	}
+	return outfile
 }

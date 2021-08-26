@@ -21,6 +21,9 @@ type Point struct {
 
 // test if testp is inside the polygon
 func isInside(polygon []Point, testp Point) bool {
+	if len(polygon) < 1 {
+		return false
+	}
 	minX := polygon[0].X
 	maxX := polygon[0].X
 	minY := polygon[0].Y

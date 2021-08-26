@@ -1,10 +1,11 @@
 module lasso
 
-go 1.16
+go 1.17
 
 require (
-	fyne.io/fyne v1.4.3 // indirect
-	fyne.io/fyne/v2 v2.0.4
+	//fyne.io/fyne v1.4.3 // indirect
+	//fyne.io/fyne/v2 v2.0.4
+	fyne.io/fyne/v2 v2.0.5-0.20210825130215-83ca35d98be7
 	github.com/ajstarks/svgo v0.0.0-20210406150507-75cfd577ce75 // indirect
 	github.com/fsnotify/fsnotify v1.5.0 // indirect
 	github.com/go-fonts/liberation v0.2.0 // indirect
@@ -21,6 +22,18 @@ require (
 	golang.org/x/sys v0.0.0-20210818153620-00dd8d7831e7 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gonum.org/v1/plot v0.9.0
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/fogleman/gg v1.3.0 // indirect
+	github.com/fredbi/uri v0.0.0-20181227131451-3dcfdacbaaf3 // indirect
+	github.com/fyne-io/mobile v0.1.3-0.20210811181917-d62fb16c28ec // indirect
+	github.com/go-latex/latex v0.0.0-20210118124228-b3d85cf34e07 // indirect
+	github.com/godbus/dbus/v5 v5.0.4 // indirect
+	github.com/goki/freetype v0.0.0-20181231101311-fa8a33aabaff // indirect
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/phpdave11/gofpdf v1.4.2 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 )

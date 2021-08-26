@@ -63,6 +63,9 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			go filterActiveGates(e, alledges, dataFiles, gatename.Text, a.Preferences(), f)
 			go saveGates(gatename.Text, e)
 		}),
+		widget.NewButton("Save gates", func() {
+			go saveGates(gatename.Text, e)
+		}),
 		widget.NewButton("Clear last gate", func() {
 			clearLastGate(e)
 		}),
@@ -137,7 +140,10 @@ func clearLastGate(e *Editor) {
 // 105,189
 // 156,187
 func saveGates(gateName string, e *Editor) {
-	fmt.Println("save gates")
+	log.Println("save gates")
+
+	gateName = filter.FormatOutFile("gate", gateName, "") // test if name exist, if not, build a file name with the current time
+
 	zoomFactor := 100. / float64(e.zoom)
 	for i, poly := range e.drawSurface.alledges {
 		if len(poly) < 3 {
@@ -170,7 +176,8 @@ func importGates(e *Editor, f binding.Float) {
 // save screenshot of image to file
 // credits https://www.devdungeon.com/content/working-images-go
 func screenShot(w fyne.Window, filename string, f binding.Float) {
-	f.Set(0.3) // progress bar
+	f.Set(0.3)                                                  // progress bar
+	filename = filter.FormatOutFile("screenshot", filename, "") // test if name exist, if not, build a file name with the current time
 	out := w.Canvas().Capture()
 	f.Set(0.5) // progress bar
 	// outputFile is a File type which satisfies Writer interface

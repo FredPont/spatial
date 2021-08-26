@@ -27,7 +27,7 @@ import (
 	"fyne.io/fyne/v2/data/binding"
 )
 
-func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string, gatename string, pref fyne.Preferences, f binding.Float) {
+func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string, gateName string, pref fyne.Preferences, f binding.Float) {
 	f.Set(0.3) // progress bar
 	// get parameters from preferences
 	param := prefToConf(pref)
@@ -39,7 +39,8 @@ func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string,
 			continue
 		}
 		for _, dataFile := range dataFiles {
-			outFile := strconv.Itoa(gateNumber) + "_" + gatename + "_" + dataFile
+			gateName = filter.FormatOutFile("filter", gateName, "") // test if name exist, if not, build a file name with the current time
+			outFile := strconv.Itoa(gateNumber) + "_" + gateName + "_" + dataFile
 			filter.FilterTable(e.zoom, dataFile, outFile, polygon, param)
 		}
 
