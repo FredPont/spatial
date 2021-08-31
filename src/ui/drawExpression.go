@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"lasso/src/filter"
 	"lasso/src/plot"
+	"lasso/src/pref"
 	"log"
 	"strconv"
 	"time"
@@ -19,7 +20,13 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	ExpressWindow := a.NewWindow("Expression")
 
 	// select the expression to draw
-	expSel := widget.NewSelectEntry(header)
+	// expSel := widget.NewSelectEntry(header) // limited for long list and replaced by custom select
+	sel := binding.NewString()
+	userSel, _ := sel.Get()
+	var expSel *widget.Button
+	expSel = widget.NewButton(userSel, func() {
+		pref.ShowTable(header, sel, expSel, "Selection")
+	})
 
 	// show choice of different gradien
 	grad := widget.NewRadioGroup([]string{"Rainbow", "White - Red", "Yellow - Red", "Purple - Red", "Inferno", "Blue - Yellow - Red"}, func(s string) {
@@ -56,17 +63,17 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		DotOpacity,
 		legendcol,
 		widget.NewButton("Plot Expression", func() {
-
+			userSel, _ = sel.Get()
 			// gradien default
 			def := "White - Red"
 			if grad.Selected == "" {
 				grad.Selected = def
 			}
-			if expSel.Entry.Text == "" {
+			if userSel == "" {
 				return // return if nothing is selected
 			}
 			//log.Println(expSel.Entry.Text, grad.Selected, op)
-			go drawExp(a, e, header, firstTable, expSel.Entry.Text, grad.Selected, f, curPathwayIndex)
+			go drawExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex)
 		}),
 		slidePause,
 		widget.NewButton("Slide show", func() {

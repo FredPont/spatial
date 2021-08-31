@@ -3,6 +3,7 @@ package plot
 import (
 	"image/color"
 	"lasso/src/filter"
+	"lasso/src/pref"
 	"log"
 
 	"fyne.io/fyne/v2"
@@ -13,28 +14,36 @@ import (
 
 // Plotform display a form with the plot preferences and parameters
 func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable string, alledges [][]filter.Point, f binding.Float) {
-	pref := a.Preferences()
+	prefs := a.Preferences()
 
 	// plot name
-	plotFileTitle := binding.BindPreferenceString("plotName", pref) // set the link to preferences for rotation
+	plotFileTitle := binding.BindPreferenceString("plotName", prefs) // set the link to preferences for rotation
 	plotFT, _ := plotFileTitle.Get()
 	plotName := widget.NewEntry()
 	plotName.SetText(plotFT)
 
 	// x coordinates
-	xplot := binding.BindPreferenceString("xPlot", pref) // set the link to preferences for rotation
+	xplot := binding.BindPreferenceString("xPlot", prefs) // set the link to preferences for rotation
 	xp, _ := xplot.Get()
-	x := widget.NewSelectEntry(header)
-	x.SetText(xp)
+	//x := widget.NewSelectEntry(header)
+	//x.SetText(xp)
+	var x *widget.Button
+	x = widget.NewButton(xp, func() {
+		pref.ShowTable(header, xplot, x, xp)
+	})
 
 	// y coordinates
-	yplot := binding.BindPreferenceString("yPlot", pref) // set the link to preferences for rotation
+	yplot := binding.BindPreferenceString("yPlot", prefs) // set the link to preferences for rotation
 	yp, _ := yplot.Get()
-	y := widget.NewSelectEntry(header)
-	y.SetText(yp)
+	//y := widget.NewSelectEntry(header)
+	//y.SetText(yp)
+	var y *widget.Button
+	y = widget.NewButton(yp, func() {
+		pref.ShowTable(header, yplot, y, yp)
+	})
 
 	// dot size
-	dotsize := binding.BindPreferenceString("dotsize", pref) // set the link to preferences for rotation
+	dotsize := binding.BindPreferenceString("dotsize", prefs) // set the link to preferences for rotation
 	ds, _ := dotsize.Get()
 	plotdot := widget.NewEntry()
 	plotdot.SetText(ds)
@@ -54,13 +63,13 @@ func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable
 		func(input bool) {
 			log.Println("input = ", input)
 			if input {
-				f.Set(0.3)
-				makeplot(a, zoom, header, firstTable, x.Text, y.Text, plotName.Text, plotdot.Text, alledges)
-				f.Set(0.6)
-				savePlotPrefs(a, x.Text, y.Text, plotName.Text, plotdot.Text)
-				f.Set(1.)
+				//f.Set(0.3)
+				xp, _ = xplot.Get()
+				yp, _ = yplot.Get()
+				go makeplot(a, zoom, header, firstTable, xp, yp, plotName.Text, plotdot.Text, alledges, f)
+				go savePlotPrefs(a, xp, yp, plotName.Text, plotdot.Text)
 			}
-			f.Set(0.) // reset progress bar
+			
 		}, win)
 
 }

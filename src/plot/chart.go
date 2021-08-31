@@ -24,7 +24,8 @@ func check(e error) {
 	}
 }
 
-func makeplot(a fyne.App, zoom int, header []string, filename, colX, colY, plotName, bkgDotSize string, alledges [][]filter.Point) {
+func makeplot(a fyne.App, zoom int, header []string, filename, colX, colY, plotName, bkgDotSize string, alledges [][]filter.Point, f binding.Float) {
+	f.Set(0.3) // progress bar
 	// index of the 2 columns to plot and the XY columns with the image coordinates (to be able to filter the gates)
 	// get parameters from preferences
 	param := prefToConf(a.Preferences())
@@ -42,12 +43,14 @@ func makeplot(a fyne.App, zoom int, header []string, filename, colX, colY, plotN
 	}
 	//fmt.Println(alldotsInGates)
 	mapDotSize, _ := vg.ParseLength(bkgDotSize)
+	f.Set(0.5) // progress bar
 	makeScatter(a, alldotsInGates, scatterData, mapDotSize, plotName, colX, colY, plotName)
-
+	f.Set(0.8) // progress bar
 	// display plot on new window
 	//plotWindow := a.NewWindow("Plot")
 	plotWindow := fyne.CurrentApp().NewWindow("Plot")
 	img := canvas.NewImageFromFile("plots/" + plotName + ".png")
+	f.Set(0.) // reset progress bar
 	plotWindow.SetContent(img)
 	plotWindow.Resize(fyne.NewSize(800, 800))
 	plotWindow.SetFixedSize(true)
