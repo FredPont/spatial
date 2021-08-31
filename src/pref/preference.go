@@ -2,6 +2,7 @@ package pref
 
 import (
 	"fmt"
+
 	"log"
 	"strconv"
 
@@ -19,67 +20,79 @@ import (
 
 // BuildPref create a form where all preferences can be set
 func BuildPref(a fyne.App, head []string) {
-	pref := a.Preferences()
+	prefs := a.Preferences()
 	//myWindow := a.NewWindow("Preferences")
 	myWindow := fyne.CurrentApp().NewWindow("Preferences")
 
 	// scaling factor
 	scalingFactor := widget.NewEntry()
-	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
-	x, _ := sf.Get()                                       // read the preference for scaling factor
-	sftxt := fmt.Sprintf("%.10f", x)                       // convert scaling factor to txt
-	scalingFactor.SetPlaceHolder(sftxt)                    // display the prefence value for scaling factor
+	sf := binding.BindPreferenceFloat("scaleFactor", prefs) // set the link to preferences for scaling factor
+	x, _ := sf.Get()                                        // read the preference for scaling factor
+	sftxt := fmt.Sprintf("%.10f", x)                        // convert scaling factor to txt
+	scalingFactor.SetPlaceHolder(sftxt)                     // display the preference value for scaling factor
 
 	// coordinates +90° rotation : necessary for 10x Genomics
-	r := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	r := binding.BindPreferenceBool("rotate", prefs) // set the link to preferences for rotation
 	b, _ := r.Get()
 	rot := widget.NewCheck("rotate coordinates +90°", func(value bool) {})
 	rot.SetChecked(b)
 
 	// X coordinates
-	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
+	xcor := binding.BindPreferenceString("xcor", prefs) // set the link to preferences for rotation
 	xc, _ := xcor.Get()
-	xSel := widget.NewSelectEntry(head)
-	xSel.SetText(xc)
+	//xSel := widget.NewSelectEntry(head)
+	//xSel.SetText(xc)
+	var xSel *widget.Button
+	xSel = widget.NewButton(xc, func() {
+		ShowTable(head, xcor, xSel, xc)
+	})
 
 	// y coordinates
-	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for rotation
+	ycor := binding.BindPreferenceString("ycor", prefs) // set the link to preferences for rotation
 	yc, _ := ycor.Get()
-	ySel := widget.NewSelectEntry(head)
-	ySel.SetText(yc)
+	//ySel := widget.NewSelectEntry(head)
+	//ySel.SetText(yc)
+	var ySel *widget.Button
+	ySel = widget.NewButton(yc, func() {
+		ShowTable(head, ycor, ySel, yc)
+	})
 
 	//microscop windows size
 	//microscop windows W
 	winWidth := widget.NewEntry()
-	winW := binding.BindPreferenceFloat("winW", pref) // set the link to preferences for win width
+	winW := binding.BindPreferenceFloat("winW", prefs) // set the link to preferences for win width
 	wW, _ := winW.Get()
 	wWtxt := fmt.Sprintf("%.0f", wW)
 	winWidth.SetPlaceHolder(wWtxt)
 
 	//microscop windows Height
 	winHeight := widget.NewEntry()
-	winH := binding.BindPreferenceFloat("winH", pref) // set the link to preferences for win width
+	winH := binding.BindPreferenceFloat("winH", prefs) // set the link to preferences for win width
 	wH, _ := winH.Get()
 	wHtxt := fmt.Sprintf("%.0f", wH)
 	winHeight.SetPlaceHolder(wHtxt)
 
 	// cluster column
-	clustercolumn := binding.BindPreferenceString("clustcol", pref) // set the link to preferences for rotation
+	clustercolumn := binding.BindPreferenceString("clustcol", prefs) // set the link to preferences for rotation
 	clucol, _ := clustercolumn.Get()
-	clco := widget.NewSelectEntry(head)
-	clco.SetText(clucol)
+	//clco := widget.NewSelectEntry(head)
+	//clco.SetText(clucol)
+	var clco *widget.Button
+	clco = widget.NewButton(clucol, func() {
+		ShowTable(head, clustercolumn, clco, clucol)
+	})
 
 	// cluster dot diameter
 	clustDotDiam := widget.NewEntry()
-	cld := binding.BindPreferenceInt("clustDotDiam", pref) // set the link to preferences for cluster diameter
-	clud, _ := cld.Get()                                   // read the preference for cluster diameter
-	cldtxt := fmt.Sprintf("%d", clud)                      // convert cluster diameter to txt
-	clustDotDiam.SetPlaceHolder(cldtxt)                    // display the prefence value for cluster diameter
+	cld := binding.BindPreferenceInt("clustDotDiam", prefs) // set the link to preferences for cluster diameter
+	clud, _ := cld.Get()                                    // read the preference for cluster diameter
+	cldtxt := fmt.Sprintf("%d", clud)                       // convert cluster diameter to txt
+	clustDotDiam.SetPlaceHolder(cldtxt)                     // display the prefsence value for cluster diameter
 
 	// vulcano selection square size in pixels
 	// record the vulcano selection square size in pixels in preferences
 	vulcSquare := widget.NewEntry()
-	vs := binding.BindPreferenceInt("vulcSelectSize", pref)
+	vs := binding.BindPreferenceInt("vulcSelectSize", prefs)
 	vsquare, err := vs.Get()
 	if err != nil {
 		log.Println("wrong selection size value !", err)
@@ -104,36 +117,36 @@ func BuildPref(a fyne.App, head []string) {
 
 			// scaling factor
 			sftxt := scalingFactor.Text
-			setPrefToF64(sftxt, "scaleFactor", pref)
+			setPrefToF64(sftxt, "scaleFactor", prefs)
 
 			// coordinates +90° rotation
-			pref.SetBool("rotate", rot.Checked)
+			prefs.SetBool("rotate", rot.Checked)
 
 			// X coordinates
-			pref.SetString("xcor", xSel.Entry.Text)
+			//prefs.SetString("xcor", xc)
 
 			// Y coordinates
-			pref.SetString("ycor", ySel.Entry.Text)
+			//prefs.SetString("ycor", ySel.Entry.Text)
 
 			// microscop windows W
 			winWidthTxt := winWidth.Text
-			setPrefToF64(winWidthTxt, "winW", pref)
+			setPrefToF64(winWidthTxt, "winW", prefs)
 
 			// microscop windows H
 			winHeightTxt := winHeight.Text
-			setPrefToF64(winHeightTxt, "winH", pref)
+			setPrefToF64(winHeightTxt, "winH", prefs)
 
 			// cluster column
-			pref.SetString("clustcol", clco.Entry.Text)
+			//prefs.SetString("clustcol", clco.Entry.Text)
 
 			// cluster dot diameter
 			cluDiamTXT := clustDotDiam.Text
-			setPrefToInt(cluDiamTXT, "clustDotDiam", pref)
-			//pref.SetInt("clustDotDiam", cluDiam)
+			setPrefToInt(cluDiamTXT, "clustDotDiam", prefs)
+			//prefs.SetInt("clustDotDiam", cluDiam)
 
 			// vulcano selection square size in pixels
 			vulSelTXT := vulcSquare.Text
-			setPrefToInt(vulSelTXT, "vulcSelectSize", pref)
+			setPrefToInt(vulSelTXT, "vulcSelectSize", prefs)
 
 			//log.Println("Form submitted:", scalingFactor.Text)
 
@@ -145,24 +158,24 @@ func BuildPref(a fyne.App, head []string) {
 	myWindow.Show()
 }
 
-// set pref of widget.NewEntry() to float64
-func setPrefToF64(s, prefId string, pref fyne.Preferences) {
+// set prefs of widget.NewEntry() to float64
+func setPrefToF64(s, prefID string, prefs fyne.Preferences) {
 	if s != "" {
 		f64, err := strconv.ParseFloat(s, 64)
 		if err != nil {
 			log.Printf("unable to convert string to float ! %T, %v\n", f64, f64)
 		}
-		pref.SetFloat(prefId, f64)
+		prefs.SetFloat(prefID, f64)
 	}
 }
 
-// set pref of widget.NewEntry() to float64
-func setPrefToInt(s, prefId string, pref fyne.Preferences) {
+// set prefs of widget.NewEntry() to float64
+func setPrefToInt(s, prefID string, prefs fyne.Preferences) {
 	if s != "" {
 		integ, err := strconv.Atoi(s)
 		if err != nil {
 			log.Printf("unable to convert string to float ! %T, %v\n", integ, integ)
 		}
-		pref.SetInt(prefId, integ)
+		prefs.SetInt(prefID, integ)
 	}
 }
