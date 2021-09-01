@@ -25,7 +25,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	userSel, _ := sel.Get()
 	var expSel *widget.Button
 	expSel = widget.NewButton(userSel, func() {
-		pref.ShowTable(header, sel, expSel, "Selection")
+		pref.ShowTable(header[1:], sel, expSel, "Selection")
 	})
 
 	// show choice of different gradien

@@ -75,6 +75,7 @@ func buildVulanoTools(v *Vulcano) {
 func refreshVulanoTools(v *Vulcano) {
 	a := fyne.CurrentApp()
 	pref := a.Preferences()
+
 	selItem := binding.BindString(&v.drawSurface.selItem)
 	data := [][]string{{"item", "X (log2FC)", "Y (log10pv)"}}
 	selRecord := v.drawSurface.selection
@@ -105,8 +106,14 @@ func refreshVulanoTools(v *Vulcano) {
 	}
 
 	// show choice of different gradien
+	gradExpression := binding.BindPreferenceString("gradExpression", pref) // pref binding for the expression gradien to avoid reset for each vulcano dot
+	selGrad, _ := gradExpression.Get()
 	grad := widget.NewRadioGroup([]string{"Rainbow", "White - Red", "Yellow - Red", "Purple - Red", "Inferno", "Blue - Yellow - Red"}, func(s string) {
 	})
+	if selGrad != "" {
+		grad.Selected = selGrad
+	}
+	grad.OnChanged = func(s string) { pref.SetString("gradExpression", s) }
 
 	// Dot opacity
 	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the expression dot opacity
