@@ -4,11 +4,11 @@ go 1.17
 
 require (
 	//fyne.io/fyne v1.4.3 // indirect
-	fyne.io/fyne/v2 v2.0.4
-	github.com/ajstarks/svgo v0.0.0-20210406150507-75cfd577ce75 // indirect
-	github.com/fsnotify/fsnotify v1.5.0 // indirect
+	fyne.io/fyne/v2 v2.1.0
+	github.com/ajstarks/svgo v0.0.0-20210927141636-6d70534b1098 // indirect
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-fonts/liberation v0.2.0 // indirect
-	github.com/go-gl/gl v0.0.0-20210813123233-e4099ee2221f // indirect
+	github.com/go-gl/gl v0.0.0-20210905235341-f7a045908259 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20210727001814-0db043d8d5be // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mazznoer/colorgrad v0.8.1
@@ -17,10 +17,10 @@ require (
 	github.com/srwiley/rasterx v0.0.0-20210519020934-456a8d69b780 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
-	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
-	golang.org/x/sys v0.0.0-20210818153620-00dd8d7831e7 // indirect
+	golang.org/x/net v0.0.0-20210929193557-e81a3d93ecf6 // indirect
+	golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	gonum.org/v1/plot v0.9.0
+	gonum.org/v1/plot v0.10.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
@@ -29,10 +29,13 @@ require (
 	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/fredbi/uri v0.0.0-20181227131451-3dcfdacbaaf3 // indirect
 	github.com/fyne-io/mobile v0.1.3-0.20210412090810-650a3139866a // indirect
-	github.com/go-latex/latex v0.0.0-20210118124228-b3d85cf34e07 // indirect
-	github.com/godbus/dbus/v5 v5.0.4 // indirect
+	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
+	github.com/go-pdf/fpdf v0.5.0 // indirect
+	github.com/godbus/dbus/v5 v5.0.5 // indirect
 	github.com/goki/freetype v0.0.0-20181231101311-fa8a33aabaff // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/phpdave11/gofpdf v1.4.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/stretchr/objx v0.1.0 // indirect
+	github.com/yuin/goldmark v1.4.1 // indirect
 )

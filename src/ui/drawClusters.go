@@ -30,6 +30,7 @@ func getClusters(a fyne.App, header []string, filename string) map[int][]filter.
 }
 
 func drawClusters(a fyne.App, e *Editor, header []string, filename string, f binding.Float) {
+	f.Set(0.2)     // progress bar
 	initCluster(e) // remove all dots of the cluster container
 	pref := a.Preferences()
 	clustOp := binding.BindPreferenceFloat("clustOpacity", pref) // cluster opacity
@@ -48,7 +49,7 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 	legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
 
 	for c := 0; c < nbCluster; c++ {
-		f.Set(float64(c) / float64(nbCluster-1)) // % progression for progress bar
+		// f.Set(float64(c) / float64(nbCluster-1)) // % progression for progress bar. This is too fast to be seen
 		coordinates := clusterMap[clustNames[c]]
 		clcolor := ClusterColors(nbCluster, c)
 		for i := 0; i < len(coordinates); i++ {
@@ -57,6 +58,10 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 		// draw legend dot and name for the current cluster
 		drawLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, diameter, clustNames[c])
 		legendPosition.Y = legendPosition.Y + 30
+		// set progress bar to 50% when half cluster have been computed
+		if c == int(nbCluster/2) {
+			f.Set(0.5) // progress bar
+		}
 	}
 
 	e.clusterContainer.Refresh()

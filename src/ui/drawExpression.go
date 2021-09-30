@@ -167,6 +167,7 @@ func getExpress(a fyne.App, header []string, filename string, expcol string, cur
 }
 
 func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gradien string, f binding.Float, curPathwayIndex binding.Int) {
+	f.Set(0.2)     // progress bar set to 20%
 	initCluster(e) // remove all dots of the cluster container
 	pref := a.Preferences()
 	// Dot opacity

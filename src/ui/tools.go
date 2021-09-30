@@ -128,7 +128,11 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 
 // clear last gate on draw surface and init all edges
 func clearLastGate(e *Editor) {
+	nob := len(e.gateContainer.Objects) - 1                  // nb of objects in the gate container
+	e.gateContainer.Objects = e.gateContainer.Objects[0:nob] // remove last object = last gate name
+
 	e.drawSurface.clearPolygon(e.drawSurface.gatesLines)
+
 	e.gateContainer.Refresh()
 	initLastedges(e) // reset last edges and all points
 	//initAlledges(e) // reset alledges

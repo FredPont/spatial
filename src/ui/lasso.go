@@ -1,8 +1,8 @@
 package ui
 
 import (
-	"fmt"
 	"image/color"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -46,11 +46,18 @@ func (r *interactiveRaster) drawline(x, y, x1, y1 int) fyne.CanvasObject {
 
 // clear the lines of the last gate in the gate container
 func (r *interactiveRaster) clearPolygon(gatesLines []fyne.CanvasObject) {
-	fmt.Println("gate lines", gatesLines)
+	//fmt.Println("gate lines", gatesLines)
 	for _, gl := range gatesLines {
 		r.edit.gateContainer.Remove(gl)
 	}
 
+}
+
+// draw the gate number after double click
+func (r *interactiveRaster) drawGateNb(x, y int) {
+	offset := 20 // x,y offset from 1st dot of the gate
+	gateNB := strconv.Itoa(len(r.alledges) - 1)
+	AbsText(r.edit.gateContainer, x-offset, y+offset, gateNB, 20, color.NRGBA{212, 170, 0, 255})
 }
 
 func abs(x int) int {

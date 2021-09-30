@@ -60,17 +60,20 @@ func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
 
 func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 	var line fyne.CanvasObject // store all line objects
+	var x, y int
 	lp := len(r.points)
 	if lp >= 1 {
-		x, y := r.points[lp-1].X, r.points[lp-1].Y
+		x, y = r.points[lp-1].X, r.points[lp-1].Y
 		x2, y2 := r.points[0].X, r.points[0].Y // get first coordinates stored
 		line = r.drawline(x2, y2, x, y)
-		fmt.Println(r.points)
+		//fmt.Println(r.points)
 		r.edit.layer.Refresh()
 	}
 	// avoid to add a void polygon :
 	if len(r.points) > 2 {
 		r.alledges = append(r.alledges, r.points) // store new edges
+		// draw gate number
+		r.drawGateNb(x, y)
 	}
 	r.points = nil                        // reset polygone coordinates
 	r.tmpLines = append(r.tmpLines, line) // store new line object
