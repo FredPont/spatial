@@ -56,7 +56,8 @@ func (r *interactiveRaster) clearPolygon(gatesLines []fyne.CanvasObject) {
 // draw the gate number after double click
 func (r *interactiveRaster) drawGateNb(x, y int) {
 	offset := 20 // x,y offset from 1st dot of the gate
-	gateNB := strconv.Itoa(len(r.alledges) - 1)
+	//gateNB := strconv.Itoa(len(r.alledges) - 1)
+	gateNB := strconv.Itoa(r.gatesNumbers.nb)
 	AbsText(r.edit.gateContainer, x-offset, y+offset, gateNB, 20, color.NRGBA{212, 170, 0, 255})
 }
 

@@ -31,6 +31,12 @@ type Editor struct {
 	microOrigWidth, microOrigHeight int             // size of the microscop picture not zoomed
 }
 
+// GateNB number holds the gate number coordinates and the number of gates starting from 1
+type GateNB struct {
+	x, y []int // position of the number in the image
+	nb   int   // number of gates starting from 1
+}
+
 func (e *Editor) draw(w, h int) image.Image {
 	return image.NewRGBA(image.Rect(0, 0, w, h))
 }

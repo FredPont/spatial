@@ -441,3 +441,13 @@ func FormatOutFile(prefix, name string, ext string) string {
 	}
 	return outfile
 }
+
+// PopIntItem return last int from []int and the new []int
+func PopIntItem(s []int) int {
+	return s[len(s)-1]
+}
+
+// PopIntArray return the new []int witout last item
+func PopIntArray(s []int) []int {
+	return s[:len(s)-1]
+}

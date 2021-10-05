@@ -26,6 +26,7 @@ func initGates(e *Editor) {
 	e.gateContainer.Objects = nil
 	e.gateContainer.Refresh()
 	initAlledges(e) // reset alledges
+	initGatesNB(e)  // clear all gates numbers
 }
 
 func initAllLayers(e *Editor) {
@@ -36,5 +37,22 @@ func initAllLayers(e *Editor) {
 func initGatesContainer(e *Editor) {
 	e.gateContainer.Objects = nil
 	e.gateContainer.Refresh()
+
+}
+
+// clear all gates numbers
+func initGatesNB(e *Editor) {
+	e.drawSurface.gatesNumbers.x = nil
+	e.drawSurface.gatesNumbers.y = nil
+	e.drawSurface.gatesNumbers.nb = 0
+}
+
+// clear last gate number coordinates and decrease gateNB
+func initLastGatesNB(e *Editor) {
+	e.drawSurface.gatesNumbers.x = filter.PopIntArray(e.drawSurface.gatesNumbers.x)
+	e.drawSurface.gatesNumbers.y = filter.PopIntArray(e.drawSurface.gatesNumbers.y)
+	if e.drawSurface.gatesNumbers.nb > 0 {
+		e.drawSurface.gatesNumbers.nb--
+	}
 
 }

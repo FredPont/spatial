@@ -134,7 +134,8 @@ func clearLastGate(e *Editor) {
 	e.drawSurface.clearPolygon(e.drawSurface.gatesLines)
 
 	e.gateContainer.Refresh()
-	initLastedges(e) // reset last edges and all points
+	initLastedges(e)   // reset last edges and all points
+	initLastGatesNB(e) // clear last gate number coordinates and decrease gateNB
 	//initAlledges(e) // reset alledges
 }
 

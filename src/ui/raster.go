@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"lasso/src/filter"
+	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -22,12 +23,14 @@ import (
 
 type interactiveRaster struct {
 	widget.BaseWidget
-	edit       *Editor
-	img        *canvas.Raster
-	points     []filter.Point      // points of current polygone edges
-	alledges   [][]filter.Point    // points of all current polygones edges
-	tmpLines   []fyne.CanvasObject // temporary slice with lines of the last gate
-	gatesLines []fyne.CanvasObject // line (fyne canvas object) of last polygone
+	edit         *Editor
+	img          *canvas.Raster
+	points       []filter.Point      // points of current polygone edges
+	alledges     [][]filter.Point    // points of all current polygones edges
+	tmpLines     []fyne.CanvasObject // temporary slice with lines of the last gate
+	gatesLines   []fyne.CanvasObject // line (fyne canvas object) of last polygon
+	gatesNumbers GateNB              // GateNB number holds the gate number coordinates and the number of gates starting from 1
+
 }
 
 func (r *interactiveRaster) MinSize() fyne.Size {
@@ -74,6 +77,11 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 		r.alledges = append(r.alledges, r.points) // store new edges
 		// draw gate number
 		r.drawGateNb(x, y)
+		// store the position of the gate number
+		r.gatesNumbers.x = append(r.gatesNumbers.x, x)
+		r.gatesNumbers.y = append(r.gatesNumbers.y, y)
+		r.gatesNumbers.nb++
+		log.Println("r.gatesNumbers", r.gatesNumbers)
 	}
 	r.points = nil                        // reset polygone coordinates
 	r.tmpLines = append(r.tmpLines, line) // store new line object
