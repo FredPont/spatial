@@ -31,7 +31,7 @@ func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string,
 	f.Set(0.2) // progress bar
 	// get parameters from preferences
 	param := prefToConf(pref)
-	log.Println("start filtering...")
+	log.Print("start filtering...")
 	// progress bar step
 	step := 0.8 / float64(len(alledges)+len(dataFiles))
 	// filter all data files with all active gates
@@ -47,6 +47,7 @@ func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string,
 		}
 		f.Set(0.2 + step) // progress bar
 	}
+	log.Println("done !")
 	f.Set(0.) // progress bar
 }
 

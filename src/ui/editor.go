@@ -25,6 +25,7 @@ type Editor struct {
 	layer                           *fyne.Container // container with image and interactive drawsurface
 	win                             fyne.Window
 	gateContainer                   *fyne.Container // container with the gates lines
+	gateDotsContainer               *fyne.Container // container with the gates dots at the polygon edges
 	clusterContainer                *fyne.Container // container with the cluster circles
 	zoom                            int             // image zoom
 	zooMin                          int             // minimal value of zoom to fit the window
@@ -48,11 +49,12 @@ func NewEditor() (*Editor, int, int) {
 	micro := canvas.NewImageFromFile(imgDir + "/" + imgFile)
 	//micro.FillMode = canvas.ImageFillOriginal
 
-	gc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // gate container
-	cc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // cluster container should be independant of gate container for separate initialisaion
+	gc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))  // gate container
+	gdc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // gate dots container
+	cc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))  // cluster container should be independant of gate container for separate initialisaion
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
-	edit := &Editor{microscop: micro, min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: cc, clusterContainer: gc, zoom: 100, microOrigWidth: w, microOrigHeight: h, zooMin: 10}
+	edit := &Editor{microscop: micro, min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: cc, gateDotsContainer: gdc, clusterContainer: gc, zoom: 100, microOrigWidth: w, microOrigHeight: h, zooMin: 10}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit, w, h
@@ -61,7 +63,7 @@ func NewEditor() (*Editor, int, int) {
 // BuildUI creates the main window of our application
 func (e *Editor) BuildUI(w fyne.Window) {
 	e.win = w
-	e.layer = container.NewMax(e.drawSurface, e.microscop, e.clusterContainer, e.gateContainer)
+	e.layer = container.NewMax(e.drawSurface, e.microscop, e.clusterContainer, e.gateContainer, e.gateDotsContainer)
 
 	w.SetContent(container.NewScroll(e.layer))
 }

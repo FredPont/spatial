@@ -56,3 +56,9 @@ func initLastGatesNB(e *Editor) {
 	}
 
 }
+
+// clear the dots at the edges of the currently drawing gate
+func initGateDots(e *Editor) {
+	e.gateDotsContainer.Objects = nil
+	e.gateDotsContainer.Refresh()
+}

@@ -43,6 +43,13 @@ func (r *interactiveRaster) drawline(x, y, x1, y1 int) fyne.CanvasObject {
 	return l
 }
 
+// drawline a circle at x,y position to the gate dot container
+func (e *Editor) drawcircleGate(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
+	c := iCircle(x, y, ray, color)   // draw circle rayon ray
+	e.gateDotsContainer.AddObject(c) // add the cicle to the cluster container
+	return c
+}
+
 // clear the lines of the last gate in the gate container
 func (r *interactiveRaster) clearPolygon(gatesLines []fyne.CanvasObject) {
 	//fmt.Println("gate lines", gatesLines)

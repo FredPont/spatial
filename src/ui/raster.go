@@ -53,11 +53,12 @@ func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
 		x2, y2 := r.points[lp-1].X, r.points[lp-1].Y // get last coordinates stored
 		line = r.drawline(x2, y2, x, y)              // draw a line between the new pixel cliked and the last one stored in r.points
 	}
-
 	fmt.Println(x, y)
 	r.points = append(r.points, filter.Point{x, y}) // store new edges
+	r.tmpLines = append(r.tmpLines, line)           // store new lines objects
 
-	r.tmpLines = append(r.tmpLines, line) // store new lines objects
+	// draw a dot at the mouse position
+	r.edit.drawcircleGate(x, y, 5, color.NRGBA{212, 170, 0, 255})
 	//r.edit.layer.Refresh() // slow
 	r.edit.gateContainer.Refresh() // refresh only the gate container, faster than refresh layer
 }
@@ -69,12 +70,14 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 	if lp >= 1 {
 		x, y = r.points[lp-1].X, r.points[lp-1].Y
 		x2, y2 := r.points[0].X, r.points[0].Y // get first coordinates stored
-		line = r.drawline(x2, y2, x, y)
+		line = r.drawline(x2, y2, x, y)        // line between the first and last polygon edge
+		initGateDots(r.edit)                   // remove the dots at the edges of a polygon
 		//fmt.Println(r.points)
-		r.edit.layer.Refresh()
+		//r.edit.layer.Refresh()
+		r.edit.gateContainer.Refresh()
 	}
 	// avoid to add a void polygon :
-	if len(r.points) > 2 {
+	if lp > 2 {
 		r.alledges = append(r.alledges, r.points) // store new edges
 		// draw gate number
 		gateNB := strconv.Itoa(r.gatesNumbers.nb)
@@ -85,6 +88,7 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 		r.gatesNumbers.nb++
 		log.Println("r.gatesNumbers", r.gatesNumbers)
 	}
+
 	r.points = nil                        // reset polygone coordinates
 	r.tmpLines = append(r.tmpLines, line) // store new line object
 	r.gatesLines = r.tmpLines
