@@ -174,6 +174,7 @@ func importGates(e *Editor, f binding.Float) {
 		e.drawSurface.alledges = append(e.drawSurface.alledges, gate)
 		redrawpolygon(e.drawSurface, gate)
 	}
+	drawImportedGatesNB(e.drawSurface) // draw and store the gates numbers coordinates after import gate
 	e.gateContainer.Refresh()
 	f.Set(0.)
 }

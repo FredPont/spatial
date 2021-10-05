@@ -213,3 +213,17 @@ func redrawLastGatesNB(r *interactiveRaster) {
 	r.drawGateNb(gn.x[L], gn.y[L], gateNB)
 
 }
+
+// draw and store the gates numbers coordinates after import gate
+func drawImportedGatesNB(r *interactiveRaster) {
+	nbGates := len(r.edit.drawSurface.alledges)
+	// store the gateNB coordinates and gateNB from imported gates
+	for _, gate := range r.edit.drawSurface.alledges {
+		p := filter.PopPointItem(gate)
+		r.gatesNumbers.x = append(r.gatesNumbers.x, p.X)
+		r.gatesNumbers.y = append(r.gatesNumbers.y, p.Y)
+	}
+	r.gatesNumbers.nb = nbGates
+	// draw the gatesNB from the coordinated just stored above
+	redrawGatesNB(r)
+}

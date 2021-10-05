@@ -37,7 +37,7 @@ type Conf struct {
 }
 
 // FilterTable filter the scRNAseq table to extract cells in polygon
-func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf) {
+func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf, gateNumber int) {
 
 	path := "data/" + dataFile
 	// open result file for write filtered table
@@ -60,8 +60,8 @@ func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf
 	reader.FieldsPerRecord = -1
 
 	// read table header
-	header, err := reader.Read()                       //read first line of pathway
-	WriteOneLine(out, strings.Join(header, "\t")+"\n") // write header in result file
+	header, err := reader.Read()                                         //read first line of pathway
+	WriteOneLine(out, strings.Join(header, "\t")+"\t"+"GateNumber"+"\n") // write header in result file
 	XYindex := GetColIndex(header, []string{param.X, param.Y})
 	//fmt.Println(XYindex)
 	for {
@@ -72,7 +72,7 @@ func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf
 		}
 
 		if filterRow(zoom, record, XYindex, polygon, param) {
-			line := strings.Join(record, "\t") + "\n"
+			line := strings.Join(record, "\t") + "\t" + strconv.Itoa(gateNumber) + "\n"
 			//fmt.Println(line)
 			WriteOneLine(out, line)
 			WriteOneLine(out2, record[0]+"\n")

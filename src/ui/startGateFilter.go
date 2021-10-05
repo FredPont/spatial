@@ -19,8 +19,8 @@
 package ui
 
 import (
-	"fmt"
 	"lasso/src/filter"
+	"log"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -28,22 +28,24 @@ import (
 )
 
 func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string, gateName string, pref fyne.Preferences, f binding.Float) {
-	f.Set(0.3) // progress bar
+	f.Set(0.2) // progress bar
 	// get parameters from preferences
 	param := prefToConf(pref)
-	fmt.Println("start filtering...", alledges)
+	log.Println("start filtering...")
+	// progress bar step
+	step := 0.8 / float64(len(alledges)+len(dataFiles))
 	// filter all data files with all active gates
 	for gateNumber, polygon := range alledges {
-		fmt.Println("polygon ", polygon)
+		//fmt.Println("polygon ", polygon)
 		if len(polygon) < 3 {
 			continue
 		}
 		for _, dataFile := range dataFiles {
 			gateName = filter.FormatOutFile("filter", gateName, "") // test if name exist, if not, build a file name with the current time
 			outFile := strconv.Itoa(gateNumber) + "_" + gateName + "_" + dataFile
-			filter.FilterTable(e.zoom, dataFile, outFile, polygon, param)
+			filter.FilterTable(e.zoom, dataFile, outFile, polygon, param, gateNumber)
 		}
-
+		f.Set(0.2 + step) // progress bar
 	}
 	f.Set(0.) // progress bar
 }
