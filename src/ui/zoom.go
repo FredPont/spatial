@@ -5,6 +5,7 @@ import (
 	"lasso/src/filter"
 	"log"
 	"math"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -69,6 +70,7 @@ func (e *Editor) setZoom(zoom, zoomStep int) {
 	// zoom the gates
 	zoomGates(e, zoomStep)
 	redrawGates(e)
+	redrawGatesNB(e.drawSurface) // redraw gates numbers
 	e.drawSurface.Refresh()
 	//e.clusterContainer.Refresh()
 	//e.gateContainer.Refresh()
@@ -118,7 +120,7 @@ func ApplyZoomInt(e *Editor, val int) int {
 	return val * e.zoom / 100
 }
 
-// apply zoom step to the polygon edges
+// apply zoom step to the polygon edges and gates numbers coordinates
 func zoomGates(e *Editor, zoomStep int) {
 
 	// update points coordinates is not usefull
@@ -131,7 +133,7 @@ func zoomGates(e *Editor, zoomStep int) {
 	for i := 0; i < L; i++ {
 		zoomPoints(e.drawSurface.alledges[i], zf)
 	}
-
+	zoomGateNumbers(e.drawSurface.gatesNumbers, zf)
 	//log.Println(e.drawSurface.alledges)
 }
 
@@ -142,6 +144,13 @@ func zoomPoints(p []filter.Point, zf float64) {
 		//(*p)[i].Y = int(float64((*p)[i].Y) * zf)
 		p[i].X = int(math.Round(float64(p[i].X) * zf))
 		p[i].Y = int(math.Round(float64(p[i].Y) * zf))
+	}
+}
+
+func zoomGateNumbers(gn GateNB, zf float64) {
+	for i := 0; i < len(gn.x); i++ {
+		gn.x[i] = int(math.Round(float64(gn.x[i]) * zf))
+		gn.y[i] = int(math.Round(float64(gn.y[i]) * zf))
 	}
 }
 
@@ -187,13 +196,20 @@ func redrawlastGate(r *interactiveRaster, p []filter.Point) []fyne.CanvasObject 
 	return lastGate
 }
 
-// // zoom polygon with zf without modifying stored polygon. function used to export gate a 100% zoom
-// func zoomPolygon(p []filter.Point, zf float64) []filter.Point {
-// 	var zoomedPoly []filter.Point
-// 	for i := 0; i < len(p); i++ {
-// 		x := int(math.Round(float64(p[i].X) * zf))
-// 		y := int(math.Round(float64(p[i].Y) * zf))
-// 		zoomedPoly = append(zoomedPoly, filter.Point{X: x, Y: y})
-// 	}
-// 	return zoomedPoly
-// }
+// redraw the gate numbers for all gates
+func redrawGatesNB(r *interactiveRaster) {
+	gn := r.gatesNumbers
+	for i := 0; i < len(gn.x); i++ {
+		gateNB := strconv.Itoa(i)
+		r.drawGateNb(gn.x[i], gn.y[i], gateNB)
+	}
+}
+
+// redraw the gate numbers for lats gate only
+func redrawLastGatesNB(r *interactiveRaster) {
+	gn := r.gatesNumbers
+	L := len(gn.x) - 1
+	gateNB := strconv.Itoa(L)
+	r.drawGateNb(gn.x[L], gn.y[L], gateNB)
+
+}

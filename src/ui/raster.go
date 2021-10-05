@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"lasso/src/filter"
 	"log"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -76,7 +77,8 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 	if len(r.points) > 2 {
 		r.alledges = append(r.alledges, r.points) // store new edges
 		// draw gate number
-		r.drawGateNb(x, y)
+		gateNB := strconv.Itoa(r.gatesNumbers.nb)
+		r.drawGateNb(x, y, gateNB)
 		// store the position of the gate number
 		r.gatesNumbers.x = append(r.gatesNumbers.x, x)
 		r.gatesNumbers.y = append(r.gatesNumbers.y, y)
