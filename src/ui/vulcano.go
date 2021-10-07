@@ -83,7 +83,7 @@ func buildVulanoPlot(e *Editor, header []string, fname, firstTable string, pvfcT
 	drawVulcano(v, vulcBox)
 	v.header = header
 	v.tableName = firstTable
-	buildVulanoTools(v)
+	buildVulcanoTools(v)
 
 }
 

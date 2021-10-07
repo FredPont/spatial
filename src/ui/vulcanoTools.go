@@ -25,6 +25,7 @@ import (
 
 	//"math"
 
+	"lasso/src/filter"
 	"log"
 	"strconv"
 	"unicode/utf8"
@@ -38,10 +39,10 @@ import (
 	//"fyne.io/fyne/v2/theme"
 )
 
-func buildVulanoTools(v *Vulcano) {
-
+func buildVulcanoTools(v *Vulcano) {
 	data := [][]string{{"item", "log2FC", "log10pv"}}
-
+	// progress bar binding
+	f := binding.NewFloat()
 	table := widget.NewTable(
 		func() (int, int) {
 			return len(data), len(data[0])
@@ -56,6 +57,10 @@ func buildVulanoTools(v *Vulcano) {
 	content := container.New(layout.
 		NewGridLayoutWithColumns(2), container.NewVBox(
 		widget.NewLabel("Left click and right click on the vulcano plot to select points"),
+		widget.NewButton("Save vulcano plot", func() {
+			imgName := filter.FormatOutFile("vulcano", "", "")
+			go screenShot(v.win, imgName, f)
+		}),
 		widget.NewButton("Close", func() {
 			v.tools.Close()
 			v.win.Close()
@@ -75,7 +80,8 @@ func buildVulanoTools(v *Vulcano) {
 func refreshVulanoTools(v *Vulcano) {
 	a := fyne.CurrentApp()
 	pref := a.Preferences()
-
+	// progress bar binding
+	f := binding.NewFloat()
 	selItem := binding.BindString(&v.drawSurface.selItem)
 	data := [][]string{{"item", "X (log2FC)", "Y (log10pv)"}}
 	selRecord := v.drawSurface.selection
@@ -135,7 +141,7 @@ func refreshVulanoTools(v *Vulcano) {
 		DotOpacity,
 		legendcol,
 		widget.NewButton("Show Expression", func() {
-			f := binding.NewFloat() // progress bar binding
+			//f := binding.NewFloat() // progress bar binding
 
 			// gradien default
 			def := "White - Red"
@@ -154,6 +160,10 @@ func refreshVulanoTools(v *Vulcano) {
 			}
 
 			go drawExp(a, v.imageEditor, v.header, v.tableName, choosedItem, grad.Selected, f, PathwayIndex)
+		}),
+		widget.NewButton("Save vulcano plot", func() {
+			imgName := filter.FormatOutFile("vulcano", "", "")
+			go screenShot(v.win, imgName, f)
 		}),
 		widget.NewButton("Close", func() {
 			v.tools.Close()
