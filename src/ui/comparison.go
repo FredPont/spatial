@@ -21,6 +21,15 @@ type PVrecord struct {
 	fc, pv, pvcorr, log2fc, log10pv float64
 }
 
+// showCompareWindow show compare gate window
+func showCompareWindow(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, firstTable string) {
+	// map that store the check boxes state
+	headerMap := make(map[string]interface{}, len(header[1:]))
+	buildMapTrue(header[1:], headerMap)
+
+	buttonCompare(a, e, preference, f, header, headerMap, firstTable)
+}
+
 func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, headerMap map[string]interface{}, firstTable string) {
 
 	compWindow := a.NewWindow("Compare")

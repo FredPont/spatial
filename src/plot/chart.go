@@ -138,7 +138,7 @@ func GetPrefColorRGBA(a fyne.App, R, G, B, A string) (int, int, int, int) {
 	dotsA := binding.BindPreferenceInt(A, pref)
 	mapA, e := dotsA.Get()
 	check(e)
-	log.Println("color in pref", mapR, mapG, mapB, mapA)
+	//log.Println("color in pref", mapR, mapG, mapB, mapA)
 	return mapR, mapG, mapB, mapA
 }
 

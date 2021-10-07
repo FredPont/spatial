@@ -67,10 +67,10 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			go saveGates(gatename.Text, e)
 		}),
 		widget.NewButton("Clear last gate", func() {
-			clearLastGate(e)
+			go clearLastGate(e)
 		}),
 		widget.NewButton("Clear all gates", func() {
-			initGates(e)
+			go initGates(e)
 		}),
 		widget.NewButton("Import gates", func() {
 			go importGates(e, f)
@@ -86,13 +86,13 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		widget.NewButton("plot", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
-			plot.Plotform(a, w, e.zoom, header, firstTable, alledges, f)
+			go plot.Plotform(a, w, e.zoom, header, firstTable, alledges, f)
 		}),
 		widget.NewButton("Show Clusters", func() {
 			go drawClusters(a, e, header, firstTable, f)
 		}),
 		widget.NewButton("Clear Clusters/Expression", func() {
-			clearCluster(e)
+			go clearCluster(e)
 		}),
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		clusDotOpacity,
@@ -104,11 +104,12 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			go buttonImportCells(a, e, preference, iCellFI, f, impCellFindex, header, firstTable)
 		}),
 		widget.NewButton("Compare gates", func() {
+			go showCompareWindow(a, e, preference, f, header, firstTable)
 			// map that store the check boxes state
-			headerMap := make(map[string]interface{}, len(header[1:]))
-			buildMapTrue(header[1:], headerMap)
+			//headerMap := make(map[string]interface{}, len(header[1:]))
+			//buildMapTrue(header[1:], headerMap)
 
-			buttonCompare(a, e, preference, f, header, headerMap, firstTable)
+			//buttonCompare(a, e, preference, f, header, headerMap, firstTable)
 		}),
 		widget.NewButton("Preferences", func() {
 			pref.BuildPref(a, header)
@@ -212,28 +213,6 @@ func startSaveImage(w fyne.Window, filename string, f binding.Float) {
 	go saveimage(w, filename, f)
 	//log.Println("image saved :", <-ch)
 }
-
-// save HR image to file
-// credits https://www.devdungeon.com/content/working-images-go
-// func saveimage3(w fyne.Window, filename string, ch chan bool) {
-
-// 	c := w.Content().(*container.Scroll).Content
-// 	out := software.Render(c, theme.DarkTheme())
-
-// 	path := "plots/" + filename + ".png"
-// 	outputFile, err := os.Create(path)
-// 	if err != nil {
-// 		log.Println("The image cannot be saved to the file")
-// 	}
-// 	err = png.Encode(outputFile, out)
-// 	if err != nil {
-// 		log.Println("png encoding error : ", err)
-// 	}
-// 	log.Println("Saving image to ", path)
-
-// 	outputFile.Close()
-// 	ch <- true
-// }
 
 // save HR image to file
 // credits https://www.devdungeon.com/content/working-images-go
