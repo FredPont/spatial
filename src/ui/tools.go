@@ -113,7 +113,8 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		// in that case the image size = window size and zoom factor is wrong !
 		newZoom(e, a, f),
 		widget.NewButton("Exit", func() {
-			os.Exit(0)
+			a.Quit()
+			//os.Exit(0)
 		}),
 		widget.NewProgressBarWithData(f),
 	)

@@ -163,10 +163,13 @@ func (p *PlotBox) YAxis(v *Vulcano) {
 	up := yCoord(p, p.Ymax)
 
 	if xZero(p) {
-		x1 = xCoord(p, 0.)
+		x1 = xCoord(p, 0.) // if x=0 exists, the Y axes is plot on 0.
 	} else {
-		x1 = xCoord(p, p.Xmin)
-		log.Println("X axis does not contain 0 value !")
+		if p.Xmax < 0 { // if all x values < 0, the y axes is on the right
+			x1 = xCoord(p, p.Xmax)
+		} else {
+			x1 = xCoord(p, p.Xmin)
+		}
 	}
 	//log.Println("y axis:", x1, bot, up)
 	c := iLine(x1, bot, x1, up, 1, color.RGBA{0, 0, 0, 255})
@@ -205,7 +208,7 @@ func (p *PlotBox) Xlabel(v *Vulcano, y int) {
 		ti := iLine(x, y, x, y+5, 1, color.RGBA{0, 0, 0, 255})                      // tick
 		v.scatterContainer.Add(ti)                                                  // add the tick to the cluster container
 	}
-	AbsText(v.scatterContainer, xCoord(p, (p.Xmax+p.Xmin)/2), y+35, "log2(FC) (g2/g1)", 12, color.NRGBA{0, 0, 0, 255}) // axis title
+	AbsText(v.scatterContainer, xCoord(p, (p.Xmax+p.Xmin)/2), y+35, "log2(FC) (group_2/group_1)", 12, color.NRGBA{0, 0, 0, 255}) // axis title
 }
 
 // Ylabel makes the x axis scale text
@@ -222,7 +225,7 @@ func (p *PlotBox) Ylabel(v *Vulcano, x int) {
 		ti := iLine(x, y-5, x+5, y-5, 1, color.RGBA{0, 0, 0, 255})               // tick
 		v.scatterContainer.Add(ti)                                               // add the tick to the cluster container
 	}
-	AbsText(v.scatterContainer, x-10, yCoord(p, p.Ymax)-25, "log10(Pvalue)", 12, color.NRGBA{0, 0, 0, 255}) // axis title
+	AbsText(v.scatterContainer, x-35, yCoord(p, p.Ymax)-25, "log10(Pvalue)", 12, color.NRGBA{0, 0, 0, 255}) // axis title
 }
 
 // TicksDecimals format the number of decimals for ticks

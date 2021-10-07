@@ -19,12 +19,6 @@
 package ui
 
 import (
-	//"fmt"
-
-	//"log"
-
-	//"math"
-
 	"lasso/src/filter"
 	"log"
 	"strconv"
@@ -35,8 +29,6 @@ import (
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	//"fyne.io/fyne/v2/data/binding"
-	//"fyne.io/fyne/v2/theme"
 )
 
 func buildVulcanoTools(v *Vulcano) {
