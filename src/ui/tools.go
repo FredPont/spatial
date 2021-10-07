@@ -129,12 +129,12 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 
 // clear last gate on draw surface and init all edges
 func clearLastGate(e *Editor) {
-	log.Println("nb de lignes", e.drawSurface.gatesLines)
+	//log.Println("nb de lignes", e.drawSurface.gatesLines)
 	if len(e.drawSurface.gatesLines) < 1 { // less than 1 lines = 1 gate
 		return
 	}
 	nob := len(e.gateNumberContainer.Objects) - 1 // nb of objects in the gate nb container
-	log.Println("nb de gate names", nob)
+	//log.Println("nb de gate names", nob)
 	if nob < 2 {
 		return // less than 2 gates nb : no gates to clear ! the last one must be cleared by clear all gates button
 	}
@@ -144,7 +144,6 @@ func clearLastGate(e *Editor) {
 	e.gateContainer.Refresh()
 	initLastedges(e)   // reset last edges and all points
 	initLastGatesNB(e) // clear last gate number coordinates and decrease gateNB
-
 }
 
 // save the gates to csv files withe ImageJ format and 100% zoom

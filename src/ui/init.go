@@ -25,6 +25,7 @@ func clearCluster(e *Editor) {
 
 func initGates(e *Editor) {
 	e.gateContainer.Objects = nil
+	e.drawSurface.gatesLines = nil
 	e.gateContainer.Refresh()
 	initAlledges(e)      // reset alledges
 	initGatesNB(e)       // clear all gates numbers in arrays
