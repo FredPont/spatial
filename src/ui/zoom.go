@@ -198,6 +198,7 @@ func redrawlastGate(r *interactiveRaster, p []filter.Point) []fyne.CanvasObject 
 
 // redraw the gate numbers for all gates
 func redrawGatesNB(r *interactiveRaster) {
+	initGatesNBwindow(r.edit) // clear gateNB in window
 	gn := r.gatesNumbers
 	for i := 0; i < len(gn.x); i++ {
 		gateNB := strconv.Itoa(i)
@@ -205,7 +206,7 @@ func redrawGatesNB(r *interactiveRaster) {
 	}
 }
 
-// redraw the gate numbers for lats gate only
+// redraw the gate numbers for last gate only
 func redrawLastGatesNB(r *interactiveRaster) {
 	gn := r.gatesNumbers
 	L := len(gn.x) - 1

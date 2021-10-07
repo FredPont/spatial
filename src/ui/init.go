@@ -7,10 +7,11 @@ func initAlledges(e *Editor) {
 	e.drawSurface.points = nil
 }
 
-// clear only the last gates edges and point
+// clear only the last gates edges and point and lines in container
 func initLastedges(e *Editor) {
 	e.drawSurface.alledges = filter.PopPoints(e.drawSurface.alledges)
 	e.drawSurface.points = nil
+	e.drawSurface.gatesLines = nil
 }
 
 func initCluster(e *Editor) {
@@ -25,8 +26,9 @@ func clearCluster(e *Editor) {
 func initGates(e *Editor) {
 	e.gateContainer.Objects = nil
 	e.gateContainer.Refresh()
-	initAlledges(e) // reset alledges
-	initGatesNB(e)  // clear all gates numbers
+	initAlledges(e)      // reset alledges
+	initGatesNB(e)       // clear all gates numbers in arrays
+	initGatesNBwindow(e) // clear all gates numbers displayed
 }
 
 func initAllLayers(e *Editor) {
@@ -40,11 +42,17 @@ func initGatesContainer(e *Editor) {
 
 }
 
-// clear all gates numbers
+// clear all stored gates numbers from arrays
 func initGatesNB(e *Editor) {
 	e.drawSurface.gatesNumbers.x = nil
 	e.drawSurface.gatesNumbers.y = nil
 	e.drawSurface.gatesNumbers.nb = 0
+}
+
+// clear all displayed gates numbers in the picture
+func initGatesNBwindow(e *Editor) {
+	e.gateNumberContainer.Objects = nil
+	e.gateNumberContainer.Refresh()
 }
 
 // clear last gate number coordinates and decrease gateNB

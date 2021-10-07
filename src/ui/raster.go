@@ -29,7 +29,7 @@ type interactiveRaster struct {
 	points       []filter.Point      // points of current polygone edges
 	alledges     [][]filter.Point    // points of all current polygones edges
 	tmpLines     []fyne.CanvasObject // temporary slice with lines of the last gate
-	gatesLines   []fyne.CanvasObject // line (fyne canvas object) of last polygon
+	gatesLines   []fyne.CanvasObject // lines (fyne canvas object) of last polygon
 	gatesNumbers GateNB              // GateNB number holds the gate number coordinates and the number of gates starting from 1
 
 }
