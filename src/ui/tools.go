@@ -15,6 +15,7 @@ import (
 	"strconv"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/driver/software"
@@ -56,6 +57,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 	f := binding.NewFloat()
 
 	content := container.NewVBox(
+		logo(),
 		gatename,
 		widget.NewButton("Filter tables with gates", func() {
 			// get the edges of all selected polygons
@@ -121,6 +123,14 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 
 	w2.SetContent(content)
 	w2.Show()
+}
+
+// logo display a log in tool window
+func logo() fyne.CanvasObject {
+	img := canvas.NewImageFromFile("src/ui/logo.png")
+	img.SetMinSize(fyne.Size{100, 100})
+	img.FillMode = canvas.ImageFillContain
+	return img
 }
 
 // clear last gate on draw surface and init all edges
