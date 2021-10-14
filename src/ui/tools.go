@@ -85,7 +85,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		widget.NewButton("Save zoomed image", func() {
 			go startSaveImage(w, gatename.Text, f)
 		}),
-		widget.NewButton("plot", func() {
+		widget.NewButton("Plot gates", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
 			go plot.Plotform(a, w, e.zoom, header, firstTable, alledges, f)
@@ -109,7 +109,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			go showCompareWindow(a, e, preference, f, header, firstTable)
 		}),
 		widget.NewButton("Preferences", func() {
-			pref.BuildPref(a, header)
+			go pref.BuildPref(a, header)
 		}),
 		// zoom : very important : never unzom under the window size
 		// in that case the image size = window size and zoom factor is wrong !
@@ -128,7 +128,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 // logo display a log in tool window
 func logo() fyne.CanvasObject {
 	img := canvas.NewImageFromFile("src/ui/logo.png")
-	img.SetMinSize(fyne.Size{100, 100})
+	img.SetMinSize(fyne.Size{Width: 100, Height: 50})
 	img.FillMode = canvas.ImageFillContain
 	return img
 }
@@ -158,7 +158,6 @@ func clearLastGate(e *Editor) {
 // 105,189
 // 156,187
 func saveGates(gateName string, e *Editor) {
-	log.Println("save gates")
 
 	gateName = filter.FormatOutFile("gate", gateName, "") // test if name exist, if not, build a file name with the current time
 
@@ -170,7 +169,7 @@ func saveGates(gateName string, e *Editor) {
 
 		out := strconv.Itoa(i) + "_" + gateName
 		writeCSV(out, filter.ZoomPolygon(poly, zoomFactor))
-
+		log.Println("gate saved in gates/", out)
 	}
 }
 
