@@ -44,13 +44,13 @@ func (v *Vulcano) vulcanoSelect(vul *PlotBox, mouse filter.Point) {
 		x1 := xCoord(vul, Xscatter)
 		y1 := yCoord(vul, vul.Y[i])
 
-		log.Println("dot filtration", mouse.X, mouse.Y, x1, y1, vsquare, inSquare(mouse.X, mouse.Y, x1, y1, vsquare))
+		//log.Println("dot filtration", mouse.X, mouse.Y, x1, y1, vsquare, inSquare(mouse.X, mouse.Y, x1, y1, vsquare))
 		if inSquare(mouse.X, mouse.Y, x1, y1, vsquare) {
 			selectedPoints = append(selectedPoints, PVrecord{item: vul.id[i], log2fc: Xscatter, log10pv: vul.Y[i]})
 		}
 	}
 	v.drawSurface.selection = selectedPoints
-	log.Println("selected points", v.drawSurface.selection)
+	//log.Println("selected points", v.drawSurface.selection)
 }
 
 // inSquare check if x,y is inside a square centered in x1,y1

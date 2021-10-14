@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"image/color"
 	"lasso/src/filter"
-	"log"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -86,7 +85,7 @@ func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
 		r.gatesNumbers.x = append(r.gatesNumbers.x, x)
 		r.gatesNumbers.y = append(r.gatesNumbers.y, y)
 		r.gatesNumbers.nb++
-		log.Println("r.gatesNumbers", r.gatesNumbers)
+		//log.Println("r.gatesNumbers", r.gatesNumbers)
 	}
 
 	r.points = nil                        // reset polygone coordinates

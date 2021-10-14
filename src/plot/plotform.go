@@ -61,7 +61,7 @@ func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable
 			widget.NewFormItem("Dots in Bkgd color", unselcol),
 			widget.NewFormItem("dot size", plotdot)},
 		func(input bool) {
-			log.Println("input = ", input)
+			//log.Println("input = ", input)
 			if input {
 				//f.Set(0.3)
 				xp, _ = xplot.Get()
@@ -69,7 +69,7 @@ func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable
 				go makeplot(a, zoom, header, firstTable, xp, yp, plotName.Text, plotdot.Text, alledges, f)
 				go savePlotPrefs(a, xp, yp, plotName.Text, plotdot.Text)
 			}
-			
+
 		}, win)
 
 }

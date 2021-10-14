@@ -129,7 +129,7 @@ func TablePlot(zoom int, tableXYxy [][]string, polygon []Point, param Conf, colu
 	var xy [][]string
 	scaleFactor := param.Scale
 	rotate := param.Rotate
-	log.Println("start extract gates", polygon)
+	//log.Println("start extract gates", polygon)
 	for _, dot := range tableXYxy {
 		if len(dot) < 4 {
 			ch1 <- xy

@@ -195,7 +195,7 @@ func startComparison(e *Editor, header []string, headerMap map[string]interface{
 	group1, group2 := gatesInGroup(e, g1Map, g2Map)
 	// index and colnames of selected colum + XY coordinates for filtering
 	index, colnames, XYindex := selColIndex(header, headerMap, pref) // colnames : cellsId, colum selected, X,Y
-	log.Println(index)
+	//log.Println(index)
 	// to save RAM each line of the table is filtered when reading the table
 	table1, table2, test := filter.ReadCompareTable(e.zoom, firstTable, index, XYindex, group1, group2, param)
 	if !test {

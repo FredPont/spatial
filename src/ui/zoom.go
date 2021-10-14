@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"lasso/src/filter"
-	"log"
 	"math"
 	"strconv"
 
@@ -23,7 +22,7 @@ type Zoom struct {
 // zoom between 10-200%
 func (z *Zoom) updateZoom(val, zoomStep int, f binding.Float) {
 	f.Set(0.3) // progress bar
-	log.Println("val=", val, "zoom Min=", z.edit.zooMin)
+	//log.Println("val=", val, "zoom Min=", z.edit.zooMin)
 	if val < z.edit.zooMin {
 		val = z.edit.zooMin // zoom must be at least the zooMin
 		f.Set(0.)           // progress bar
@@ -65,7 +64,7 @@ func (e *Editor) setZoom(zoom, zoomStep int) {
 	w := float32(e.microOrigWidth) * float32(zoom) / 100
 	size := fyne.Size{Width: float32(w), Height: float32(h)}
 	e.min = size
-	log.Println("zoom=", zoom, "min=", e.min, "microscope H=", e.microOrigHeight)
+	//log.Println("zoom=", zoom, "min=", e.min, "microscope H=", e.microOrigHeight)
 
 	// zoom the gates
 	zoomGates(e, zoomStep)
