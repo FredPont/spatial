@@ -293,9 +293,13 @@ func foldChangePV(table1, table2 [][]string, colnames []string) []PVrecord {
 		fc, t := folchange(v1, v2)
 		// if undetermined fc == 0/0  the data is skiped
 		if !t {
+			log.Println("for", colnames[c])
 			continue
 		}
-		pv, _ := filter.PvMannWhitney(v1, v2)
+		pv, t1 := filter.PvMannWhitney(v1, v2)
+		if !t1 {
+			log.Println("for", colnames[c])
+		}
 		// PV corrected by Bonferroni
 		pvBonf := pvBonferroni(pv, float64(nc-1))
 
