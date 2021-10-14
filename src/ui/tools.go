@@ -31,7 +31,7 @@ func checkError(message string, err error) {
 
 // BuildTools build tools window with buttons and text entry
 func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
-	w2 := fyne.CurrentApp().NewWindow("Tool Box")
+	w2 := fyne.CurrentApp().NewWindow("Spatial Explorer")
 	preference := a.Preferences()
 	// get informations from data files to be used with buttons
 	dataFiles := filter.ListFiles("data/") // list all tables in data dir

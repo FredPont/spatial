@@ -75,8 +75,8 @@ func setMinWindow(prefSize float64, imgSize int) float32 {
 
 func title() {
 
-	fmt.Println("   ┌───────────────────────────────────────────────────┐") // unicode U+250C
-	fmt.Println("   │   single cell Spatial Gate (c)Frederic PONT 2021  │")
-	fmt.Println("   │       Free Software GNU General Public License    │")
-	fmt.Println("   └───────────────────────────────────────────────────┘")
+	fmt.Println("   ┌────────────────────────────────────────────────────┐") // unicode U+250C
+	fmt.Println("   │ Single Cell Spatial Explorer (c)Frederic PONT 2021 │")
+	fmt.Println("   │       Free Software GNU General Public License     │")
+	fmt.Println("   └────────────────────────────────────────────────────┘")
 }
