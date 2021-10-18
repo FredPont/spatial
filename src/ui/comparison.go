@@ -292,7 +292,7 @@ func foldChangePV(table1, table2 [][]string, colnames []string) []PVrecord {
 		v2 := getColum(c, table2)
 		fc, t := folchange(v1, v2)
 		// if undetermined fc == 0/0  the data is skiped
-		if !t {
+		if !t || fc == 1e300{
 			log.Println("for", colnames[c])
 			continue
 		}
