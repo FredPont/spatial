@@ -62,11 +62,10 @@ func ReadCompareTable(zoom int, filename string, colIndexes []int, XYindex []int
 			} else if g == 2 {
 				table2 = append(table2, selByIndex(record, colIndexes))
 			}
-		} else {
-			if g == -1 {
-				return [][]string{}, [][]string{}, false
-			}
 		}
+		// } else {
+		// 	return [][]string{}, [][]string{}, false
+		// }
 	}
 	return table1, table2, true
 }
@@ -84,5 +83,55 @@ func rowInGroup(zoom int, record []string, XYindex []int, group1, group2 [][]Poi
 			return true, 2
 		}
 	}
+	return false, 0
+}
+
+// ReadGateVsAll read only columns with positions in indexes and filter rows by groups of gates
+// xy coordinates are the last indexes in colIndexes
+func ReadGateVsAll(zoom int, filename string, colIndexes []int, XYindex []int, group1 [][]Point, param Conf) ([][]string, [][]string, bool) {
+	var table1, table2 [][]string
+	// Open the file
+	csvfile, err := os.Open("data/" + filename)
+	if err != nil {
+		log.Fatalln("Couldn't open the csv file", err)
+	}
+
+	// Parse the file
+	r := csv.NewReader(bufio.NewReader(csvfile))
+	//r := csv.NewReader(csvfile)
+	r.Comma = '\t'
+	r.Read() // skip header
+
+	// Iterate through the records
+	for {
+		// Read each record from csv
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		test, g := rowInGroup1(zoom, record, XYindex, group1, param)
+		if test {
+			if g == 1 {
+				table1 = append(table1, selByIndex(record, colIndexes))
+			}
+		} else {
+			table2 = append(table2, selByIndex(record, colIndexes))
+		}
+	}
+	return table1, table2, true
+}
+
+// rowInGroup1 filter row and put it in group1 for comparison depending on gates in group 1
+func rowInGroup1(zoom int, record []string, XYindex []int, group1 [][]Point, param Conf) (bool, int) {
+
+	for _, polygon1 := range group1 {
+		if filterRow(zoom, record, XYindex, polygon1, param) {
+			return true, 1
+		}
+	}
+
 	return false, 0
 }

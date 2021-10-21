@@ -67,7 +67,7 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 			//boxes.Reload()
 			compWindow.Content().Refresh()
 		}),
-		widget.NewButton("Compare", func() {
+		widget.NewButton("Compare Group2 / Group 1", func() {
 			//log.Println(g1Map, g2Map)
 			//log.Println(headerMap)
 
@@ -76,6 +76,16 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 			}
 			outfile := filename.Text
 			go startComparison(e, header, headerMap, preference, firstTable, f, g1Map, g2Map, outfile)
+		}),
+		widget.NewButton("Compare Outside / Group1", func() {
+			//log.Println(g1Map, g2Map)
+			//log.Println(headerMap)
+
+			if !chkGates(g1Map, g2Map) {
+				return
+			}
+			outfile := filename.Text
+			go compareGatevsAll(e, header, headerMap, preference, firstTable, f, g1Map, g2Map, outfile)
 		}),
 		widget.NewButton("Close", func() {
 			compWindow.Close()
@@ -292,7 +302,7 @@ func foldChangePV(table1, table2 [][]string, colnames []string) []PVrecord {
 		v2 := getColum(c, table2)
 		fc, t := folchange(v1, v2)
 		// if undetermined fc == 0/0  the data is skiped
-		if !t || fc == 1e300{
+		if !t || fc == 1e300 {
 			log.Println("for", colnames[c])
 			continue
 		}

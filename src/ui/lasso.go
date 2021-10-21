@@ -64,7 +64,7 @@ func (r *interactiveRaster) drawGateNb(x, y int, gateNB string) {
 	offset := 20 // x,y offset from 1st dot of the gate
 	//gateNB := strconv.Itoa(len(r.alledges) - 1)
 	//gateNB := strconv.Itoa(r.gatesNumbers.nb)
-	AbsText(r.edit.gateNumberContainer, x-offset, y+offset, gateNB, 20, color.NRGBA{212, 170, 0, 255})
+	AbsText(r.edit.gateNumberContainer, x-offset, y+offset, gateNB, 20, color.NRGBA{255, 255, 0, 255})
 }
 
 func abs(x int) int {
