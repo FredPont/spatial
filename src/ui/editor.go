@@ -65,7 +65,7 @@ func NewEditor() (*Editor, int, int) {
 // BuildUI creates the main window of our application
 func (e *Editor) BuildUI(w fyne.Window) {
 	e.win = w
-	e.layer = container.NewMax(e.drawSurface, e.microscop, e.clusterContainer, e.gateContainer, e.gateNumberContainer, e.gateDotsContainer)
+	e.layer = container.NewMax(e.drawSurface, e.microscop, e.clusterContainer, e.gateContainer, e.gateDotsContainer, e.gateNumberContainer)
 
 	w.SetContent(container.NewScroll(e.layer))
 }

@@ -38,10 +38,9 @@ func compareGatevsAll(e *Editor, header []string, headerMap map[string]interface
 		f.Set(0.)
 		return
 	}
-	f.Set(.5)
-
+	f.Set(0.5)
 	pvfcTable := foldChangePV(table1, table2, colnames)
-
+	f.Set(0.8)
 	// log.Println(colnames, group1, group2)
 	// log.Println(table1)
 	// log.Println(table2)

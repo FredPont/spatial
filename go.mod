@@ -3,8 +3,7 @@ module lasso
 go 1.17
 
 require (
-	//fyne.io/fyne v1.4.3 // indirect
-	fyne.io/fyne/v2 v2.1.1-0.20211018190809-cd2ef3e0d8c4
+	fyne.io/fyne/v2 v2.1.1
 	github.com/ajstarks/svgo v0.0.0-20210927141636-6d70534b1098 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-fonts/liberation v0.2.0 // indirect
