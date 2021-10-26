@@ -108,13 +108,13 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		widget.NewButton("Compare gates", func() {
 			go showCompareWindow(a, e, preference, f, header, firstTable)
 		}),
-		widget.NewButton("Preferences", func() {
+		widget.NewButtonWithIcon("Preferences", theme.SettingsIcon(), func() {
 			go pref.BuildPref(a, header)
 		}),
 		// zoom : very important : never unzom under the window size
 		// in that case the image size = window size and zoom factor is wrong !
 		newZoom(e, a, f),
-		widget.NewButton("Exit", func() {
+		widget.NewButtonWithIcon("Exit", theme.LogoutIcon(), func() {
 			a.Quit()
 			//os.Exit(0)
 		}),
