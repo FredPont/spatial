@@ -106,7 +106,7 @@ func refreshVulanoTools(v *Vulcano) {
 	// show choice of different gradien
 	gradExpression := binding.BindPreferenceString("gradExpression", pref) // pref binding for the expression gradien to avoid reset for each vulcano dot
 	selGrad, _ := gradExpression.Get()
-	grad := widget.NewRadioGroup([]string{"Rainbow", "White - Red", "Yellow - Red", "Purple - Red", "Inferno", "Blue - Yellow - Red"}, func(s string) {
+	grad := widget.NewRadioGroup([]string{"Turbo", "Viridis", "Inferno", "White - Red", "Yellow - Red", "Purple - Red", "Blue - Yellow - Red"}, func(s string) {
 	})
 	if selGrad != "" {
 		grad.Selected = selGrad
@@ -127,7 +127,7 @@ func refreshVulanoTools(v *Vulcano) {
 	content := container.New(layout.
 		NewGridLayoutWithColumns(2), container.NewVBox(
 		widget.NewLabel("Left click and right click on the vulcano plot to select points"),
-		widget.NewLabel("Select your gradien"),
+		widget.NewLabel("Select your gradient"),
 		grad,
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,

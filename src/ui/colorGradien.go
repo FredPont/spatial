@@ -44,6 +44,12 @@ func InferGrad(val float64) RGB {
 	return rgbModel(grad.At(val))
 }
 
+// ViridisGrad Viridis rainbow gradien
+func ViridisGrad(val float64) RGB {
+	grad := colorgrad.Viridis()
+	return rgbModel(grad.At(val))
+}
+
 // PuRdGradien purple Red
 func PuRdGradien(val float64) RGB {
 	grad := colorgrad.PuRd()
