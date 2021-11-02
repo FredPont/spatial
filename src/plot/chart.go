@@ -12,6 +12,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/data/binding"
+	"github.com/mazznoer/colorgrad"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
@@ -112,14 +113,31 @@ func makeScatter(a fyne.App, alldotsInGates [][][]string, scatterData plotter.XY
 }
 
 func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg.Length) {
-	gatedotsR, gatedotsG, gatedotsB, gatedotsA := GetPrefColorRGBA(a, "gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA")
-
-	for _, gate := range alldotsInGates {
+	nbGates := len(alldotsInGates)
+	for i, gate := range alldotsInGates {
 		scatterData := strToplot(gate)
-		addPoints(scatterData, p, dotsize, color.RGBA{R: uint8(gatedotsR), G: uint8(gatedotsG), B: uint8(gatedotsB), A: uint8(gatedotsA)})
-		//addPoints(scatterData, p, dotsize, color.RGBA{R: 75, G: 0, B: 130, A: 255})
+		if nbGates == 1 {
+			gatedotsR, gatedotsG, gatedotsB, gatedotsA := GetPrefColorRGBA(a, "gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA")
+			addPoints(scatterData, p, dotsize, color.RGBA{R: uint8(gatedotsR), G: uint8(gatedotsG), B: uint8(gatedotsB), A: uint8(gatedotsA)})
+		} else {
+			addPoints(scatterData, p, dotsize, dotColors(nbGates, i))
+		}
+
+		//
 	}
 
+}
+
+// dotColors computes the color of scatter dots
+// for a total number of clusters "nbGates"
+func dotColors(nbGates, gateIndex int) color.RGBA {
+	grad := colorgrad.Rainbow().Sharp(uint(nbGates+1), 0.2)
+	return rgbaModel(grad.Colors(uint(nbGates + 1))[gateIndex])
+}
+
+func rgbaModel(c color.Color) color.RGBA {
+	r, g, b, a := c.RGBA()
+	return color.RGBA{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8), uint8(a >> 8)}
 }
 
 // GetPrefColorRGBA get the R, G, B, A values from preferences
