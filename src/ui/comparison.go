@@ -104,7 +104,7 @@ func listColums(header []string, headerMap map[string]interface{}) fyne.CanvasOb
 	strings := binding.BindStringList(&header)
 	l := widget.NewListWithData(strings,
 		func() fyne.CanvasObject {
-			return widget.NewCheck("text", func(val bool) {
+			return widget.NewCheck("columns names", func(val bool) {
 				log.Println(val)
 			})
 
@@ -151,7 +151,7 @@ func listGates(gates []string, gMap map[string]interface{}) fyne.CanvasObject {
 	strings := binding.BindStringList(&gates)
 	l := widget.NewListWithData(strings,
 		func() fyne.CanvasObject {
-			return widget.NewCheck("text", func(val bool) {
+			return widget.NewCheck("gates numbers", func(val bool) {
 				log.Println(val)
 			})
 

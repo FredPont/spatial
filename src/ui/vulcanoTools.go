@@ -86,7 +86,7 @@ func refreshVulanoTools(v *Vulcano) {
 			return len(data), len(data[0])
 		},
 		func() fyne.CanvasObject {
-			return widget.NewLabel("wide content")
+			return widget.NewLabel("wide content : gene exression, pathways etc..")
 		},
 		func(i widget.TableCellID, o fyne.CanvasObject) {
 			o.(*widget.Label).SetText(data[i.Row][i.Col])

@@ -59,7 +59,7 @@ func ShowTable(data []string, sel binding.String, but *widget.Button, winLabel s
 		func() int { return len(data) },
 		func() fyne.CanvasObject {
 			//icon := widget.NewIcon(theme.FileIcon())
-			label := widget.NewLabel("List item")
+			label := widget.NewLabel("wide content : gene exression, pathways etc..")
 			return container.NewHBox(label)
 		},
 		func(index int, template fyne.CanvasObject) {
