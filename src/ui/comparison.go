@@ -1,10 +1,10 @@
 package ui
 
 import (
-	"lasso/src/filter"
 	"log"
 	"math"
 	"os"
+	"spatial/src/filter"
 	"strconv"
 	"strings"
 

@@ -4,11 +4,11 @@ import (
 	"encoding/csv"
 	"fmt"
 	"image/png"
-	"lasso/src/filter"
-	"lasso/src/plot"
-	"lasso/src/pref"
+	"spatial/src/filter"
+	"spatial/src/plot"
+	"spatial/src/pref"
 
-	//"lasso/src/plot"
+	//"spatial/src/plot"
 
 	"log"
 	"os"

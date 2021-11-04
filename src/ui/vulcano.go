@@ -2,8 +2,8 @@ package ui
 
 import (
 	"image/color"
-	"lasso/src/filter"
 	"log"
+	"spatial/src/filter"
 	"strconv"
 
 	"fyne.io/fyne/v2"

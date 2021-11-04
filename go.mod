@@ -1,4 +1,4 @@
-module lasso
+module spatial
 
 go 1.17
 

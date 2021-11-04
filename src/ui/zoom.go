@@ -2,8 +2,8 @@ package ui
 
 import (
 	"fmt"
-	"lasso/src/filter"
 	"math"
+	"spatial/src/filter"
 	"strconv"
 
 	"fyne.io/fyne/v2"

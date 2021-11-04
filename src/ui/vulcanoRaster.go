@@ -20,10 +20,10 @@ package ui
 
 import (
 	"image/color"
-	"lasso/src/filter"
 	"log"
+	"spatial/src/filter"
 
-	//"lasso/src/filter"
+	//"spatial/src/filter"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"

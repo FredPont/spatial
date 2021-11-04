@@ -2,8 +2,8 @@ package ui
 
 import (
 	"fmt"
-	"lasso/src/filter"
 	"reflect"
+	"spatial/src/filter"
 	"testing"
 )
 

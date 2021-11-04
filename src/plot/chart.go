@@ -4,9 +4,9 @@ import (
 	"encoding/csv"
 	"image/color"
 	"io"
-	"lasso/src/filter"
 	"log"
 	"os"
+	"spatial/src/filter"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -114,16 +114,36 @@ func makeScatter(a fyne.App, alldotsInGates [][][]string, scatterData plotter.XY
 
 func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg.Length) {
 	nbGates := len(alldotsInGates)
+
 	for i, gate := range alldotsInGates {
 		scatterData := strToplot(gate)
+		// if only one gate, use custom color
 		if nbGates == 1 {
 			gatedotsR, gatedotsG, gatedotsB, gatedotsA := GetPrefColorRGBA(a, "gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA")
 			addPoints(scatterData, p, dotsize, color.RGBA{R: uint8(gatedotsR), G: uint8(gatedotsG), B: uint8(gatedotsB), A: uint8(gatedotsA)})
 		} else {
-			addPoints(scatterData, p, dotsize, dotColors(nbGates, i))
+			//red := exampleThumbnailer{Color: color.NRGBA{R: 255, A: 255}}
+
+			addPoints(scatterData, p, dotsize, dotColors(nbGates, i)) // if more than one gate, use rainbow colors
 		}
 
-		//
+	}
+
+	//
+	addLegend(nbGates, p)
+}
+
+func addLegend(n int, p *plot.Plot) {
+	pts := make(plotter.XYs, 1, 1)
+	log.Println("xmin", p.X.Min, "ymin", p.Y.Min)
+	//legColors := make([]color.RGBA, n)
+	pts[0].X = p.X.Min - (p.X.Max-p.X.Min)*3./100.
+	dy := (p.Y.Max - p.Y.Min)
+	for i := 0; i < n; i++ {
+		pts[0].Y = dy*2./100.*float64(i) + p.Y.Min
+		addPoints(pts, p, 5, dotColors(n, i))
+		//p.Add("text")
+
 	}
 
 }

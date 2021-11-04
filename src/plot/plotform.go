@@ -2,9 +2,9 @@ package plot
 
 import (
 	"image/color"
-	"lasso/src/filter"
-	"lasso/src/pref"
 	"log"
+	"spatial/src/filter"
+	"spatial/src/pref"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"

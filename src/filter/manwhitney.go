@@ -1,8 +1,8 @@
 package filter
 
 import (
-	"lasso/src/filter/stats"
 	"log"
+	"spatial/src/filter/stats"
 )
 
 // PvMannWhitney pvalue for MannWhitney test

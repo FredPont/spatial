@@ -19,8 +19,8 @@
 package ui
 
 import (
-	"lasso/src/filter"
 	"log"
+	"spatial/src/filter"
 	"strconv"
 
 	"fyne.io/fyne/v2"

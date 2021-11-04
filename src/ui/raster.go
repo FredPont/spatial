@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 	"image/color"
-	"lasso/src/filter"
+	"spatial/src/filter"
 	"strconv"
 
 	"fyne.io/fyne/v2"

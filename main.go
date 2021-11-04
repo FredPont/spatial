@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"lasso/src/ui"
 	"log"
+	"spatial/src/ui"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"

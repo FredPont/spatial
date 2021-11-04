@@ -1,6 +1,6 @@
 package ui
 
-import "lasso/src/filter"
+import "spatial/src/filter"
 
 func initAlledges(e *Editor) {
 	e.drawSurface.alledges = nil

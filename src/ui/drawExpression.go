@@ -2,10 +2,10 @@ package ui
 
 import (
 	"image/color"
-	"lasso/src/filter"
-	"lasso/src/plot"
-	"lasso/src/pref"
 	"log"
+	"spatial/src/filter"
+	"spatial/src/plot"
+	"spatial/src/pref"
 	"strconv"
 	"time"
 
