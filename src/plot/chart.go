@@ -61,21 +61,35 @@ func makeplot(a fyne.App, zoom int, header []string, filename, colX, colY, plotN
 
 func extractGateDots(a fyne.App, zoom int, tableXYxy [][]string, alledges [][]filter.Point, colX, colY string) [][][]string {
 
-	var allXY [][][]string // all xy coordinates of dots in all gates
+	//var allXY [][][]string // all xy coordinates of dots in all gates
 	param := prefToConf(a.Preferences())
 	gateNB := len(alledges)
+	dotInGates := make(map[int][][]string, gateNB) // XYdict : gateNumber => dots in that gate. it contains all xy coordinates of dots in all gates and the index of the gate
 	//log.Println("all edges", alledges)
-	ch1 := make(chan [][]string, gateNB) // ch1 store the xy coordinates of dots in one gate
-	for _, polygon := range alledges {
-		go filter.TablePlot(zoom, tableXYxy, polygon, param, colX, colY, ch1)
+	//ch1 := make(chan [][]string, gateNB) // ch1 store the xy coordinates of dots in one gate
+	ch1 := make(chan filter.DotsGate, gateNB) // ch1 store the xy coordinates of dots in one gate
+	for idx, polygon := range alledges {
+		go filter.TablePlot(zoom, tableXYxy, polygon, param, colX, colY, ch1, idx)
 	}
 	for i := 0; i < gateNB; i++ {
 		msg := <-ch1
-		if len(msg) > 0 {
-			allXY = append(allXY, msg)
+		if len(msg.Dots) > 0 {
+			//allXY = append(allXY, msg)
+			dotInGates[msg.Idx] = msg.Dots
 		}
 	}
 	//log.Println("all gates gates", allXY)
+	//return allXY
+	return sortGates(dotInGates, gateNB)
+}
+
+// sort by increasing index the gates that are in random order because of paralelisation.
+func sortGates(dotInGates map[int][][]string, gateNB int) [][][]string {
+	var allXY [][][]string // all xy coordinates of dots in all gates
+	for i := 0; i < gateNB; i++ {
+		allXY = append(allXY, dotInGates[i])
+	}
+
 	return allXY
 }
 
@@ -120,33 +134,29 @@ func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg
 		// if only one gate, use custom color
 		if nbGates == 1 {
 			gatedotsR, gatedotsG, gatedotsB, gatedotsA := GetPrefColorRGBA(a, "gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA")
-			addPoints(scatterData, p, dotsize, color.RGBA{R: uint8(gatedotsR), G: uint8(gatedotsG), B: uint8(gatedotsB), A: uint8(gatedotsA)})
+			addPoints(scatterData, p, dotsize, color.RGBA{R: uint8(gatedotsR), G: uint8(gatedotsG), B: uint8(gatedotsB), A: uint8(gatedotsA)}, i)
 		} else {
-			//red := exampleThumbnailer{Color: color.NRGBA{R: 255, A: 255}}
 
-			addPoints(scatterData, p, dotsize, dotColors(nbGates, i)) // if more than one gate, use rainbow colors
+			addPoints(scatterData, p, dotsize, dotColors(nbGates, i), i) // if more than one gate, use rainbow colors
+
 		}
 
 	}
 
-	//
-	addLegend(nbGates, p)
 }
 
-func addLegend(n int, p *plot.Plot) {
-	pts := make(plotter.XYs, 1, 1)
-	log.Println("xmin", p.X.Min, "ymin", p.Y.Min)
-	//legColors := make([]color.RGBA, n)
-	pts[0].X = p.X.Min - (p.X.Max-p.X.Min)*3./100.
-	dy := (p.Y.Max - p.Y.Min)
-	for i := 0; i < n; i++ {
-		pts[0].Y = dy*2./100.*float64(i) + p.Y.Min
-		addPoints(pts, p, 5, dotColors(n, i))
-		//p.Add("text")
-
-	}
-
-}
+// func addLegend(n int, p *plot.Plot) {
+// 	pts := make(plotter.XYs, 1, 1)
+// 	log.Println("xmin", p.X.Min, "ymin", p.Y.Min)
+// 	//legColors := make([]color.RGBA, n)
+// 	pts[0].X = p.X.Min - (p.X.Max-p.X.Min)*3./100.
+// 	dy := (p.Y.Max - p.Y.Min)
+// 	for i := 0; i < n; i++ {
+// 		pts[0].Y = dy*2./100.*float64(i) + p.Y.Min
+// 		addPoints(pts, p, 5, dotColors(n, i))
+// 		//p.Add("text")
+// 	}
+// }
 
 // dotColors computes the color of scatter dots
 // for a total number of clusters "nbGates"
@@ -190,7 +200,7 @@ func savePlot(p *plot.Plot, w, h vg.Length, filename string) {
 	}
 }
 
-func addPoints(pts plotter.XYs, p *plot.Plot, dotsize vg.Length, clr color.Color) {
+func addPoints(pts plotter.XYs, p *plot.Plot, dotsize vg.Length, clr color.Color, gateNB int) {
 	s2, err := plotter.NewScatter(pts)
 	if err != nil {
 		panic(err)
@@ -198,7 +208,9 @@ func addPoints(pts plotter.XYs, p *plot.Plot, dotsize vg.Length, clr color.Color
 	s2.GlyphStyle.Shape = draw.CircleGlyph{}
 	s2.GlyphStyle.Radius = dotsize
 	s2.GlyphStyle.Color = clr
-	p.Add(s2)
+	p.Add(s2)                              // add dots
+	p.Legend.Add(strconv.Itoa(gateNB), s2) //add dots color and gateNB in legend
+
 }
 
 func readscv() [][]string {

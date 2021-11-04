@@ -36,6 +36,12 @@ type Conf struct {
 	Rotate bool
 }
 
+// DotsGate stores the dots in one gate and the index of the gate
+type DotsGate struct {
+	Dots [][]string // dots in one gate
+	Idx  int        // index of the gate
+}
+
 // FilterTable filter the scRNAseq table to extract cells in polygon
 func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf, gateNumber int) {
 
@@ -123,7 +129,7 @@ func inGate(zoom int, x, y int64, polygon []Point) bool {
 }
 
 // TablePlot filter the scRNAseq table XY coordinates to extract cells in polygon to draw a plot and return XY coordinates
-func TablePlot(zoom int, tableXYxy [][]string, polygon []Point, param Conf, columnX, columnY string, ch1 chan<- [][]string) {
+func TablePlot(zoom int, tableXYxy [][]string, polygon []Point, param Conf, columnX, columnY string, ch1 chan<- DotsGate, idx int) {
 	// tableXYxy contains the index of the 2 columns to plot and the XY columns with the image coordinates
 	// cf plot.makeplot() mapAndGates := filter.ReadColumns(filename, colIndexes)
 	var xy [][]string
@@ -132,7 +138,7 @@ func TablePlot(zoom int, tableXYxy [][]string, polygon []Point, param Conf, colu
 	//log.Println("start extract gates", polygon)
 	for _, dot := range tableXYxy {
 		if len(dot) < 4 {
-			ch1 <- xy
+			ch1 <- DotsGate{Dots: xy, Idx: idx}
 			return
 		}
 		// x,y = coordinates of the dots in gate
@@ -155,7 +161,7 @@ func TablePlot(zoom int, tableXYxy [][]string, polygon []Point, param Conf, colu
 		}
 	}
 	//log.Println("xy extract gates", xy)
-	ch1 <- xy
+	ch1 <- DotsGate{Dots: xy, Idx: idx}
 	//return xy
 }
 
