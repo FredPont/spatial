@@ -42,9 +42,9 @@ func (r *interactiveRaster) CreateRenderer() fyne.WidgetRenderer {
 	return &rasterWidgetRender{raster: r, bg: canvas.NewRasterWithPixels(bgPattern)}
 }
 
-////////////////////////////
-// Dragged functions
-////////////////////////////
+///////////////////////////////
+// Dragged functions for brush
+///////////////////////////////
 
 func (r *interactiveRaster) Dragged(ev *fyne.DragEvent) {
 	// drag mode active only for pencil
@@ -81,9 +81,9 @@ func (r *interactiveRaster) DragEnd() {
 	r.edit.gateContainer.Refresh()
 }
 
-////////////////////////////
-// Tapped functions
-////////////////////////////
+/////////////////////////////////////
+// Tapped functions for polygon lasso
+/////////////////////////////////////
 
 // this function draw the lasso and store the lasso coordinates in r.points
 func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {

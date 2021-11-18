@@ -33,24 +33,43 @@ func (z *Zoom) updateZoom(val, zoomStep int, f binding.Float) {
 		return
 	}
 	z.edit.setZoom(val, zoomStep)
-	z.zoom.SetText(fmt.Sprintf("Zoom : %d%%", z.edit.zoom))
+	z.zoom.SetText(fmt.Sprintf("%d%%", z.edit.zoom))
 	f.Set(0.) // progress bar
 }
 
 // create a zoom widget to increase/decrease size by 10%
 // it is not possible to zoom more than 100% of image native size
 func newZoom(edit *Editor, a fyne.App, f binding.Float) fyne.CanvasObject {
-	z := &Zoom{edit: edit, zoom: widget.NewLabel("Zoom : 100%")}
+	z := &Zoom{edit: edit, zoom: widget.NewLabel("100%")}
 	edit.zoomMin(a) //compute zoom Min
-	step := 10      // zoom step
-	zoom := container.NewHBox(
-		widget.NewButtonWithIcon("", theme.ZoomOutIcon(), func() {
+	// zoom step
+	step := 10
+	step2 := 1
+	step3 := 50
+
+	zoom := container.NewVBox(container.NewHBox(
+		widget.NewButtonWithIcon("10%", theme.ZoomOutIcon(), func() {
 			go z.updateZoom(z.edit.zoom-step, -step, f)
 		}),
 		z.zoom,
-		widget.NewButtonWithIcon("", theme.ZoomInIcon(), func() {
+		widget.NewButtonWithIcon("10%", theme.ZoomInIcon(), func() {
 			go z.updateZoom(z.edit.zoom+step, step, f)
-		}))
+		})),
+		container.NewHBox(
+			widget.NewButton("-1%", func() {
+				go z.updateZoom(z.edit.zoom-step2, -step2, f)
+			}),
+			widget.NewButton("-50%", func() {
+				go z.updateZoom(z.edit.zoom-step3, -step3, f)
+			}),
+			widget.NewButton("+50%", func() {
+				go z.updateZoom(z.edit.zoom+step3, step3, f)
+			}),
+			widget.NewButton("+1%", func() {
+				go z.updateZoom(z.edit.zoom+step2, step2, f)
+			}),
+		),
+	)
 	return zoom
 }
 
@@ -87,12 +106,12 @@ func (e *Editor) zoomMin(a fyne.App) {
 	wH, _ := winH.Get()
 
 	e.zooMin = findMin(imgH, imgW, wH, wW)
-
+	//log.Println("zoom min : ", e.zooMin)
 }
 
 // find zoom min between 10-200%
 // image and zoomed image must be larger than the window
-func findMin(imgH, imgW int, wH, wW float64) int {
+func findMin2(imgH, imgW int, wH, wW float64) int {
 	zH := 100 * wH / float64(imgH)
 	zW := 100 * wW / float64(imgW)
 	zMax := math.Max(zH, zW)
@@ -104,6 +123,25 @@ func findMin(imgH, imgW int, wH, wW float64) int {
 			return int(i)
 		} else if zMax > i && zMax < i+10 {
 			return int(i + 10)
+		}
+
+	}
+
+	return 10
+}
+
+func findMin(imgH, imgW int, wH, wW float64) int {
+	zH := 100. * wH / float64(imgH)
+	zW := 100. * wW / float64(imgW)
+	zMax := math.Max(zH, zW)
+
+	// image and un-zoomed image must be larger than the window
+
+	for i := 10.; i < 200.; i += 1. {
+		if zMax == i {
+			return int(i)
+		} else if zMax > i && zMax < i+1 {
+			return int(i + 1)
 		}
 
 	}
