@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -49,8 +50,8 @@ func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable
 	plotdot.SetText(ds)
 
 	// dots color
-	gateDotscol := widget.NewButton("color", func() { GateDotscolor(a, win) })
-	unselcol := widget.NewButton("color", func() { unseldcolor(a, win) })
+	gateDotscol := widget.NewButtonWithIcon("", theme.ColorPaletteIcon(), func() { GateDotscolor(a, win) })
+	unselcol := widget.NewButtonWithIcon("", theme.ColorPaletteIcon(), func() { unseldcolor(a, win) })
 
 	dialog.ShowForm("Plot parameters", "Enter", "Cancel",
 		[]*widget.FormItem{
