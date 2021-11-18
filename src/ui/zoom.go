@@ -60,10 +60,16 @@ func newZoom(edit *Editor, a fyne.App, f binding.Float) fyne.CanvasObject {
 			// 	go z.updateZoom(z.edit.zoom-step2, -step2, f)
 			// }),
 			widget.NewButtonWithIcon("", theme.ZoomFitIcon(), func() {
+				if z.edit.zoom == z.edit.zooMin {
+					return
+				}
 				step2 := z.edit.zoom - z.edit.zooMin
 				go z.updateZoom(z.edit.zooMin, -step2, f)
 			}),
 			widget.NewButton("100%", func() {
+				if z.edit.zoom == 100 {
+					return
+				}
 				step2 := 100 - z.edit.zooMin
 				go z.updateZoom(100, step2, f)
 			}),
