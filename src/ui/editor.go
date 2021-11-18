@@ -31,6 +31,7 @@ type Editor struct {
 	zoom                            int             // image zoom
 	zooMin                          int             // minimal value of zoom to fit the window
 	microOrigWidth, microOrigHeight int             // size of the microscop picture not zoomed
+	brush                           string          // the brush selected can be "lasso" or "pencil"
 }
 
 // GateNB number holds the gate number coordinates and the number of gates starting from 1

@@ -59,6 +59,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 	content := container.NewVBox(
 		logo(),
 		gatename,
+		brushesButtons(e, a),
 		widget.NewButton("Filter tables with gates", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
@@ -136,20 +137,20 @@ func logo() fyne.CanvasObject {
 // clear last gate on draw surface and init all edges
 func clearLastGate(e *Editor) {
 	//log.Println("nb de lignes", e.drawSurface.gatesLines)
-	if len(e.drawSurface.gatesLines) < 1 { // less than 1 lines = 1 gate
+	if e.drawSurface.gatesNumbers.nb < 2 || len(e.drawSurface.gatesLines) < 2 { // less than 2 gates
 		return
 	}
-	nob := len(e.gateNumberContainer.Objects) - 1 // nb of objects in the gate nb container
-	//log.Println("nb de gate names", nob)
-	if nob < 2 {
-		return // less than 2 gates nb : no gates to clear ! the last one must be cleared by clear all gates button
-	}
-	e.gateNumberContainer.Objects = e.gateNumberContainer.Objects[0:nob] // remove last object = last gate name
+	//log.Println("e.drawSurface.gatesNumbers.nb=", e.drawSurface.gatesNumbers.nb)
+	nob := len(e.gateNumberContainer.Objects) - 1 // nb of objects in the gate nb container minus the last one
+	log.Println("nb de gate names", nob)
+	
+	e.gateNumberContainer.Objects = e.gateNumberContainer.Objects[:nob] // remove last object = last gate name
 
 	e.drawSurface.clearPolygon(e.drawSurface.gatesLines)
-	e.gateContainer.Refresh()
+
 	initLastedges(e)   // reset last edges and all points
 	initLastGatesNB(e) // clear last gate number coordinates and decrease gateNB
+	e.gateContainer.Refresh()
 }
 
 // save the gates to csv files withe ImageJ format and 100% zoom

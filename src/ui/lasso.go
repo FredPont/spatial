@@ -44,9 +44,16 @@ func (r *interactiveRaster) drawline(x, y, x1, y1 int) fyne.CanvasObject {
 }
 
 // drawline a circle at x,y position to the gate dot container
-func (e *Editor) drawcircleGate(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
+func (e *Editor) drawcircleGateDot(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
 	c := iCircle(x, y, ray, color)   // draw circle rayon ray
 	e.gateDotsContainer.AddObject(c) // add the cicle to the cluster container
+	return c
+}
+
+// drawline a circle at x,y position to the gate  container
+func (e *Editor) drawcircleGateCont(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
+	c := iCircle(x, y, ray, color) // draw circle rayon ray
+	e.gateContainer.AddObject(c)   // add the cicle to the cluster container
 	return c
 }
 

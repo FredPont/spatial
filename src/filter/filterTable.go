@@ -38,7 +38,7 @@ type Conf struct {
 
 // DotsGate stores the dots in one gate and the index of the gate
 type DotsGate struct {
-	Dots [][]string // dots in one gate
+	Dots [][]string // x,y dots in one gate
 	Idx  int        // index of the gate
 }
 

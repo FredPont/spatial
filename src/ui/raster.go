@@ -42,8 +42,55 @@ func (r *interactiveRaster) CreateRenderer() fyne.WidgetRenderer {
 	return &rasterWidgetRender{raster: r, bg: canvas.NewRasterWithPixels(bgPattern)}
 }
 
+////////////////////////////
+// Dragged functions
+////////////////////////////
+
+func (r *interactiveRaster) Dragged(ev *fyne.DragEvent) {
+	// drag mode active only for pencil
+	if r.edit.brush == "lasso" {
+		return
+	}
+	x := int(ev.Position.X)
+	y := int(ev.Position.Y)
+	r.points = append(r.points, filter.Point{X: x, Y: y}) // store new edges
+	// draw a dot at the mouse position
+	circle := r.edit.drawcircleGateCont(x, y, 1, color.NRGBA{212, 170, 0, 255})
+	r.tmpLines = append(r.tmpLines, circle) // store new circles objects in the r.tmpLines slice
+	r.edit.gateContainer.Refresh()          // refresh only the gate container,
+}
+
+func (r *interactiveRaster) DragEnd() {
+	// drag mode active only for pencil
+	if r.edit.brush == "lasso" {
+		return
+	}
+	x := r.points[0].X
+	y := r.points[0].Y
+	r.alledges = append(r.alledges, r.points) // store new edges
+	// draw gate number
+	gateNB := strconv.Itoa(r.gatesNumbers.nb)
+	r.drawGateNb(x, y, gateNB)
+	// store the position of the gate number
+	r.gatesNumbers.x = append(r.gatesNumbers.x, x)
+	r.gatesNumbers.y = append(r.gatesNumbers.y, y)
+	r.gatesNumbers.nb++
+	r.points = nil            // reset polygone coordinates
+	r.gatesLines = r.tmpLines // store new circles objects in the r.gatesLines
+	r.tmpLines = nil          // initialisation of gate lines
+	r.edit.gateContainer.Refresh()
+}
+
+////////////////////////////
+// Tapped functions
+////////////////////////////
+
 // this function draw the lasso and store the lasso coordinates in r.points
 func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
+	// Tap mode active only for lasso
+	if r.edit.brush == "pencil" {
+		return
+	}
 	var line fyne.CanvasObject // store all line pixels
 	x := int(ev.Position.X)
 	y := int(ev.Position.Y)
@@ -53,16 +100,20 @@ func (r *interactiveRaster) Tapped(ev *fyne.PointEvent) {
 		line = r.drawline(x2, y2, x, y)              // draw a line between the new pixel cliked and the last one stored in r.points
 	}
 	fmt.Println(x, y)
-	r.points = append(r.points, filter.Point{x, y}) // store new edges
-	r.tmpLines = append(r.tmpLines, line)           // store new lines objects
+	r.points = append(r.points, filter.Point{X: x, Y: y}) // store new edges
+	r.tmpLines = append(r.tmpLines, line)                 // store new lines objects
 
 	// draw a dot at the mouse position
-	r.edit.drawcircleGate(x, y, 5, color.NRGBA{212, 170, 0, 255})
-	//r.edit.layer.Refresh() // slow
+	r.edit.drawcircleGateDot(x, y, 5, color.NRGBA{212, 170, 0, 255})
 	r.edit.gateContainer.Refresh() // refresh only the gate container, faster than refresh layer
 }
 
+// this function close the lasso and save the gate lines
 func (r *interactiveRaster) TappedSecondary(*fyne.PointEvent) {
+	// Tap mode active only for lasso
+	if r.edit.brush == "pencil" {
+		return
+	}
 	var line fyne.CanvasObject // store all line objects
 	var x, y int
 	lp := len(r.points)
