@@ -40,6 +40,7 @@ func makeplot(a fyne.App, zoom int, header []string, filename, colX, colY, plotN
 	alldotsInGates := extractGateDots(a, zoom, mapAndGates, alledges, colX, colY)
 	if len(alldotsInGates) < 1 {
 		log.Println("Plot canceled or no dots in gate !")
+		f.Set(0.)
 		return
 	}
 	//fmt.Println(alldotsInGates)

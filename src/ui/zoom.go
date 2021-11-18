@@ -33,41 +33,42 @@ func (z *Zoom) updateZoom(val, zoomStep int, f binding.Float) {
 		return
 	}
 	z.edit.setZoom(val, zoomStep)
-	z.zoom.SetText(fmt.Sprintf("%d%%", z.edit.zoom))
+	z.zoom.SetText(fmt.Sprintf("Zoom %d%%", z.edit.zoom))
 	f.Set(0.) // progress bar
 }
 
 // create a zoom widget to increase/decrease size by 10%
 // it is not possible to zoom more than 100% of image native size
 func newZoom(edit *Editor, a fyne.App, f binding.Float) fyne.CanvasObject {
-	z := &Zoom{edit: edit, zoom: widget.NewLabel("100%")}
+	z := &Zoom{edit: edit, zoom: widget.NewLabel("Zoom 100%")}
 	edit.zoomMin(a) //compute zoom Min
 	// zoom step
 	step := 10
-	step2 := 1
-	step3 := 50
+	//step2 := 1
+	//step3 := 50
 
 	zoom := container.NewVBox(container.NewHBox(
 		widget.NewButtonWithIcon("10%", theme.ZoomOutIcon(), func() {
 			go z.updateZoom(z.edit.zoom-step, -step, f)
 		}),
-		z.zoom,
+
 		widget.NewButtonWithIcon("10%", theme.ZoomInIcon(), func() {
 			go z.updateZoom(z.edit.zoom+step, step, f)
 		})),
 		container.NewHBox(
-			widget.NewButton("-1%", func() {
-				go z.updateZoom(z.edit.zoom-step2, -step2, f)
+			// widget.NewButton("-1%", func() {
+			// 	go z.updateZoom(z.edit.zoom-step2, -step2, f)
+			// }),
+			widget.NewButtonWithIcon("", theme.ZoomFitIcon(), func() {
+				go z.updateZoom(z.edit.zooMin, -step, f)
 			}),
-			widget.NewButton("-50%", func() {
-				go z.updateZoom(z.edit.zoom-step3, -step3, f)
+			widget.NewButton("100%", func() {
+				go z.updateZoom(100, step, f)
 			}),
-			widget.NewButton("+50%", func() {
-				go z.updateZoom(z.edit.zoom+step3, step3, f)
-			}),
-			widget.NewButton("+1%", func() {
-				go z.updateZoom(z.edit.zoom+step2, step2, f)
-			}),
+			z.zoom,
+			// widget.NewButton("+1%", func() {
+			// 	go z.updateZoom(z.edit.zoom+step2, step2, f)
+			// }),
 		),
 	)
 	return zoom
