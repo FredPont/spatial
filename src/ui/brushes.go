@@ -3,11 +3,10 @@ package ui
 import (
 	"fyne.io/fyne/v2"
 
-	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
 
-func brushesButtons(edit *Editor, a fyne.App) fyne.CanvasObject {
+func brushesButtons(edit *Editor, a fyne.App) (*widget.Button, *widget.Button) {
 
 	var svgbrush = "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"48px\" viewBox=\"0 0 24 24\" width=\"48px\" fill=\"#de8159\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z\"/></svg>"
 	var svglasso = "<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 20 20\" height=\"48px\" viewBox=\"0 0 20 20\" width=\"48px\" fill=\"#de8159\"><g><rect fill=\"none\" height=\"20\" width=\"20\" x=\"0\"/></g><g><path d=\"M16.27,10l-3.14,5.5H6.87L3.73,10l3.14-5.5h6.26L16.27,10z M6,3l-4,7l4,7h8l4-7l-4-7H6z\"/></g></svg>"
@@ -40,11 +39,12 @@ func brushesButtons(edit *Editor, a fyne.App) fyne.CanvasObject {
 		inactiveLasso(b2, svglasso)
 	}
 
-	drawtools := container.NewHBox(
-		b1,
-		b2,
-	)
-	return drawtools
+	// drawtools := container.NewHBox(
+	// 	b1,
+	// 	b2,
+	// )
+	//return drawtools
+	return b1, b2
 }
 
 func activePencil(b *widget.Button) {

@@ -23,8 +23,6 @@ import (
 	"log"
 	"spatial/src/filter"
 
-	//"spatial/src/filter"
-
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/data/binding"

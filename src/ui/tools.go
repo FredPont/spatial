@@ -31,7 +31,7 @@ func checkError(message string, err error) {
 
 // BuildTools build tools window with buttons and text entry
 func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
-	w2 := fyne.CurrentApp().NewWindow("Spatial Explorer")
+	w2 := fyne.CurrentApp().NewWindow("scSpatial Explorer")
 	preference := a.Preferences()
 	// get informations from data files to be used with buttons
 	dataFiles := filter.ListFiles("data/") // list all tables in data dir
@@ -56,69 +56,93 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 	// progress bar binding
 	f := binding.NewFloat()
 
+	// brush buttons
+	brush1, brush2 := brushesButtons(e, a)
+
+	// icons
+	iconFilt := "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"24\" height=\"24\" fill=\"#de8159\" viewBox=\"0 0 24 24\"><path d=\"M15,19.88C15.04,20.18 14.94,20.5 14.71,20.71C14.32,21.1 13.69,21.1 13.3,20.71L9.29,16.7C9.06,16.47 8.96,16.16 9,15.87V10.75L4.21,4.62C3.87,4.19 3.95,3.56 4.38,3.22C4.57,3.08 4.78,3 5,3V3H19V3C19.22,3 19.43,3.08 19.62,3.22C20.05,3.56 20.13,4.19 19.79,4.62L15,10.75V19.88M7.04,5L11,10.06V15.58L13,17.58V10.05L16.96,5H7.04Z\" /></svg>"
+	iconFilter := fyne.NewStaticResource("filter", []byte(iconFilt))
+
 	content := container.NewVBox(
 		logo(),
 		gatename,
-		brushesButtons(e, a),
-		widget.NewButton("Filter tables with gates", func() {
+		container.NewHBox(brush1,
+			brush2,
+			// screenshot
+			widget.NewButtonWithIcon("", theme.MediaPhotoIcon(), func() {
+				go screenShot(w, gatename.Text, f)
+			}),
+			// preferences
+			widget.NewButtonWithIcon("", theme.SettingsIcon(), func() {
+				go pref.BuildPref(a, header)
+			}),
+			widget.NewButtonWithIcon("Exit", theme.LogoutIcon(), func() {
+				a.Quit()
+				//os.Exit(0)
+			}),
+		),
+		widget.NewButtonWithIcon("Filter tables by gates", iconFilter, func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
 			go filterActiveGates(e, alledges, dataFiles, gatename.Text, a.Preferences(), f)
 			go saveGates(gatename.Text, e)
 		}),
-		widget.NewButton("Save gates", func() {
+		widget.NewButtonWithIcon("Save Gates", theme.DocumentSaveIcon(), func() {
 			go saveGates(gatename.Text, e)
 		}),
-		widget.NewButton("Clear last gate", func() {
-			go clearLastGate(e)
-		}),
-		widget.NewButton("Clear all gates", func() {
-			go initGates(e)
-		}),
-		widget.NewButton("Import gates", func() {
+		widget.NewButtonWithIcon("Import gates", theme.FolderOpenIcon(), func() {
 			go importGates(e, f)
 		}),
-		widget.NewButton("Screen shot", func() {
-			//f.Set(0.3) // progress bar
-			go screenShot(w, gatename.Text, f)
-			//f.Set(0.) // reset progress bar
+		container.NewHBox(
+			widget.NewLabel("Clear :"),
+			widget.NewButton("last gate", func() {
+				go clearLastGate(e)
+			}),
+			widget.NewButton("all gates", func() {
+				go initGates(e)
+			}),
+		),
+		widget.NewButton("Compare gates", func() {
+			go showCompareWindow(a, e, preference, f, header, firstTable)
 		}),
-		widget.NewButton("Save zoomed image", func() {
-			go startSaveImage(w, gatename.Text, f)
-		}),
+
 		widget.NewButton("Plot gates", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
 			go plot.Plotform(a, w, e.zoom, header, firstTable, alledges, f)
 		}),
-		widget.NewButton("Show Clusters", func() {
-			go drawClusters(a, e, header, firstTable, f)
+		widget.NewButton("2DPlot", func() {
+			// get the edges of all selected polygons
+			alledges := e.drawSurface.alledges
+			go plot.Plot2Dform(a, w, e.zoom, header, firstTable, alledges, f)
 		}),
+		container.NewHBox(
+			//widget.NewLabel("Show :"),
+			widget.NewButton("Show Clusters", func() {
+				go drawClusters(a, e, header, firstTable, f)
+			}),
+			widget.NewButton("Expression", func() {
+				go buttonDrawExpress(a, e, preference, f, header, firstTable)
+				//f.Set(0.) // reset progress bar
+			}),
+		),
 		widget.NewButton("Clear Clusters/Expression", func() {
 			go clearCluster(e)
 		}),
+		widget.NewButton("Save zoomed image", func() {
+			go startSaveImage(w, gatename.Text, f)
+		}),
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		clusDotOpacity,
-		widget.NewButton("Show Expression", func() {
-			go buttonDrawExpress(a, e, preference, f, header, firstTable)
-			//f.Set(0.) // reset progress bar
-		}),
+
 		widget.NewButton("Import cells", func() {
 			go buttonImportCells(a, e, preference, iCellFI, f, impCellFindex, header, firstTable)
 		}),
-		widget.NewButton("Compare gates", func() {
-			go showCompareWindow(a, e, preference, f, header, firstTable)
-		}),
-		widget.NewButtonWithIcon("Preferences", theme.SettingsIcon(), func() {
-			go pref.BuildPref(a, header)
-		}),
+
 		// zoom : very important : never unzom under the window size
 		// in that case the image size = window size and zoom factor is wrong !
 		newZoom(e, a, f),
-		widget.NewButtonWithIcon("Exit", theme.LogoutIcon(), func() {
-			a.Quit()
-			//os.Exit(0)
-		}),
+
 		widget.NewProgressBarWithData(f),
 	)
 
@@ -129,7 +153,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 // logo display a log in tool window
 func logo() fyne.CanvasObject {
 	img := canvas.NewImageFromFile("src/ui/logo.png")
-	img.SetMinSize(fyne.Size{Width: 100, Height: 50})
+	img.SetMinSize(fyne.Size{Width: 171, Height: 55})
 	img.FillMode = canvas.ImageFillContain
 	return img
 }
@@ -143,7 +167,7 @@ func clearLastGate(e *Editor) {
 	//log.Println("e.drawSurface.gatesNumbers.nb=", e.drawSurface.gatesNumbers.nb)
 	nob := len(e.gateNumberContainer.Objects) - 1 // nb of objects in the gate nb container minus the last one
 	log.Println("nb de gate names", nob)
-	
+
 	e.gateNumberContainer.Objects = e.gateNumberContainer.Objects[:nob] // remove last object = last gate name
 
 	e.drawSurface.clearPolygon(e.drawSurface.gatesLines)
