@@ -50,7 +50,7 @@ func (e *Editor) drawcircleGateDot(x, y, ray int, color color.NRGBA) fyne.Canvas
 	return c
 }
 
-// drawline a circle at x,y position to the gate  container
+// drawcircleGateCont draw a circle at x,y position to the gate container
 func (e *Editor) drawcircleGateCont(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
 	c := iCircle(x, y, ray, color) // draw circle rayon ray
 	e.gateContainer.AddObject(c)   // add the cicle to the cluster container

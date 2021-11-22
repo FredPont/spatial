@@ -37,6 +37,7 @@ type Interactive2Dsurf struct {
 	imageEditor      *Editor         // editor of the microscopie image is embeded to allow expression plots
 	header           []string        // header of the first data table (to allow expression plots)
 	tableName        string          // name of the first data table (to allow expression plots)
+
 }
 
 // NewInterative2D creates a new interactive 2D plot
@@ -61,13 +62,13 @@ func (p *Interactive2Dsurf) build2DinterPlot(w fyne.Window) {
 }
 
 // build2DplotWin creates display 2Dplot window
-func build2DplotWin(imageEditor *Editor) *Interactive2Dsurf {
+func build2DplotWin(imageEditor *Editor) fyne.Window {
 	w := fyne.CurrentApp().NewWindow("2D Plot")
 	p, finalWidth, finalHeight := NewInterative2D()
 	p.build2DinterPlot(w)
 	w.Resize(fyne.NewSize(float32(finalWidth), float32(finalHeight)))
 	w.SetFixedSize(true)
 	w.Show()
-	p.imageEditor = imageEditor // store the image Editor to enable expression display from the 2D plot
-	return p
+	//p.imageEditor = imageEditor // store the image Editor to enable expression display from the 2D plot
+	return w
 }

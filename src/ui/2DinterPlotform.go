@@ -1,4 +1,4 @@
-package plot
+package ui
 
 import (
 	"spatial/src/filter"
@@ -10,8 +10,8 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-// Plotform display a form with the plot preferences and parameters
-func Plot2Dform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable string, alledges [][]filter.Point, f binding.Float) {
+// Plot2Dform display a form with the plot preferences and parameters
+func Plot2Dform(a fyne.App, e *Editor, win fyne.Window, zoom int, header []string, firstTable string, alledges [][]filter.Point, f binding.Float) {
 	prefs := a.Preferences()
 
 	// plot name
@@ -65,6 +65,7 @@ func Plot2Dform(a fyne.App, win fyne.Window, zoom int, header []string, firstTab
 				xp, _ = xplot.Get()
 				yp, _ = yplot.Get()
 				//go makeplot(a, zoom, header, firstTable, xp, yp, plotName.Text, plotdot.Text, alledges, f)
+				go show2D(a, e, prefs, f, header, firstTable)
 				go save2DPlotPrefs(a, xp, yp, plotName.Text, plotdot.Text)
 			}
 

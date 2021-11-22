@@ -34,62 +34,65 @@ import (
 
 type plotRaster struct {
 	widget.BaseWidget
-	vulcEdit  *Interactive2Dsurf
-	mouseXY   filter.Point //position of the mouse click
-	selection []PVrecord   // dots selected by user in vulcano plot
-	selItem   string       // item selected by the user to draw expression
-	vulcBox   PlotBox
+	plot2DEdit *Interactive2Dsurf
+	//mouseXY    filter.Point //position of the mouse click
+	//selection  []PVrecord   // dots selected by user in vulcano plot
+	//selItem    string       // item selected by the user to draw expression
+	points     []filter.Point        // points coordinates of the last gate
+	tmpLines   []fyne.CanvasObject   // circles of the last gate
+	gatesLines [][]fyne.CanvasObject // all the gates dots
+	alledges   [][]filter.Point      // points coordinates of all the gate
+	plot2DBox  PlotBox
 }
 
 func (r *plotRaster) MinSize() fyne.Size {
-	//fmt.Println("min size :", r.vulcedit.min)
-	return r.vulcEdit.min
+	//fmt.Println("min size :", r.plot2DEdit.min)
+	return r.plot2DEdit.min
 }
 
 func (r *plotRaster) CreateRenderer() fyne.WidgetRenderer {
 	return &plotWidgetRender{raster: r, bg: canvas.NewRasterWithPixels(plotPattern)}
 }
 
-// this function draw a selection rectangle around dots
+///////////////////////////////
+// Dragged functions for brush
+///////////////////////////////
+
+func (r *plotRaster) Dragged(ev *fyne.DragEvent) {
+
+	x := int(ev.Position.X)
+	y := int(ev.Position.Y)
+	r.points = append(r.points, filter.Point{X: x, Y: y}) // store new edges
+	// draw a dot at the mouse position
+	circle := r.drawcircleScattCont(x, y, 1, color.NRGBA{76, 0, 153, 255})
+
+	//test
+	//r.plot2DEdit.imageEditor.drawcircle(x, y, 1, color.NRGBA{76, 0, 153, 255})
+	//r.plot2DEdit.imageEditor.clusterContainer.Refresh()
+
+	r.tmpLines = append(r.tmpLines, circle) // store new circles objects in the r.tmpLines slice
+	r.plot2DEdit.scatterContainer.Refresh()
+	//log.Println(x, y, circle)
+}
+
+func (r *plotRaster) DragEnd() {
+	r.alledges = append(r.alledges, r.points)       // store new edges
+	r.points = nil                                  // reset polygone coordinates
+	r.gatesLines = append(r.gatesLines, r.tmpLines) // store new circles objects in the r.gatesLines
+	r.tmpLines = nil                                // initialisation of gate lines
+	r.plot2DEdit.scatterContainer.Refresh()
+}
+
 func (r *plotRaster) Tapped(ev *fyne.PointEvent) {
-	// r.vulcEdit.selectContainer.Objects = nil // clear previous selection
 
-	// x := int(ev.Position.X)
-	// y := int(ev.Position.Y)
-
-	// // read the vulcano selection square size in pixels from preferences
-	// pref := fyne.CurrentApp().Preferences()
-	// vs := binding.BindPreferenceInt("vulcSelectSize", pref)
-	// vsquare, err := vs.Get()
-	// if err != nil {
-	// 	log.Println("Error reading selection size value !", err)
-	// }
-	// if vsquare == 0 {
-	// 	vsquare = 10
-	// }
-	// w, h := vsquare, vsquare // selection rectangle size
-	// R := uint8(250)
-	// G := uint8(50)
-	// B := uint8(50)
-
-	// rect := borderRect(x, y, w, h, color.NRGBA{R, G, B, 255})
-	// r.vulcEdit.selectContainer.Add(rect)
-
-	// //fmt.Println(x, y)
-	// r.mouseXY = filter.Point{X: x, Y: y}
-
-	// r.vulcEdit.selectContainer.Refresh() // refresh only the gate container, faster than refresh layer
 }
 
 func (r *plotRaster) TappedSecondary(*fyne.PointEvent) {
-	//r.vulcEdit.vulcanoSelect(&r.vulcBox, r.mouseXY)
-
-	//refreshVulanoTools(r.vulcEdit)
 
 }
 
 func newInteractive2DRaster(plotEdit *Interactive2Dsurf) *plotRaster {
-	r := &plotRaster{vulcEdit: plotEdit}
+	r := &plotRaster{plot2DEdit: plotEdit}
 
 	r.ExtendBaseWidget(r)
 	return r
