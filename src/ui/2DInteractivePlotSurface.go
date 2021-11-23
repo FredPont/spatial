@@ -31,7 +31,7 @@ type Interactive2Dsurf struct {
 	min              fyne.Size // size of the scatter container
 	win              fyne.Window
 	layer            *fyne.Container // container with plot and interactive drawsurface
-	selectContainer  *fyne.Container // container with the select dot lines
+	gateContainer    *fyne.Container // container with the gate dot lines
 	scatterContainer *fyne.Container // container with the scatter circles
 	tools            fyne.Window     // 2D plot tools windows
 	imageEditor      *Editor         // editor of the microscopie image is embeded to allow expression plots
@@ -46,7 +46,7 @@ func NewInterative2D() (*Interactive2Dsurf, int, int) {
 
 	sel := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))         // select container
 	sca := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{255, 255, 255, 255})) // scatter container should be independant of select container for separate initialisaion
-	plotEdit := &Interactive2Dsurf{min: fyne.Size{Width: float32(w), Height: float32(h)}, selectContainer: sel, scatterContainer: sca}
+	plotEdit := &Interactive2Dsurf{min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: sel, scatterContainer: sca}
 	plotEdit.drawSurface = newInteractive2DRaster(plotEdit)
 
 	return plotEdit, w, h
@@ -56,19 +56,20 @@ func NewInterative2D() (*Interactive2Dsurf, int, int) {
 func (p *Interactive2Dsurf) build2DinterPlot(w fyne.Window) {
 	p.win = w
 	//e.layer = container.NewMax(e.scatterContainer)
-	p.layer = container.NewMax(p.drawSurface, p.scatterContainer, p.selectContainer)
+	p.layer = container.NewMax(p.drawSurface, p.scatterContainer, p.gateContainer)
 	w.SetContent(p.layer)
 
 }
 
 // build2DplotWin creates display 2Dplot window
-func build2DplotWin(imageEditor *Editor) fyne.Window {
+func build2DplotWin(imageEditor *Editor) (fyne.Window, *Interactive2Dsurf) {
 	w := fyne.CurrentApp().NewWindow("2D Plot")
 	p, finalWidth, finalHeight := NewInterative2D()
 	p.build2DinterPlot(w)
 	w.Resize(fyne.NewSize(float32(finalWidth), float32(finalHeight)))
 	w.SetFixedSize(true)
 	w.Show()
+
 	//p.imageEditor = imageEditor // store the image Editor to enable expression display from the 2D plot
-	return w
+	return w, p
 }

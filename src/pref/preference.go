@@ -38,7 +38,7 @@ func BuildPref(a fyne.App, head []string) {
 	rot.SetChecked(b)
 
 	// X coordinates
-	xcor := binding.BindPreferenceString("xcor", prefs) // set the link to preferences for rotation
+	xcor := binding.BindPreferenceString("xcor", prefs) // set the link to preferences for x coordinates
 	xc, _ := xcor.Get()
 	//xSel := widget.NewSelectEntry(head)
 	//xSel.SetText(xc)
@@ -48,7 +48,7 @@ func BuildPref(a fyne.App, head []string) {
 	})
 
 	// y coordinates
-	ycor := binding.BindPreferenceString("ycor", prefs) // set the link to preferences for rotation
+	ycor := binding.BindPreferenceString("ycor", prefs) // set the link to preferences for y coordinates
 	yc, _ := ycor.Get()
 	//ySel := widget.NewSelectEntry(head)
 	//ySel.SetText(yc)

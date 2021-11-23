@@ -21,7 +21,7 @@ type PlotBox struct {
 	winH, winW               float64
 }
 
-// newHisto read the pvalue table and return a PlotBox
+// readVulcano read the pvalue table and return a PlotBox
 func readVulcano(title string, pvTable []PVrecord) PlotBox {
 	var x, y []float64
 	var items []string
@@ -106,13 +106,13 @@ func drawVulcano(v *Vulcano, vulcBox PlotBox) {
 	vulcBox.YAxis(v)
 
 	// draw scatter plot
-	vulcBox.Scatter(v, 3)
+	vulcBox.scatter(v, 3)
 
 	v.scatterContainer.Refresh()
 }
 
 // Scatter makes a scatter chart
-func (p *PlotBox) Scatter(v *Vulcano, dotsize int) {
+func (p *PlotBox) scatter(v *Vulcano, dotsize int) {
 
 	for i, xplot := range p.X {
 		//x := int(MapRange(x, p.Xmin, p.Xmax, p.Left, 800-p.Right))

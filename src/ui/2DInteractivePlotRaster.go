@@ -64,14 +64,14 @@ func (r *plotRaster) Dragged(ev *fyne.DragEvent) {
 	y := int(ev.Position.Y)
 	r.points = append(r.points, filter.Point{X: x, Y: y}) // store new edges
 	// draw a dot at the mouse position
-	circle := r.drawcircleScattCont(x, y, 1, color.NRGBA{76, 0, 153, 255})
+	circle := r.drawcircleGateCont(x, y, 1, color.NRGBA{76, 0, 153, 255})
 
 	//test
 	//r.plot2DEdit.imageEditor.drawcircle(x, y, 1, color.NRGBA{76, 0, 153, 255})
 	//r.plot2DEdit.imageEditor.clusterContainer.Refresh()
 
 	r.tmpLines = append(r.tmpLines, circle) // store new circles objects in the r.tmpLines slice
-	r.plot2DEdit.scatterContainer.Refresh()
+	r.plot2DEdit.gateContainer.Refresh()
 	//log.Println(x, y, circle)
 }
 
@@ -80,7 +80,7 @@ func (r *plotRaster) DragEnd() {
 	r.points = nil                                  // reset polygone coordinates
 	r.gatesLines = append(r.gatesLines, r.tmpLines) // store new circles objects in the r.gatesLines
 	r.tmpLines = nil                                // initialisation of gate lines
-	r.plot2DEdit.scatterContainer.Refresh()
+	r.plot2DEdit.gateContainer.Refresh()
 }
 
 func (r *plotRaster) Tapped(ev *fyne.PointEvent) {

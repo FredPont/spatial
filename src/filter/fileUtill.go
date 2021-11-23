@@ -456,3 +456,21 @@ func PopIntArray(s []int) []int {
 func PopPointItem(s []Point) Point {
 	return s[len(s)-1]
 }
+
+// StrToInt convert a string to an int
+func StrToInt(s string) int {
+	intVar, err := strconv.Atoi(s)
+	if err != nil {
+		log.Println("cannot convert string ", s, " to int !")
+	}
+	return intVar
+}
+
+// StrToF64 convert a string to a float64
+func StrToF64(s string) float64 {
+	floatVar, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		log.Println("cannot convert string ", s, " to float64 !")
+	}
+	return floatVar
+}
