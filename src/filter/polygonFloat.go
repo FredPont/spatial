@@ -18,3 +18,40 @@ package filter
 type Dot struct {
 	X, Y float64
 }
+
+
+
+/*
+// test if testp is inside the polygon
+func dotInside(polygon []Dot, testp Dot) bool {
+	if len(polygon) < 1 {
+		return false
+	}
+	minX := polygon[0].X
+	maxX := polygon[0].X
+	minY := polygon[0].Y
+	maxY := polygon[0].Y
+
+	for _, p := range polygon {
+		minX = math.Min(p.X, minX)
+		maxX = math.Max(p.X, maxX)
+		minY = math.Min(p.Y, minY)
+		maxY = math.Max(p.Y, maxY)
+	}
+
+	if testp.X < minX || testp.X > maxX || testp.Y < minY || testp.Y > maxY {
+		return false
+	}
+
+	inside := false
+	j := len(polygon) - 1
+	for i := 0; i < len(polygon); i++ {
+		if (polygon[i].Y > testp.Y) != (polygon[j].Y > testp.Y) && testp.X < (polygon[j].X-polygon[i].X)*(testp.Y-polygon[i].Y)/(polygon[j].Y-polygon[i].Y)+polygon[i].X {
+			inside = !inside
+		}
+		j = i
+	}
+
+	return inside
+}
+*/

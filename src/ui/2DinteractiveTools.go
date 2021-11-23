@@ -31,9 +31,9 @@ import (
 // show2D show 2Di tools and 2Di window
 func show2D(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, firstTable string) {
 	f.Set(0.3)
-	winplot, inter2D := build2DplotWin(e) // show 2D interactive window
-	show2DinterTools(a, e, winplot, inter2D, preference, f, header, firstTable)
-	build2DPlot(inter2D, preference, header, firstTable)
+	winplot, inter2D := build2DplotWin(e)                                       // show 2D interactive window
+	show2DinterTools(a, e, winplot, inter2D, preference, f, header, firstTable) // show tool box
+	build2DPlot(inter2D, preference, header, firstTable)                        // build scatter plot
 	f.Set(0.)
 }
 
@@ -140,3 +140,20 @@ func subTableToMap(subtable [][]string) (map[string]filter.Point, map[string]fil
 
 	return imageMap, plotMap
 }
+
+// convert the cellID -> []Dot (plot) to cellID -> Point
+// apply to each dot the conversion to the pixel position in the scatter window
+func dotMapToPointMap(p *PlotBox, dotmap map[string]filter.Dot) map[string]filter.Point {
+	pointMap := make(map[string]filter.Point, len(dotmap))
+
+	for k, v := range dotmap {
+		pointMap[k] = filter.Point{X: xCoord(p, v.X), Y: yCoord(p, v.Y)}
+	}
+	return pointMap
+}
+
+// convert the scatter points to dots position in pixel
+// filter the dots that are in the gates
+// show the dots in gate in the microscopy image
+// dotMapToPointMap(p *PlotBox, dotmap map[string]filter.Dot)
+// filter.DotsInGate(gate []Point, scatter map[string]Point)
