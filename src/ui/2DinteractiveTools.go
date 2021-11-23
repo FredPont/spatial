@@ -67,7 +67,9 @@ func build2DPlot(inter2D *Interactive2Dsurf, prefs fyne.Preferences, header []st
 	subtable := extract2DinterData(prefs, header, firstTable)
 	_, plotMap := subTableToMap(subtable)
 	plotbox := buildPlot(plotMap)
-	plotbox.scatterPlot(inter2D.drawSurface, 3)
+	plotbox.scatterPlot(inter2D, 3)
+	plotbox.xAxisScat(inter2D)
+	plotbox.yAxisScat(inter2D)
 	inter2D.scatterContainer.Refresh()
 }
 
