@@ -71,6 +71,8 @@ func build2DPlot(inter2D *Interactive2Dsurf, prefs fyne.Preferences, header []st
 	ds := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
 	ds2 := binding.StringToInt(ds)
 	dotsize, _ := ds2.Get()
+
+	// built scatter plot
 	plotbox.scatterPlot(inter2D, dotsize)
 	plotbox.xAxisScat(inter2D)
 	plotbox.yAxisScat(inter2D)

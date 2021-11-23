@@ -122,7 +122,9 @@ func (p *PlotBox) xScatlabel(v *Interactive2Dsurf, y int) {
 	// x coordinates of the 2D plot
 	xplot := binding.BindPreferenceString("2DxPlot", prefs) // set the link to preferences for rotation
 	xp, _ := xplot.Get()
-	AbsText(v.scatterContainer, xCoord(p, (p.Xmax+p.Xmin)/2), y+35, xp, 12, color.NRGBA{0, 0, 0, 255}) // axis title
+	// y label lenght
+	//labelSize := len([]rune(xp))-float64(labelSize)
+	AbsText(v.scatterContainer, xCoord(p, p.Xmin), y+35, xp, 12, color.NRGBA{0, 0, 0, 255}) // axis title
 }
 
 // Ylabel makes the x axis scale text
@@ -143,6 +145,9 @@ func (p *PlotBox) yScatlabel(v *Interactive2Dsurf, x int) {
 	// y coordinates of the 2D plot
 	yplot := binding.BindPreferenceString("2DyPlot", prefs) // set the link to preferences for rotation
 	yp, _ := yplot.Get()
+	// y label lenght
+	labelSize := 8 * len([]rune(yp))
+	//log.Println("taille ", yp, " = ", labelSize)
 
-	AbsText(v.scatterContainer, x-35, yCoord(p, p.Ymax)-25, yp, 12, color.NRGBA{0, 0, 0, 255}) // axis title
+	AbsText(v.scatterContainer, x-labelSize, yCoord(p, p.Ymax)-25, yp, 12, color.NRGBA{0, 0, 0, 255}) // axis title
 }
