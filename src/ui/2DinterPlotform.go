@@ -86,6 +86,8 @@ func save2DPlotPrefs(a fyne.App, x, y, plotName, dotsize string) {
 	pref.SetString("2DplotName", plotName)
 
 	//dot size
+	//binding.StringToInt(dotsize)
+	//pref.SetInt("2Ddotsize", dotsize)
 	pref.SetString("2Ddotsize", dotsize)
 }
 

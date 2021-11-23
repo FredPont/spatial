@@ -67,7 +67,11 @@ func build2DPlot(inter2D *Interactive2Dsurf, prefs fyne.Preferences, header []st
 	subtable := extract2DinterData(prefs, header, firstTable)
 	_, plotMap := subTableToMap(subtable)
 	plotbox := buildPlot(plotMap)
-	plotbox.scatterPlot(inter2D, 3)
+	//get scatter dot size
+	ds := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
+	ds2 := binding.StringToInt(ds)
+	dotsize, _ := ds2.Get()
+	plotbox.scatterPlot(inter2D, dotsize)
 	plotbox.xAxisScat(inter2D)
 	plotbox.yAxisScat(inter2D)
 	inter2D.scatterContainer.Refresh()
@@ -109,6 +113,7 @@ func extract2DinterData(prefs fyne.Preferences, header []string, firstTable stri
 
 	colIndexes := plotColIndex(prefs, header)
 	cols := filter.ReadColumns(firstTable, colIndexes)
+
 	return cols
 }
 

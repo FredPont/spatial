@@ -2,8 +2,10 @@ package ui
 
 import (
 	"image/color"
-	"log"
 	"spatial/src/filter"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/data/binding"
 )
 
 func buildPlot(plotMap map[string]filter.Dot) PlotBox {
@@ -56,7 +58,7 @@ func (p *PlotBox) scatterPlot(v *Interactive2Dsurf, dotsize int) {
 		//y := int(MapRange(p.Y[i], p.Ymin, p.Ymax, p.Bottom, 800-p.Top))
 		x, y := xCoord(p, xplot), yCoord(p, p.Y[i])
 		v.drawcircleScattCont(x, y, dotsize, color.NRGBA{128, 128, 128, 255})
-		log.Println(x, y)
+		//log.Println(x, y)
 	}
 
 }
@@ -116,7 +118,11 @@ func (p *PlotBox) xScatlabel(v *Interactive2Dsurf, y int) {
 		ti := iLine(x, y, x, y+5, 1, color.RGBA{0, 0, 0, 255})                      // tick
 		v.scatterContainer.Add(ti)                                                  // add the tick to the cluster container
 	}
-	AbsText(v.scatterContainer, xCoord(p, (p.Xmax+p.Xmin)/2), y+35, "log2(FC) (group_2/group_1)", 12, color.NRGBA{0, 0, 0, 255}) // axis title
+	prefs := fyne.CurrentApp().Preferences()
+	// x coordinates of the 2D plot
+	xplot := binding.BindPreferenceString("2DxPlot", prefs) // set the link to preferences for rotation
+	xp, _ := xplot.Get()
+	AbsText(v.scatterContainer, xCoord(p, (p.Xmax+p.Xmin)/2), y+35, xp, 12, color.NRGBA{0, 0, 0, 255}) // axis title
 }
 
 // Ylabel makes the x axis scale text
@@ -133,5 +139,10 @@ func (p *PlotBox) yScatlabel(v *Interactive2Dsurf, x int) {
 		ti := iLine(x, y-5, x+5, y-5, 1, color.RGBA{0, 0, 0, 255})               // tick
 		v.scatterContainer.Add(ti)                                               // add the tick to the cluster container
 	}
-	AbsText(v.scatterContainer, x-35, yCoord(p, p.Ymax)-25, "log10(Pvalue)", 12, color.NRGBA{0, 0, 0, 255}) // axis title
+	prefs := fyne.CurrentApp().Preferences()
+	// y coordinates of the 2D plot
+	yplot := binding.BindPreferenceString("2DyPlot", prefs) // set the link to preferences for rotation
+	yp, _ := yplot.Get()
+
+	AbsText(v.scatterContainer, x-35, yCoord(p, p.Ymax)-25, yp, 12, color.NRGBA{0, 0, 0, 255}) // axis title
 }
