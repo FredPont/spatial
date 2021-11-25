@@ -19,6 +19,8 @@
 package ui
 
 import (
+	"image/color"
+	"math"
 	"spatial/src/filter"
 
 	"fyne.io/fyne/v2"
@@ -26,31 +28,38 @@ import (
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"github.com/mazznoer/colorgrad"
 )
 
 // show2D show 2Di tools and 2Di window
 func show2D(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, firstTable string) {
 	f.Set(0.3)
-	winplot, inter2D := build2DplotWin(e)                                       // show 2D interactive window
+	winplot, inter2D := build2DplotWin(e) // show 2D interactive window
+
 	show2DinterTools(a, e, winplot, inter2D, preference, f, header, firstTable) // show tool box
-	build2DPlot(inter2D, preference, header, firstTable)                        // build scatter plot
+
 	f.Set(0.)
 }
 
 // show2DinterTools show 2Di tools
 func show2DinterTools(a fyne.App, e *Editor, winplot fyne.Window, inter2D *Interactive2Dsurf, preference fyne.Preferences, f binding.Float, header []string, firstTable string) {
-
+	plotbox, dotmap, imageMap := build2DPlot(inter2D, preference, header, firstTable) // build scatter plot
 	win2Dtools := a.NewWindow("2D plot tools")
 
-	content := container.NewVBox(
-		widget.NewLabel("Tools"),
-		widget.NewButton("Show Cells in Gates", func() {
+	gatename := widget.NewEntry()
+	gatename.SetPlaceHolder("Selection name...")
 
-			//go
+	content := container.NewVBox(
+		gatename,
+		widget.NewButton("Show Cells in Gates", func() {
+			go searchDotsInGates(e, inter2D, &plotbox, dotmap, imageMap, f)
+		}),
+		widget.NewButton("Clear Gates", func() {
+			go init2DScatterGates(inter2D)
 		}),
 		// screenshot
 		widget.NewButtonWithIcon("", theme.MediaPhotoIcon(), func() {
-			//go screenShot(w, gatename.Text, f)
+			go screenShot(winplot, gatename.Text, f)
 		}),
 		widget.NewButtonWithIcon("Exit", theme.LogoutIcon(), func() {
 			win2Dtools.Close() // close tool window
@@ -62,10 +71,11 @@ func show2DinterTools(a fyne.App, e *Editor, winplot fyne.Window, inter2D *Inter
 	win2Dtools.Show()
 }
 
-// build2DPlo start extracting the plot data and make the plot
-func build2DPlot(inter2D *Interactive2Dsurf, prefs fyne.Preferences, header []string, firstTable string) {
+// build2DPlot start extracting the plot data and make the plot
+func build2DPlot(inter2D *Interactive2Dsurf, prefs fyne.Preferences, header []string, firstTable string) (PlotBox, map[string]filter.Dot, map[string]filter.Point) {
 	subtable := extract2DinterData(prefs, header, firstTable)
-	_, plotMap := subTableToMap(subtable)
+	imageMap, plotMap := subTableToMap(subtable)
+
 	plotbox := buildPlot(plotMap)
 	//get scatter dot size
 	ds := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
@@ -77,9 +87,10 @@ func build2DPlot(inter2D *Interactive2Dsurf, prefs fyne.Preferences, header []st
 	plotbox.xAxisScat(inter2D)
 	plotbox.yAxisScat(inter2D)
 	inter2D.scatterContainer.Refresh()
+	return plotbox, plotMap, imageMap
 }
 
-// extract cols index from the first table :
+// extract cols index from the first data table :
 // cells ID
 // x,y coordinates of the microcopy image
 // x,y coordinates of the 2D scatter plot
@@ -101,7 +112,7 @@ func plotColIndex(prefs fyne.Preferences, header []string) []int {
 
 	list := []string{xMi, yMi, xp, yp}
 
-	colIndexes := []int{0} // get first column = cell names
+	colIndexes := []int{0} // 0 = get first column = cell names
 	colIndexes = append(colIndexes, filter.GetColIndex(header, list)...)
 	//ReadColumns(filename , colIndexes )
 	return colIndexes
@@ -155,5 +166,106 @@ func dotMapToPointMap(p *PlotBox, dotmap map[string]filter.Dot) map[string]filte
 // convert the scatter points to dots position in pixel
 // filter the dots that are in the gates
 // show the dots in gate in the microscopy image
-// dotMapToPointMap(p *PlotBox, dotmap map[string]filter.Dot)
-// filter.DotsInGate(gate []Point, scatter map[string]Point)
+func searchDotsInGates(e *Editor, inter2D *Interactive2Dsurf, p *PlotBox, dotmap map[string]filter.Dot, imagemap map[string]filter.Point, f binding.Float) {
+	f.Set(0.3)
+	scatter := dotMapToPointMap(p, dotmap)
+	cellsInGates := selectedCells(inter2D, scatter)
+
+	go plotDotsMicrocop(e, cellsInGates, imagemap)
+	plotDotsInGates(p, inter2D, cellsInGates)
+
+	inter2D.gateContainer.Refresh()
+	f.Set(0.)
+}
+
+// extract the cells (map cell ID => XY) in the gates drawn in the 2D plot
+func selectedCells(inter2D *Interactive2Dsurf, scatter map[string]filter.Point) []map[string]filter.Point {
+	cellsInGates := make([]map[string]filter.Point, 0)
+	for _, gate := range inter2D.drawSurface.alledges {
+		cells := filter.DotsInGate(gate, scatter)
+		cellsInGates = append(cellsInGates, cells)
+	}
+	return cellsInGates
+}
+
+// plot the dots in gates in color in the 2D scatter plot. dots are plotted in the gate container
+func plotDotsInGates(p *PlotBox, inter2D *Interactive2Dsurf, cellsInGates []map[string]filter.Point) {
+	prefs := fyne.CurrentApp().Preferences()
+	//get scatter dot size
+	ds := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
+	ds2 := binding.StringToInt(ds)
+	dotsize, _ := ds2.Get()
+
+	nbGates := len(cellsInGates)
+	for i := 0; i < nbGates; i++ {
+		dotcolor := dotColors(nbGates, i)
+		p.gatesDotPlot(inter2D, dotsize, cellsInGates[i], dotcolor)
+	}
+}
+
+// dotColors computes the color of scatter dots
+// for a total number of clusters "nbGates"
+func dotColors(nbGates, gateIndex int) color.NRGBA {
+	grad := colorgrad.Rainbow().Sharp(uint(nbGates+1), 0.2)
+	return nrgbaModel(grad.Colors(uint(nbGates + 1))[gateIndex])
+}
+
+func nrgbaModel(c color.Color) color.NRGBA {
+	r, g, b, a := c.RGBA()
+	return color.NRGBA{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8), uint8(a >> 8)}
+}
+
+// extract the cells ID of the cells in gates and get their corresponding XY coordinates for the microscopy image
+func plotDotsMicrocop(e *Editor, cellsInGates []map[string]filter.Point, imageMap map[string]filter.Point) {
+	initCluster(e) // remove all dots of the cluster container
+	nbGates := len(cellsInGates)
+	// get the image microscopy coordinates of the cells in one gate from the cells names in the 2D plot
+	for i, cellsingate := range cellsInGates {
+		var cellsXY []filter.Point
+		dotcolor := dotColors(nbGates, i)
+		for cellid := range cellsingate {
+			cellsXY = append(cellsXY, imageMap[cellid])
+		}
+		drawCells(e, cellsXY, dotcolor)
+	}
+
+}
+
+// draw the selected cells on the microscopy image
+func drawCells(e *Editor, cellsXY []filter.Point, dotcolor color.NRGBA) {
+
+	pref := fyne.CurrentApp().Preferences()
+	clustOp := binding.BindPreferenceFloat("clustOpacity", pref) // cluster opacity
+	opacity, _ := clustOp.Get()
+	op := uint8(opacity)
+	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) // cluster dot diameter
+	diameter, _ := clustDia.Get()
+	diameter = ApplyZoomInt(e, diameter)
+	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
+	scaleFactor, _ := sf.Get()                             // read the preference for scaling factor
+	rot := binding.BindPreferenceBool("rotate", pref)      // set the link to preferences for rotation
+	rotate, _ := rot.Get()
+
+	for _, xy := range cellsXY {
+		xScaled, yScaled := scale(xy.X, xy.Y, scaleFactor, rotate)
+		e.drawcircle(ApplyZoomInt(e, xScaled), ApplyZoomInt(e, yScaled), diameter, color.NRGBA{dotcolor.R, dotcolor.G, dotcolor.B, op})
+		//log.Println(xy)
+	}
+
+	e.clusterContainer.Refresh()
+}
+
+// apply the scaling factor and rotation to xy coordinates
+func scale(x, y int, scaleFactor float64, rotate bool) (int, int) {
+
+	xScaled := int(math.Round(float64(x) * scaleFactor))
+	yScaled := int(math.Round(float64(y) * scaleFactor))
+
+	if rotate {
+		xRot := yScaled
+		yRot := xScaled
+		return xRot, yRot
+	}
+	return xScaled, yScaled
+
+}

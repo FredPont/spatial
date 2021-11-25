@@ -69,13 +69,8 @@ func (p *PlotBox) xAxisScat(v *Interactive2Dsurf) {
 	lef := xCoord(p, p.Xmin)
 	rig := xCoord(p, p.Xmax)
 
-	//if yZero(p) {
-	//	y1 = yCoord(p, 0.)
-	//} else {
 	y1 = yCoord(p, p.Ymin)
-	//	log.Println("Y axis does not contain 0 value !")
-	//}
-	//log.Println("y axis:", x1, bot, up)
+
 	c := iLine(lef, y1, rig, y1, 1, color.RGBA{0, 0, 0, 255})
 	v.scatterContainer.Add(c) // add the line to the cluster container
 	p.xScatlabel(v, y1)
@@ -88,16 +83,8 @@ func (p *PlotBox) yAxisScat(v *Interactive2Dsurf) {
 	bot := yCoord(p, p.Ymin)
 	up := yCoord(p, p.Ymax)
 
-	// if xZero(p) {
-	// 	x1 = xCoord(p, 0.) // if x=0 exists, the Y axes is plot on 0.
-	// } else {
-	// 	if p.Xmax < 0 { // if all x values < 0, the y axes is on the right
 	x1 = xCoord(p, p.Xmax)
-	// 	} else {
-	// 		x1 = xCoord(p, p.Xmin)
-	// 	}
-	// }
-	//log.Println("y axis:", x1, bot, up)
+
 	c := iLine(x1, bot, x1, up, 1, color.RGBA{0, 0, 0, 255})
 	v.scatterContainer.Add(c) // add the line to the cluster container
 	p.yScatlabel(v, x1)
@@ -150,4 +137,15 @@ func (p *PlotBox) yScatlabel(v *Interactive2Dsurf, x int) {
 	//log.Println("taille ", yp, " = ", labelSize)
 
 	AbsText(v.scatterContainer, x-labelSize, yCoord(p, p.Ymax)-25, yp, 12, color.NRGBA{0, 0, 0, 255}) // axis title
+}
+
+// gatesDotPlot plot the cells inside one gate in the 2D plot
+func (p *PlotBox) gatesDotPlot(v *Interactive2Dsurf, dotsize int, cells map[string]filter.Point, dotcolor color.NRGBA) {
+
+	for _, xy := range cells {
+		//x, y := xCoord(p, float64(xy.X)), yCoord(p, float64(xy.Y))
+		v.drawSurface.drawcircleGateCont(xy.X, xy.Y, dotsize, dotcolor)
+		//log.Println(x, y)
+	}
+
 }

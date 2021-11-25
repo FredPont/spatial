@@ -71,3 +71,14 @@ func initGateDots(e *Editor) {
 	e.gateDotsContainer.Objects = nil
 	e.gateDotsContainer.Refresh()
 }
+
+////////////////////////////
+// interactive 2D plot INIT
+////////////////////////////
+
+// clear gates from screen and initialise inter2D.drawSurface.alledges
+func init2DScatterGates(inter2D *Interactive2Dsurf) {
+	inter2D.drawSurface.alledges = nil
+	inter2D.gateContainer.Objects = nil
+	inter2D.gateContainer.Refresh()
+}

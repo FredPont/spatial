@@ -138,7 +138,7 @@ func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg
 			addPoints(scatterData, p, dotsize, color.RGBA{R: uint8(gatedotsR), G: uint8(gatedotsG), B: uint8(gatedotsB), A: uint8(gatedotsA)}, i)
 		} else {
 
-			addPoints(scatterData, p, dotsize, dotColors(nbGates, i), i) // if more than one gate, use rainbow colors
+			addPoints(scatterData, p, dotsize, DotColors(nbGates, i), i) // if more than one gate, use rainbow colors
 
 		}
 
@@ -159,14 +159,14 @@ func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg
 // 	}
 // }
 
-// dotColors computes the color of scatter dots
+// DotColors computes the color of scatter dots
 // for a total number of clusters "nbGates"
-func dotColors(nbGates, gateIndex int) color.RGBA {
+func DotColors(nbGates, gateIndex int) color.RGBA {
 	grad := colorgrad.Rainbow().Sharp(uint(nbGates+1), 0.2)
-	return rgbaModel(grad.Colors(uint(nbGates + 1))[gateIndex])
+	return RgbaModel(grad.Colors(uint(nbGates + 1))[gateIndex])
 }
 
-func rgbaModel(c color.Color) color.RGBA {
+func RgbaModel(c color.Color) color.RGBA {
 	r, g, b, a := c.RGBA()
 	return color.RGBA{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8), uint8(a >> 8)}
 }
