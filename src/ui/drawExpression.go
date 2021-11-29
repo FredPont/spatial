@@ -57,8 +57,13 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	content := container.NewVBox(
 		widget.NewLabel("Select the variable"),
 		expSel,
-		widget.NewLabel("Select your gradient"),
-		grad,
+		container.NewHBox(
+			container.NewVBox(
+				widget.NewLabel("Select your gradient"),
+				grad,
+			),
+			plot.DensityPicture(),
+		),
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,
 		legendcol,
@@ -73,13 +78,14 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 				return // return if nothing is selected
 			}
 			//log.Println(expSel.Entry.Text, grad.Selected, op)
-			go drawExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex)
+			go drawExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex, ExpressWindow)
+
 		}),
 		slidePause,
 		widget.NewButton("Slide show", func() {
 			anim.Set(true)
 			setDelay(slidePause, slideDelay)
-			go startSlideShow(a, e, header, firstTable, grad.Selected, f, anim, curPathwayIndex, slideDelay)
+			go startSlideShow(a, e, header, firstTable, grad.Selected, f, anim, curPathwayIndex, slideDelay, ExpressWindow)
 
 		}),
 		widget.NewButton("Stop/Continue Slide show", func() {
@@ -89,7 +95,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 				anim.Set(false)
 			} else {
 				anim.Set(true)
-				go startSlideShow(a, e, header, firstTable, grad.Selected, f, anim, curPathwayIndex, slideDelay)
+				go startSlideShow(a, e, header, firstTable, grad.Selected, f, anim, curPathwayIndex, slideDelay, ExpressWindow)
 			}
 
 		}),
@@ -100,7 +106,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 				return
 			}
 			curPathwayIndex.Set(startIdx - 1)
-			go drawExp(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex)
+			go drawExp(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex, ExpressWindow)
 		}),
 		widget.NewButton("Next Slide", func() {
 			startIdx, _ := curPathwayIndex.Get()
@@ -109,7 +115,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 				return
 			}
 			curPathwayIndex.Set(startIdx + 1)
-			go drawExp(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex)
+			go drawExp(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex, ExpressWindow)
 		}),
 		widget.NewButton("Close", func() { ExpressWindow.Close() }),
 	)
@@ -117,7 +123,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	ExpressWindow.Show()
 }
 
-func startSlideShow(a fyne.App, e *Editor, header []string, firstTable, grad string, f binding.Float, anim binding.Bool, curPathwayIndex binding.Int, slideDelay binding.Float) {
+func startSlideShow(a fyne.App, e *Editor, header []string, firstTable, grad string, f binding.Float, anim binding.Bool, curPathwayIndex binding.Int, slideDelay binding.Float, ExpressWindow fyne.Window) {
 	m := len(header)
 	startIdx, _ := curPathwayIndex.Get()
 	for i := startIdx; i < m; i++ {
@@ -128,7 +134,7 @@ func startSlideShow(a fyne.App, e *Editor, header []string, firstTable, grad str
 			break
 		}
 		if header[i] != "" {
-			drawExp(a, e, header, firstTable, header[i], grad, f, curPathwayIndex)
+			drawExp(a, e, header, firstTable, header[i], grad, f, curPathwayIndex, ExpressWindow)
 			pause, _ := slideDelay.Get()
 			time.Sleep(time.Duration(1000*pause) * time.Millisecond)
 			log.Println(i, "/", m-1, " column :", header[i])
@@ -166,7 +172,7 @@ func getExpress(a fyne.App, header []string, filename string, expcol string, cur
 	return filter.ReadExpress(a, filename, colIndexes)
 }
 
-func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gradien string, f binding.Float, curPathwayIndex binding.Int) {
+func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gradien string, f binding.Float, curPathwayIndex binding.Int, ExpressWindow fyne.Window) {
 	f.Set(0.2)     // progress bar set to 20%
 	initCluster(e) // remove all dots of the cluster container
 	pref := a.Preferences()
@@ -186,8 +192,8 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	f.Set(0.3) // progress bar set to 30% after data reading
 	scaleExp, min, max := filter.ScaleSlice01(expressions)
 
-	//density
-	go plot.BuildDensity(expressions, 100.)
+	// density plot
+	go plot.BuildDensity(expressions, 100., expcol, ExpressWindow)
 
 	//legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
 	nbPts := len(pts)

@@ -151,7 +151,7 @@ func refreshVulanoTools(v *Vulcano) {
 				return
 			}
 
-			go drawExp(a, v.imageEditor, v.header, v.tableName, choosedItem, grad.Selected, f, PathwayIndex)
+			go drawExp(a, v.imageEditor, v.header, v.tableName, choosedItem, grad.Selected, f, PathwayIndex, v.tools)
 		}),
 		widget.NewButton("Save vulcano plot", func() {
 			imgName := filter.FormatOutFile("vulcano", "", "")
