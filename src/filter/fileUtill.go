@@ -352,7 +352,7 @@ func ReadExpress(a fyne.App, filename string, colIndexes []int) ([]float64, []Po
 // scale a slice between 0-1
 func ScaleSlice01(s []float64) ([]float64, float64, float64) {
 	var norm []float64
-	min, max := findMinAndMax(s)
+	min, max := FindMinAndMax(s)
 	for _, v := range s {
 		if max != min {
 			z := (v - min) / (max - min)
@@ -366,7 +366,7 @@ func ScaleSlice01(s []float64) ([]float64, float64, float64) {
 }
 
 // credit : https://learningprogramming.net/golang/golang-golang/find-max-and-min-of-array-in-golang/
-func findMinAndMax(a []float64) (min, max float64) {
+func FindMinAndMax(a []float64) (min, max float64) {
 	min = a[0]
 	max = a[0]
 	for _, value := range a {

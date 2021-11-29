@@ -80,5 +80,8 @@ func initGateDots(e *Editor) {
 func init2DScatterGates(inter2D *Interactive2Dsurf) {
 	inter2D.drawSurface.alledges = nil
 	inter2D.gateContainer.Objects = nil
+	inter2D.drawSurface.gatesNumbers.x = nil
+	inter2D.drawSurface.gatesNumbers.y = nil
+	inter2D.drawSurface.gatesNumbers.nb = 0
 	inter2D.gateContainer.Refresh()
 }

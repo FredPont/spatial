@@ -21,6 +21,7 @@ package ui
 import (
 	"image/color"
 	"spatial/src/filter"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -36,13 +37,13 @@ type plotRaster struct {
 	widget.BaseWidget
 	plot2DEdit *Interactive2Dsurf
 	//mouseXY    filter.Point //position of the mouse click
-	//selection  []PVrecord   // dots selected by user in vulcano plot
-	//selItem    string       // item selected by the user to draw expression
-	points     []filter.Point        // points coordinates of the last gate
-	tmpLines   []fyne.CanvasObject   // circles of the last gate
-	gatesLines [][]fyne.CanvasObject // all the gates dots
-	alledges   [][]filter.Point      // points coordinates of all the gate
-	plot2DBox  PlotBox
+
+	points       []filter.Point        // points coordinates of the last gate
+	tmpLines     []fyne.CanvasObject   // circles of the last gate
+	gatesLines   [][]fyne.CanvasObject // all the gates dots
+	gatesNumbers GateNB                // GateNB number holds the gate number coordinates and the number of gates starting from 1
+	alledges     [][]filter.Point      // points coordinates of all the gate
+	plot2DBox    PlotBox
 }
 
 func (r *plotRaster) MinSize() fyne.Size {
@@ -66,16 +67,21 @@ func (r *plotRaster) Dragged(ev *fyne.DragEvent) {
 	// draw a dot at the mouse position
 	circle := r.drawcircleGateCont(x, y, 1, color.NRGBA{76, 0, 153, 255})
 
-	//test
-	//r.plot2DEdit.imageEditor.drawcircle(x, y, 1, color.NRGBA{76, 0, 153, 255})
-	//r.plot2DEdit.imageEditor.clusterContainer.Refresh()
-
 	r.tmpLines = append(r.tmpLines, circle) // store new circles objects in the r.tmpLines slice
 	r.plot2DEdit.gateContainer.Refresh()
 	//log.Println(x, y, circle)
 }
 
 func (r *plotRaster) DragEnd() {
+	// plot gate number
+	x := r.points[0].X
+	y := r.points[0].Y
+	gateNB := strconv.Itoa(r.gatesNumbers.nb)
+	r.plotGateNb(x, y, gateNB)
+	// store the position of the gate number
+	r.gatesNumbers.x = append(r.gatesNumbers.x, x)
+	r.gatesNumbers.y = append(r.gatesNumbers.y, y)
+	r.gatesNumbers.nb++
 	r.alledges = append(r.alledges, r.points)       // store new edges
 	r.points = nil                                  // reset polygone coordinates
 	r.gatesLines = append(r.gatesLines, r.tmpLines) // store new circles objects in the r.gatesLines

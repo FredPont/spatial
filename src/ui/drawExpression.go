@@ -186,6 +186,9 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	f.Set(0.3) // progress bar set to 30% after data reading
 	scaleExp, min, max := filter.ScaleSlice01(expressions)
 
+	//density
+	go plot.BuildDensity(expressions, 100.)
+
 	//legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
 	nbPts := len(pts)
 
