@@ -42,6 +42,19 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		preference.SetFloat("dotOpacity", v)
 	}
 
+	// Max expression slider
+	maxExp := binding.BindPreferenceFloat("maxExp", preference) // pref binding for the expression Max
+	eMax, _ := maxExp.Get()
+	minExp := binding.BindPreferenceFloat("minExp", preference) // pref binding for the expression Min
+	eMin, _ := minExp.Get()
+	MaxExp := widget.NewSliderWithData(eMin, eMax, maxExp)
+	MaxExp.Step = (eMax - eMin) / 100.
+	userMaxExp := binding.BindPreferenceFloat("userMaxExp", preference) // pref binding for user current the expression Max
+	MaxExp.OnChanged = func(v float64) {
+		preference.SetFloat("userMaxExp", v)
+
+	}
+
 	//legend color - the results is store in preferences
 	legendcol := widget.NewButton("Legend Text Color", func() { LegendTxtscolor(a, ExpressWindow) })
 
@@ -66,6 +79,15 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		),
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,
+
+		widget.NewLabel("Max :"),
+		widget.NewButton("Apply", func() {
+			v, _ := userMaxExp.Get()
+			log.Println("max expression :", v, eMin, eMax)
+			go updateMaxExp(v, a, e, userSel, grad.Selected, f, ExpressWindow)
+		}),
+		MaxExp,
+
 		legendcol,
 		widget.NewButton("Plot Expression", func() {
 			userSel, _ = sel.Get()
@@ -190,13 +212,12 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 		return
 	}
 	f.Set(0.3) // progress bar set to 30% after data reading
+	nbPts := len(pts)
 	scaleExp, min, max := filter.ScaleSlice01(expressions)
 
-	// density plot
+	// density plot of the expression distribution
 	go plot.BuildDensity(expressions, 100., expcol, ExpressWindow)
-
-	//legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
-	nbPts := len(pts)
+	go saveTMPfiles(pts, expressions, min, max, nbPts, ExpressWindow)
 
 	for c := 0; c < nbPts; c++ {
 		// progress bar increases when 50% of points are loaded
@@ -282,4 +303,68 @@ func LegendTxtscolor(a fyne.App, win fyne.Window) {
 		win)
 	picker.Advanced = true
 	picker.Show()
+}
+
+// save pts and scaleExp to temporary files to be used by the min/max slider
+func saveTMPfiles(pts []filter.Point, expressions []float64, min, max float64, nbpts int, ExpressWindow fyne.Window) {
+	pref := fyne.CurrentApp().Preferences()
+	minExp := binding.BindPreferenceFloat("minExp", pref) // pref binding for the expression dot opacity
+	minExp.Set(min)
+	maxExp := binding.BindPreferenceFloat("maxExp", pref) // pref binding for the expression dot opacity
+	maxExp.Set(max)
+	tmp := filter.Record{Pts: pts, Exp: expressions, Min: min, Max: max, NbPts: nbpts}
+	filter.DumpJson("temp/expressTMP.json", tmp)
+	ExpressWindow.Content().Refresh()
+}
+
+// load pts and scaleExp to temporary files to be used by the min/max slider
+func loadTMPfiles(fname string) filter.Record {
+	return filter.LoadJson(fname)
+}
+
+// update the Max expression
+func updateMaxExp(value float64, a fyne.App, e *Editor, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
+	tmp := loadTMPfiles("temp/expressTMP.json")
+	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, tmp.Min, value)
+	refreshExp(a, e, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
+}
+
+func refreshExp(a fyne.App, e *Editor, tmp filter.Record, scaleExp []float64, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
+	f.Set(0.2)     // progress bar set to 20%
+	initCluster(e) // remove all dots of the cluster container
+	pref := a.Preferences()
+	// Dot opacity
+	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the  dot opacity
+	opacity, _ := DotOp.Get()
+	op := uint8(opacity)
+	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) //  dot diameter
+	diameter, _ := clustDia.Get()
+	diameter = ApplyZoomInt(e, diameter)
+
+	if len(tmp.Exp) < 1 {
+		log.Println("Intensities not availble for column", expcol)
+		return
+	}
+	f.Set(0.3) // progress bar set to 30% after data reading
+
+	for c := 0; c < tmp.NbPts; c++ {
+		// progress bar increases when 50% of points are loaded
+		if c == int(tmp.NbPts/2) {
+			f.Set(0.5) // 50 % progression for progress bar
+		}
+
+		clcolor := grad(gradien)(scaleExp[c])
+
+		e.drawcircle(ApplyZoomInt(e, tmp.Pts[c].X), ApplyZoomInt(e, tmp.Pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+
+	}
+	// draw legend titel, dot and value for the current cexpression
+	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
+	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
+	titleLegend(e, expcol, colorText)
+	expLegend(e, op, diameter, gradien, tmp.Min, tmp.Max, colorText)
+
+	e.clusterContainer.Refresh()
+	ExpressWindow.Content().Refresh()
+	f.Set(0.) // reset progress bar
 }
