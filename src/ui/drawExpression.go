@@ -38,17 +38,20 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	DotOp := binding.BindPreferenceFloat("dotOpacity", preference) // pref binding for the expression dot opacity
 	DotOpacity := widget.NewSliderWithData(0, 255, DotOp)
 	DotOpacity.Step = 1
+	DotOpacity.Value = 255
 	DotOpacity.OnChanged = func(v float64) {
 		preference.SetFloat("dotOpacity", v)
 	}
 
 	// Max expression slider
-	maxExp := binding.BindPreferenceFloat("maxExp", preference) // pref binding for the expression Max
-	eMax, _ := maxExp.Get()
-	minExp := binding.BindPreferenceFloat("minExp", preference) // pref binding for the expression Min
-	eMin, _ := minExp.Get()
-	MaxExp := widget.NewSliderWithData(eMin, eMax, maxExp)
-	MaxExp.Step = (eMax - eMin) / 100.
+	// maxExp := binding.BindPreferenceFloat("maxExp", preference) // pref binding for the expression Max
+	// eMax, _ := maxExp.Get()
+	// minExp := binding.BindPreferenceFloat("minExp", preference) // pref binding for the expression Min
+	// eMin, _ := minExp.Get()
+	// MaxExp := widget.NewSliderWithData(eMin, eMax, maxExp)
+	MaxExp := widget.NewSlider(0., 100.)
+	MaxExp.Value = 100.
+	//MaxExp.Step = (eMax - eMin) / 100.
 	userMaxExp := binding.BindPreferenceFloat("userMaxExp", preference) // pref binding for user current the expression Max
 	MaxExp.OnChanged = func(v float64) {
 		preference.SetFloat("userMaxExp", v)
@@ -83,7 +86,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		widget.NewLabel("Max :"),
 		widget.NewButton("Apply", func() {
 			v, _ := userMaxExp.Get()
-			log.Println("max expression :", v, eMin, eMax)
+			//log.Println("max expression :", v, eMin, eMax)
 			go updateMaxExp(v, a, e, userSel, grad.Selected, f, ExpressWindow)
 		}),
 		MaxExp,
@@ -99,7 +102,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 			if userSel == "" {
 				return // return if nothing is selected
 			}
-			//log.Println(expSel.Entry.Text, grad.Selected, op)
+			MaxExp.Value = 100. // reset slider position
 			go drawExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex, ExpressWindow)
 
 		}),
@@ -217,7 +220,7 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 
 	// density plot of the expression distribution
 	go plot.BuildDensity(expressions, 100., expcol, ExpressWindow)
-	go saveTMPfiles(pts, expressions, min, max, nbPts, ExpressWindow)
+	go saveTMPfiles(pts, expressions, min, max, nbPts)
 
 	for c := 0; c < nbPts; c++ {
 		// progress bar increases when 50% of points are loaded
@@ -306,15 +309,15 @@ func LegendTxtscolor(a fyne.App, win fyne.Window) {
 }
 
 // save pts and scaleExp to temporary files to be used by the min/max slider
-func saveTMPfiles(pts []filter.Point, expressions []float64, min, max float64, nbpts int, ExpressWindow fyne.Window) {
-	pref := fyne.CurrentApp().Preferences()
-	minExp := binding.BindPreferenceFloat("minExp", pref) // pref binding for the expression dot opacity
-	minExp.Set(min)
-	maxExp := binding.BindPreferenceFloat("maxExp", pref) // pref binding for the expression dot opacity
-	maxExp.Set(max)
+func saveTMPfiles(pts []filter.Point, expressions []float64, min, max float64, nbpts int) {
+	// pref := fyne.CurrentApp().Preferences()
+	// minExp := binding.BindPreferenceFloat("minExp", pref) // pref binding for the expression dot opacity
+	// minExp.Set(min)
+	// maxExp := binding.BindPreferenceFloat("maxExp", pref) // pref binding for the expression dot opacity
+	// maxExp.Set(max)
 	tmp := filter.Record{Pts: pts, Exp: expressions, Min: min, Max: max, NbPts: nbpts}
 	filter.DumpJson("temp/expressTMP.json", tmp)
-	ExpressWindow.Content().Refresh()
+	//ExpressWindow.Content().Refresh()
 }
 
 // load pts and scaleExp to temporary files to be used by the min/max slider
@@ -325,7 +328,8 @@ func loadTMPfiles(fname string) filter.Record {
 // update the Max expression
 func updateMaxExp(value float64, a fyne.App, e *Editor, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
 	tmp := loadTMPfiles("temp/expressTMP.json")
-	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, tmp.Min, value)
+	newMax := tmp.Max * value / 100.
+	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, tmp.Min, newMax)
 	refreshExp(a, e, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
 }
 
