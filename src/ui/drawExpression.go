@@ -19,15 +19,6 @@ import (
 func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, firstTable string) {
 	ExpressWindow := a.NewWindow("Expression")
 
-	// select the expression to draw
-	// expSel := widget.NewSelectEntry(header) // limited for long list and replaced by custom select
-	sel := binding.NewString()
-	userSel, _ := sel.Get()
-	var expSel *widget.Button
-	expSel = widget.NewButton(userSel, func() {
-		pref.ShowTable(header[1:], sel, expSel, "Selection")
-	})
-
 	// show choice of different gradien
 	grad := widget.NewRadioGroup([]string{"Turbo", "Viridis", "Inferno", "White - Red", "Yellow - Red", "Purple - Red", "Blue - Yellow - Red"}, func(s string) {
 
@@ -44,19 +35,32 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	}
 
 	// Max expression slider
-	// maxExp := binding.BindPreferenceFloat("maxExp", preference) // pref binding for the expression Max
-	// eMax, _ := maxExp.Get()
-	// minExp := binding.BindPreferenceFloat("minExp", preference) // pref binding for the expression Min
-	// eMin, _ := minExp.Get()
-	// MaxExp := widget.NewSliderWithData(eMin, eMax, maxExp)
 	MaxExp := widget.NewSlider(0., 100.)
 	MaxExp.Value = 100.
 	//MaxExp.Step = (eMax - eMin) / 100.
 	userMaxExp := binding.BindPreferenceFloat("userMaxExp", preference) // pref binding for user current the expression Max
 	MaxExp.OnChanged = func(v float64) {
 		preference.SetFloat("userMaxExp", v)
-
 	}
+
+	// Min expression slider
+	MinExp := widget.NewSlider(0., 100.)
+	MinExp.Value = 0.
+	//MaxExp.Step = (eMax - eMin) / 100.
+	userMinExp := binding.BindPreferenceFloat("userMinExp", preference) // pref binding for user current the expression Min
+	MinExp.OnChanged = func(v float64) {
+		preference.SetFloat("userMinExp", v)
+	}
+
+	// select the expression to draw
+	// expSel := widget.NewSelectEntry(header) // limited for long list and replaced by custom select
+	sel := binding.NewString()
+	userSel, _ := sel.Get()
+	var expSel *widget.Button
+	expSel = widget.NewButton(userSel, func() {
+		pref.ShowTable(header[1:], sel, expSel, "Selection")
+
+	})
 
 	//legend color - the results is store in preferences
 	legendcol := widget.NewButton("Legend Text Color", func() { LegendTxtscolor(a, ExpressWindow) })
@@ -78,70 +82,87 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 				widget.NewLabel("Select your gradient"),
 				grad,
 			),
-			plot.DensityPicture(),
+			container.NewVBox(
+				widget.NewButton("Plot Expression", func() {
+					userSel, _ = sel.Get()
+					// gradien default
+					def := "White - Red"
+					if grad.Selected == "" {
+						grad.Selected = def
+					}
+					if userSel == "" {
+						return // return if nothing is selected
+					}
+					initSliderExp(MaxExp, MinExp) // reset expression min max sliders values
+
+					go drawExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex, ExpressWindow)
+
+				}),
+				legendcol,
+
+				slidePause,
+				widget.NewButton("Slide show", func() {
+					anim.Set(true)
+					setDelay(slidePause, slideDelay)
+					go startSlideShow(a, e, header, firstTable, grad.Selected, f, anim, curPathwayIndex, slideDelay, ExpressWindow)
+
+				}),
+				widget.NewButton("Stop/Continue Slide show", func() {
+					setDelay(slidePause, slideDelay)
+					an, _ := anim.Get()
+					if an {
+						anim.Set(false)
+					} else {
+						anim.Set(true)
+						go startSlideShow(a, e, header, firstTable, grad.Selected, f, anim, curPathwayIndex, slideDelay, ExpressWindow)
+					}
+
+				}),
+				widget.NewButton("Previous Slide", func() {
+					startIdx, _ := curPathwayIndex.Get()
+					if startIdx < 2 {
+						log.Println("Column", startIdx-1, "cannot be accessed !")
+						return
+					}
+					curPathwayIndex.Set(startIdx - 1)
+					go drawExp(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex, ExpressWindow)
+				}),
+				widget.NewButton("Next Slide", func() {
+					startIdx, _ := curPathwayIndex.Get()
+					if startIdx > len(header)-2 {
+						log.Println("Data table have", len(header)-1, "columns ! Column", startIdx+1, "cannot be accessed !")
+						return
+					}
+					curPathwayIndex.Set(startIdx + 1)
+					go drawExp(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex, ExpressWindow)
+				}),
+			),
 		),
+		plot.DensityPicture(),
+		container.NewHBox(
+			widget.NewLabel("Max :"),
+			widget.NewButton("Apply", func() {
+				vmax, _ := userMaxExp.Get()
+				vmin, _ := userMinExp.Get()
+				//go updateMaxExp(v, a, e, userSel, grad.Selected, f, ExpressWindow)
+				go updateMinMaxExp(vmin, vmax, a, e, userSel, grad.Selected, f, ExpressWindow)
+			}),
+		),
+		MaxExp,
+		container.NewHBox(
+			widget.NewLabel("Min :"),
+			widget.NewButton("Apply", func() {
+				vmax, _ := userMaxExp.Get()
+				vmin, _ := userMinExp.Get()
+				//log.Println("max expression :", v, eMin, eMax)
+				//go updateMinExp(v, a, e, userSel, grad.Selected, f, ExpressWindow)
+				go updateMinMaxExp(vmin, vmax, a, e, userSel, grad.Selected, f, ExpressWindow)
+			}),
+		),
+		MinExp,
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,
 
-		widget.NewLabel("Max :"),
-		widget.NewButton("Apply", func() {
-			v, _ := userMaxExp.Get()
-			//log.Println("max expression :", v, eMin, eMax)
-			go updateMaxExp(v, a, e, userSel, grad.Selected, f, ExpressWindow)
-		}),
-		MaxExp,
-
-		legendcol,
-		widget.NewButton("Plot Expression", func() {
-			userSel, _ = sel.Get()
-			// gradien default
-			def := "White - Red"
-			if grad.Selected == "" {
-				grad.Selected = def
-			}
-			if userSel == "" {
-				return // return if nothing is selected
-			}
-			MaxExp.Value = 100. // reset slider position
-			go drawExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex, ExpressWindow)
-
-		}),
-		slidePause,
-		widget.NewButton("Slide show", func() {
-			anim.Set(true)
-			setDelay(slidePause, slideDelay)
-			go startSlideShow(a, e, header, firstTable, grad.Selected, f, anim, curPathwayIndex, slideDelay, ExpressWindow)
-
-		}),
-		widget.NewButton("Stop/Continue Slide show", func() {
-			setDelay(slidePause, slideDelay)
-			an, _ := anim.Get()
-			if an {
-				anim.Set(false)
-			} else {
-				anim.Set(true)
-				go startSlideShow(a, e, header, firstTable, grad.Selected, f, anim, curPathwayIndex, slideDelay, ExpressWindow)
-			}
-
-		}),
-		widget.NewButton("Previous Slide", func() {
-			startIdx, _ := curPathwayIndex.Get()
-			if startIdx < 2 {
-				log.Println("Column", startIdx-1, "cannot be accessed !")
-				return
-			}
-			curPathwayIndex.Set(startIdx - 1)
-			go drawExp(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex, ExpressWindow)
-		}),
-		widget.NewButton("Next Slide", func() {
-			startIdx, _ := curPathwayIndex.Get()
-			if startIdx > len(header)-2 {
-				log.Println("Data table have", len(header)-1, "columns ! Column", startIdx+1, "cannot be accessed !")
-				return
-			}
-			curPathwayIndex.Set(startIdx + 1)
-			go drawExp(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex, ExpressWindow)
-		}),
 		widget.NewButton("Close", func() { ExpressWindow.Close() }),
 	)
 	ExpressWindow.SetContent(content)
@@ -233,7 +254,7 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 		e.drawcircle(ApplyZoomInt(e, pts[c].X), ApplyZoomInt(e, pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 
 	}
-	// draw legend titel, dot and value for the current cexpression
+	// draw legend title, dot and value for the current cexpression
 	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
 	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
 	titleLegend(e, expcol, colorText)
@@ -325,15 +346,32 @@ func loadTMPfiles(fname string) filter.Record {
 	return filter.LoadJson(fname)
 }
 
-// update the Max expression
-func updateMaxExp(value float64, a fyne.App, e *Editor, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
+// update the Min and Max expression
+func updateMinMaxExp(vmin, vmax float64, a fyne.App, e *Editor, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
 	tmp := loadTMPfiles("temp/expressTMP.json")
-	newMax := tmp.Max * value / 100.
-	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, tmp.Min, newMax)
-	refreshExp(a, e, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
+	newMin := vmin/100.*(tmp.Max-tmp.Min) + tmp.Min
+	newMax := vmax/100.*(tmp.Max-tmp.Min) + tmp.Min
+	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, newMin, newMax)
+	refreshExp(a, e, newMin, newMax, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
 }
 
-func refreshExp(a fyne.App, e *Editor, tmp filter.Record, scaleExp []float64, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
+// update the Max expression
+// func updateMaxExp(value float64, a fyne.App, e *Editor, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
+// 	tmp := loadTMPfiles("temp/expressTMP.json")
+// 	newMax := value/100.*(tmp.Max-tmp.Min) + tmp.Min
+// 	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, tmp.Min, newMax)
+// 	refreshExp(a, e, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
+// }
+
+// // update the Max expression
+// func updateMinExp(value float64, a fyne.App, e *Editor, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
+// 	tmp := loadTMPfiles("temp/expressTMP.json")
+// 	newMin := value/100.*(tmp.Max-tmp.Min) + tmp.Min
+// 	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, newMin, tmp.Max)
+// 	refreshExp(a, e, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
+// }
+
+func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record, scaleExp []float64, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
 	f.Set(0.2)     // progress bar set to 20%
 	initCluster(e) // remove all dots of the cluster container
 	pref := a.Preferences()
@@ -362,11 +400,11 @@ func refreshExp(a fyne.App, e *Editor, tmp filter.Record, scaleExp []float64, ex
 		e.drawcircle(ApplyZoomInt(e, tmp.Pts[c].X), ApplyZoomInt(e, tmp.Pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 
 	}
-	// draw legend titel, dot and value for the current cexpression
+	// draw legend title, dot and value for the current cexpression
 	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
 	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
 	titleLegend(e, expcol, colorText)
-	expLegend(e, op, diameter, gradien, tmp.Min, tmp.Max, colorText)
+	expLegend(e, op, diameter, gradien, newMin, newMax, colorText)
 
 	e.clusterContainer.Refresh()
 	ExpressWindow.Content().Refresh()

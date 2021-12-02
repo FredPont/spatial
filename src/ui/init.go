@@ -1,6 +1,11 @@
 package ui
 
-import "spatial/src/filter"
+import (
+	"spatial/src/filter"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/widget"
+)
 
 func initAlledges(e *Editor) {
 	e.drawSurface.alledges = nil
@@ -70,6 +75,20 @@ func initLastGatesNB(e *Editor) {
 func initGateDots(e *Editor) {
 	e.gateDotsContainer.Objects = nil
 	e.gateDotsContainer.Refresh()
+}
+
+////////////////////////////
+// Expression map INIT
+////////////////////////////
+
+// reset expression min max slider
+func initSliderExp(MaxExp, MinExp *widget.Slider) {
+	preference := fyne.CurrentApp().Preferences()
+	preference.SetFloat("userMaxExp", 100)
+	preference.SetFloat("userMinExp", 0)
+	MaxExp.Value = 100. // reset slider position
+	MinExp.Value = 0.   // reset slider position
+
 }
 
 ////////////////////////////
