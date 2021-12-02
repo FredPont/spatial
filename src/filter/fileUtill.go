@@ -342,13 +342,6 @@ func ReadExpress(a fyne.App, filename string, colIndexes []int) ([]float64, []Po
 	return expressions, pts
 }
 
-// func checkFloat(err error, colIndexes []int) {
-// 	if err != nil {
-// 		log.Println("column number", colIndexes[0]+1, "does not contain a number", err)
-// 	}
-// 	continue
-// }
-
 // ScaleSlice01 scale a slice between 0-1
 func ScaleSlice01(s []float64) ([]float64, float64, float64) {
 	var norm []float64

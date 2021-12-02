@@ -1,6 +1,9 @@
 package ui
 
 import (
+	"io"
+	"log"
+	"os"
 	"spatial/src/filter"
 
 	"fyne.io/fyne/v2"
@@ -88,6 +91,31 @@ func initSliderExp(MaxExp, MinExp *widget.Slider) {
 	preference.SetFloat("userMinExp", 0)
 	MaxExp.Value = 100. // reset slider position
 	MinExp.Value = 0.   // reset slider position
+
+}
+
+// reset the density plot picture
+func initDensityPlot() {
+	src := "src/ui/sky.png"
+	dst := "temp/density.png"
+
+	fin, err := os.Open(src)
+	if err != nil {
+		log.Println(err)
+	}
+	defer fin.Close()
+
+	fout, err := os.Create(dst)
+	if err != nil {
+		log.Println(err)
+	}
+	defer fout.Close()
+
+	_, err = io.Copy(fout, fin)
+
+	if err != nil {
+		log.Println(err)
+	}
 
 }
 

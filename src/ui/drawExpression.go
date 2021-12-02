@@ -13,6 +13,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -33,6 +34,10 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	DotOpacity.OnChanged = func(v float64) {
 		preference.SetFloat("dotOpacity", v)
 	}
+
+	// density plot
+	initDensityPlot() // clear previous density plot
+	densityPlot := plot.DensityPicture()
 
 	// Max expression slider
 	MaxExp := widget.NewSlider(0., 100.)
@@ -75,11 +80,14 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	slidePause.SetPlaceHolder("Pause between slides (sec)")
 
 	content := container.NewVBox(
-		widget.NewLabel("Select the variable"),
+		container.NewHBox(
+			widget.NewLabel("Select the variable and gradient :"),
+			widget.NewButtonWithIcon("Exit", theme.LogoutIcon(), func() { ExpressWindow.Close() }),
+		),
 		expSel,
 		container.NewHBox(
 			container.NewVBox(
-				widget.NewLabel("Select your gradient"),
+				//widget.NewLabel("Select your gradient"),
 				grad,
 			),
 			container.NewVBox(
@@ -93,6 +101,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 					if userSel == "" {
 						return // return if nothing is selected
 					}
+
 					initSliderExp(MaxExp, MinExp) // reset expression min max sliders values
 
 					go drawExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex, ExpressWindow)
@@ -138,7 +147,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 				}),
 			),
 		),
-		plot.DensityPicture(),
+		densityPlot,
 		container.NewHBox(
 			widget.NewLabel("Max :"),
 			widget.NewButton("Apply", func() {
@@ -162,8 +171,6 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		MinExp,
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,
-
-		widget.NewButton("Close", func() { ExpressWindow.Close() }),
 	)
 	ExpressWindow.SetContent(content)
 	ExpressWindow.Show()

@@ -93,7 +93,8 @@ func sma(period int) func(float64) float64 {
 
 // DensityPicture display a density plot in expression tool window
 func DensityPicture() fyne.CanvasObject {
-	img := canvas.NewImageFromFile("temp/density.png")
+	var img = canvas.NewImageFromFile("temp/density.png")
+
 	img.SetMinSize(fyne.Size{Width: 350, Height: 350})
 	img.FillMode = canvas.ImageFillContain
 	return img
