@@ -298,6 +298,10 @@ func save2DGates(gateName string, inter2D *Interactive2Dsurf) {
 	}
 }
 
+////////////////////////////
+// import 2D gates
+////////////////////////////
+
 // import the gates in csv files withe ImageJ format into the inter2D.drawSurface.alledges
 func import2DGates(inter2D *Interactive2Dsurf, f binding.Float) {
 	f.Set(0.3)
