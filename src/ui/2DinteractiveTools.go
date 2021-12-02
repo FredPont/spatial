@@ -57,7 +57,10 @@ func show2DinterTools(a fyne.App, e *Editor, winplot fyne.Window, inter2D *Inter
 			go searchDotsInGates(e, inter2D, &plotbox, dotmap, imageMap, f)
 		}),
 		widget.NewButton("Save Gates", func() {
-			go save2DGates(gatename.Text, e, inter2D)
+			go save2DGates(gatename.Text, inter2D)
+		}),
+		widget.NewButton("Import Gates", func() {
+			go import2DGates(inter2D, f)
 		}),
 		widget.NewButton("Clear Gates", func() {
 			go init2DScatterGates(inter2D)
@@ -275,23 +278,58 @@ func scale(x, y int, scaleFactor float64, rotate bool) (int, int) {
 
 }
 
-// save the gates to csv files withe ImageJ format and 100% zoom
+// save the gates to csv files withe ImageJ format
 // X,Y
 // 131,150
 // 105,189
 // 156,187
-func save2DGates(gateName string, e *Editor, inter2D *Interactive2Dsurf) {
+func save2DGates(gateName string, inter2D *Interactive2Dsurf) {
 
 	gateName = filter.FormatOutFile("gate", gateName, "") // test if name exist, if not, build a file name with the current time
 
-	zoomFactor := 100. / float64(e.zoom)
 	for i, poly := range inter2D.drawSurface.alledges {
 		if len(poly) < 3 {
 			continue
 		}
 
 		out := strconv.Itoa(i) + "_" + gateName
-		writeCSV(out, filter.ZoomPolygon(poly, zoomFactor))
+		writeCSV(out, poly)
 		log.Println("gate saved in gates/", out)
 	}
+}
+
+// import the gates in csv files withe ImageJ format into the inter2D.drawSurface.alledges
+func import2DGates(inter2D *Interactive2Dsurf, f binding.Float) {
+	f.Set(0.3)
+	// clear all gates
+	init2DScatterGates(inter2D)
+	dir := "import_gates_2Dplot"
+	gateFiles := filter.ListFiles(dir)
+	for gateNB, file := range gateFiles {
+		gate := filter.ZoomPolygon(filter.ReadGate(dir, file), 1.) // import the gate file and apply current zoom to polygon coordinates
+		//fmt.Println("gate zoomed:", gate)
+		inter2D.drawSurface.alledges = append(inter2D.drawSurface.alledges, gate)
+		redraw2Dgates(inter2D, gate)
+		replot2DgateNB(inter2D, gate, gateNB)
+	}
+	//drawImportedGatesNB(e.drawSurface) // draw and store the gates numbers coordinates after import gate
+	inter2D.gateContainer.Refresh()
+	f.Set(0.)
+}
+
+// redraw2Dgates draw the gates in 2D plot after importation
+func redraw2Dgates(inter2D *Interactive2Dsurf, p []filter.Point) {
+	L := len(p)
+	if L < 1 {
+		return
+	}
+	for i := 0; i < L; i++ {
+		inter2D.drawSurface.drawcircleGateCont(p[i].X, p[i].Y, 1, color.NRGBA{76, 0, 153, 255})
+	}
+	inter2D.gateContainer.Refresh()
+}
+
+// replot2DgateNB draw the gates numbers in 2D plot after importation
+func replot2DgateNB(inter2D *Interactive2Dsurf, gate []filter.Point, gateNB int) {
+	inter2D.drawSurface.plotGateNb(gate[0].X, gate[0].Y, strconv.Itoa(gateNB))
 }
