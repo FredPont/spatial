@@ -20,8 +20,10 @@ package ui
 
 import (
 	"image/color"
+	"log"
 	"math"
 	"spatial/src/filter"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -53,6 +55,9 @@ func show2DinterTools(a fyne.App, e *Editor, winplot fyne.Window, inter2D *Inter
 		gatename,
 		widget.NewButton("Show Cells in Gates", func() {
 			go searchDotsInGates(e, inter2D, &plotbox, dotmap, imageMap, f)
+		}),
+		widget.NewButton("Save Gates", func() {
+			go save2DGates(gatename.Text, e, inter2D)
 		}),
 		widget.NewButton("Clear Gates", func() {
 			go init2DScatterGates(inter2D)
@@ -268,4 +273,25 @@ func scale(x, y int, scaleFactor float64, rotate bool) (int, int) {
 	}
 	return xScaled, yScaled
 
+}
+
+// save the gates to csv files withe ImageJ format and 100% zoom
+// X,Y
+// 131,150
+// 105,189
+// 156,187
+func save2DGates(gateName string, e *Editor, inter2D *Interactive2Dsurf) {
+
+	gateName = filter.FormatOutFile("gate", gateName, "") // test if name exist, if not, build a file name with the current time
+
+	zoomFactor := 100. / float64(e.zoom)
+	for i, poly := range inter2D.drawSurface.alledges {
+		if len(poly) < 3 {
+			continue
+		}
+
+		out := strconv.Itoa(i) + "_" + gateName
+		writeCSV(out, filter.ZoomPolygon(poly, zoomFactor))
+		log.Println("gate saved in gates/", out)
+	}
 }

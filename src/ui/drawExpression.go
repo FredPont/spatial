@@ -22,7 +22,6 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 
 	// show choice of different gradien
 	grad := widget.NewRadioGroup([]string{"Turbo", "Viridis", "Inferno", "White - Red", "Yellow - Red", "Purple - Red", "Blue - Yellow - Red"}, func(s string) {
-
 		//fmt.Println("Selected <", s, ">")
 	})
 
@@ -82,7 +81,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	content := container.NewVBox(
 		container.NewHBox(
 			widget.NewLabel("Select the variable and gradient :"),
-			widget.NewButtonWithIcon("Exit", theme.LogoutIcon(), func() { ExpressWindow.Close() }),
+			widget.NewButtonWithIcon("Close", theme.LogoutIcon(), func() { ExpressWindow.Close() }),
 		),
 		expSel,
 		container.NewHBox(
@@ -163,8 +162,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 			widget.NewButton("Apply", func() {
 				vmax, _ := userMaxExp.Get()
 				vmin, _ := userMinExp.Get()
-				//log.Println("max expression :", v, eMin, eMax)
-				//go updateMinExp(v, a, e, userSel, grad.Selected, f, ExpressWindow)
+
 				go updateMinMaxExp(vmin, vmax, a, e, userSel, grad.Selected, f, ExpressWindow)
 			}),
 		),
@@ -338,14 +336,10 @@ func LegendTxtscolor(a fyne.App, win fyne.Window) {
 
 // save pts and scaleExp to temporary files to be used by the min/max slider
 func saveTMPfiles(pts []filter.Point, expressions []float64, min, max float64, nbpts int) {
-	// pref := fyne.CurrentApp().Preferences()
-	// minExp := binding.BindPreferenceFloat("minExp", pref) // pref binding for the expression dot opacity
-	// minExp.Set(min)
-	// maxExp := binding.BindPreferenceFloat("maxExp", pref) // pref binding for the expression dot opacity
-	// maxExp.Set(max)
+
 	tmp := filter.Record{Pts: pts, Exp: expressions, Min: min, Max: max, NbPts: nbpts}
 	filter.DumpJson("temp/expressTMP.json", tmp)
-	//ExpressWindow.Content().Refresh()
+
 }
 
 // load pts and scaleExp to temporary files to be used by the min/max slider
@@ -361,22 +355,6 @@ func updateMinMaxExp(vmin, vmax float64, a fyne.App, e *Editor, expcol, gradien 
 	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, newMin, newMax)
 	refreshExp(a, e, newMin, newMax, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
 }
-
-// update the Max expression
-// func updateMaxExp(value float64, a fyne.App, e *Editor, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
-// 	tmp := loadTMPfiles("temp/expressTMP.json")
-// 	newMax := value/100.*(tmp.Max-tmp.Min) + tmp.Min
-// 	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, tmp.Min, newMax)
-// 	refreshExp(a, e, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
-// }
-
-// // update the Max expression
-// func updateMinExp(value float64, a fyne.App, e *Editor, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
-// 	tmp := loadTMPfiles("temp/expressTMP.json")
-// 	newMin := value/100.*(tmp.Max-tmp.Min) + tmp.Min
-// 	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, newMin, tmp.Max)
-// 	refreshExp(a, e, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
-// }
 
 func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record, scaleExp []float64, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
 	f.Set(0.2)     // progress bar set to 20%
