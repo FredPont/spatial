@@ -20,6 +20,7 @@ package ui
 
 import (
 	"log"
+	"runtime"
 	"spatial/src/filter"
 	"strconv"
 
@@ -33,8 +34,12 @@ func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string,
 	param := prefToConf(pref)
 	log.Print("start filtering...")
 	// progress bar step
-	step := 0.8 / float64(len(alledges)+len(dataFiles))
+	nbFiles := len(alledges) * len(dataFiles)
+	step := 0.8 / float64(nbFiles)
 	// filter all data files with all active gates
+	nbCPU := runtime.NumCPU()
+	ch := make(chan string, 2*nbCPU+1)
+
 	for gateNumber, polygon := range alledges {
 		//fmt.Println("polygon ", polygon)
 		if len(polygon) < 3 {
@@ -43,11 +48,18 @@ func filterActiveGates(e *Editor, alledges [][]filter.Point, dataFiles []string,
 		for _, dataFile := range dataFiles {
 			gateName = filter.FormatOutFile("filter", gateName, "") // test if name exist, if not, build a file name with the current time
 			outFile := strconv.Itoa(gateNumber) + "_" + gateName + "_" + dataFile
-			filter.FilterTable(e.zoom, dataFile, outFile, polygon, param, gateNumber)
+			go filter.FilterTable(e.zoom, dataFile, outFile, polygon, param, gateNumber, ch)
 		}
-		f.Set(0.2 + step) // progress bar
+		
 	}
-	log.Println("done !")
+
+	// print the file progression and the progress bar
+	for i := 0; i < nbFiles; i++ {
+		msg := <-ch
+		prog, _ := f.Get()
+		f.Set(prog + step) // progress bar
+		log.Println(msg, " done !")
+	}
 	f.Set(0.) // progress bar
 }
 

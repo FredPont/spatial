@@ -24,6 +24,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -54,7 +55,8 @@ func Filter2DGates(cellsInGates []map[string]Point, alledges [][]Point, gateName
 	nbFiles := len(cellsInGates) * len(dataFiles)
 	step := 0.8 / float64(nbFiles)
 	// filter all data files with all active gates
-	ch := make(chan string)
+	nbCPU := runtime.NumCPU()
+	ch := make(chan string, 2*nbCPU+1)
 
 	for gateNumber, cellsOnegate := range cellsInGates {
 		for _, dataFile := range dataFiles {

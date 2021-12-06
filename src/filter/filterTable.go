@@ -43,7 +43,7 @@ type DotsGate struct {
 }
 
 // FilterTable filter the scRNAseq table to extract cells in polygon
-func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf, gateNumber int) {
+func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf, gateNumber int, ch chan string) chan string {
 
 	path := "data/" + dataFile
 	// open result file for write filtered table
@@ -85,7 +85,8 @@ func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf
 		}
 
 	}
-	return
+	ch <- fout
+	return ch
 }
 
 func filterRow(zoom int, record []string, XYindex []int, polygon []Point, param Conf) bool {

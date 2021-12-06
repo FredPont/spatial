@@ -112,7 +112,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 			alledges := e.drawSurface.alledges
 			go plot.Plotform(a, w, e.zoom, header, firstTable, alledges, f)
 		}),
-		widget.NewButton("2D Plot", func() {
+		widget.NewButton("2D interactive Plot", func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges
 			go Plot2Dform(a, e, w, e.zoom, header, firstTable, alledges, f)
