@@ -58,7 +58,7 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 
 				compWindow.Content().Refresh()
 			}),
-			widget.NewButton("unSelect all", func() {
+			widget.NewButton("Deselect all", func() {
 				buildMapFalse(gates, g1Map)
 
 				compWindow.Content().Refresh()
@@ -72,7 +72,7 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 
 				compWindow.Content().Refresh()
 			}),
-			widget.NewButton("unSelect all", func() {
+			widget.NewButton("Deselect all", func() {
 				buildMapFalse(gates, g2Map)
 
 				compWindow.Content().Refresh()
@@ -85,7 +85,7 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 
 				compWindow.Content().Refresh()
 			}),
-			widget.NewButton("unSelect all", func() {
+			widget.NewButton("Deselect all", func() {
 				buildMapFalse(header[1:], headerMap)
 
 				compWindow.Content().Refresh()
