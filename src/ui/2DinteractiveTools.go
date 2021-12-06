@@ -57,6 +57,7 @@ func show2DinterTools(a fyne.App, e *Editor, winplot fyne.Window, inter2D *Inter
 			go searchDotsInGates(e, inter2D, &plotbox, dotmap, imageMap, f)
 		}),
 		widget.NewButton("Filter tables by Gates", func() {
+			go save2DGates(gatename.Text, inter2D)
 			go filterTables2DGates(e, inter2D, &plotbox, dotmap, imageMap, gatename.Text, f)
 		}),
 		widget.NewButton("Save Gates", func() {
