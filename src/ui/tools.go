@@ -154,7 +154,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 // logo display a log in tool window
 func logo() fyne.CanvasObject {
 	img := canvas.NewImageFromFile("src/ui/logo.png")
-	img.SetMinSize(fyne.Size{Width: 171, Height: 55})
+	img.SetMinSize(fyne.Size{Width: 280, Height: 90})
 	img.FillMode = canvas.ImageFillContain
 	return img
 }

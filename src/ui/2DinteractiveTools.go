@@ -56,6 +56,9 @@ func show2DinterTools(a fyne.App, e *Editor, winplot fyne.Window, inter2D *Inter
 		widget.NewButton("Show Cells in Gates", func() {
 			go searchDotsInGates(e, inter2D, &plotbox, dotmap, imageMap, f)
 		}),
+		widget.NewButton("Filter tables by Gates", func() {
+			go filterTables2DGates(e, inter2D, &plotbox, dotmap, imageMap, gatename.Text, f)
+		}),
 		widget.NewButton("Save Gates", func() {
 			go save2DGates(gatename.Text, inter2D)
 		}),
@@ -336,4 +339,20 @@ func redraw2Dgates(inter2D *Interactive2Dsurf, p []filter.Point) {
 // replot2DgateNB draw the gates numbers in 2D plot after importation
 func replot2DgateNB(inter2D *Interactive2Dsurf, gate []filter.Point, gateNB int) {
 	inter2D.drawSurface.plotGateNb(gate[0].X, gate[0].Y, strconv.Itoa(gateNB))
+}
+
+////////////////////////////
+// filter tables by gates
+////////////////////////////
+
+// convert the scatter points to dots position in pixel
+// filter the dots that are in the gates
+// filter the tables by cells ID
+func filterTables2DGates(e *Editor, inter2D *Interactive2Dsurf, p *PlotBox, dotmap map[string]filter.Dot, imagemap map[string]filter.Point, gateName string, f binding.Float) {
+	scatter := dotMapToPointMap(p, dotmap)
+	f.Set(0.1) // progress bar
+	cellsInGates := selectedCells(inter2D, scatter)
+	f.Set(0.2) // progress bar
+	go filter.Filter2DGates(cellsInGates, inter2D.drawSurface.alledges, gateName, f)
+
 }
