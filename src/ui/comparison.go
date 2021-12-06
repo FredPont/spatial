@@ -52,21 +52,45 @@ func buttonCompare(a fyne.App, e *Editor, preference fyne.Preferences, f binding
 		widget.NewLabel("Groups to compare"),
 		widget.NewLabel("Group 1"),
 		listGates(gates, g1Map),
+		container.NewHBox(
+			widget.NewButton("Select all", func() {
+				buildMapTrue(gates, g1Map)
+
+				compWindow.Content().Refresh()
+			}),
+			widget.NewButton("unSelect all", func() {
+				buildMapFalse(gates, g1Map)
+
+				compWindow.Content().Refresh()
+			}),
+		),
 		widget.NewLabel("Group 2"),
 		listGates(gates, g2Map),
+		container.NewHBox(
+			widget.NewButton("Select all", func() {
+				buildMapTrue(gates, g2Map)
+
+				compWindow.Content().Refresh()
+			}),
+			widget.NewButton("unSelect all", func() {
+				buildMapFalse(gates, g2Map)
+
+				compWindow.Content().Refresh()
+			}),
+		),
 		widget.NewLabel("Columns to compare"),
-		widget.NewButton("Select all", func() {
-			buildMapTrue(header[1:], headerMap)
-			//boxes = binding.BindUntypedMap(&headerMap)
-			//boxes.Reload()
-			compWindow.Content().Refresh()
-		}),
-		widget.NewButton("unSelect all", func() {
-			buildMapFalse(header[1:], headerMap)
-			//boxes = binding.BindUntypedMap(&headerMap)
-			//boxes.Reload()
-			compWindow.Content().Refresh()
-		}),
+		container.NewHBox(
+			widget.NewButton("Select all", func() {
+				buildMapTrue(header[1:], headerMap)
+
+				compWindow.Content().Refresh()
+			}),
+			widget.NewButton("unSelect all", func() {
+				buildMapFalse(header[1:], headerMap)
+
+				compWindow.Content().Refresh()
+			}),
+		),
 		widget.NewButton("Compare Group2 / Group 1", func() {
 			//log.Println(g1Map, g2Map)
 			//log.Println(headerMap)
