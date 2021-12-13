@@ -3,6 +3,7 @@ package ui
 import (
 	"image/color"
 
+	"github.com/lucasb-eyer/go-colorful"
 	"github.com/mazznoer/colorgrad"
 )
 
@@ -64,6 +65,29 @@ func BYRGradien(val float64) RGB {
 
 	return rgbModel(grad.At(val))
 }
+
+// FULLGradien Full color gradient blue to red for 2D plot
+func FULLGradien(val float64) RGB {
+	grad, _ := colorgrad.NewGradient().
+		Colors(
+			color.RGBA{0, 206, 209, 255},
+			color.RGBA{255, 105, 180, 255},
+			colorful.Color{R: 0.274, G: 0.5, B: 0.7},
+			colorful.Hsv(50, 1, 1),
+			colorful.Hsv(348, 0.9, 0.8),
+		).
+		Build()
+	return rgbModel(grad.At(val))
+}
+
+// YELLBLUEGradien color gradient yellow to rblue for 2D plot
+func YELLBLUEGradien(val float64) RGB {
+	grad, _ := colorgrad.NewGradient().
+		HtmlColors("gold", "hotpink", "darkturquoise").
+		Build()
+	return rgbModel(grad.At(val))
+}
+
 func rgbModel(c color.Color) RGB {
 	r, g, b, _ := c.RGBA()
 	return RGB{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}
