@@ -51,10 +51,21 @@ func show2DinterTools(a fyne.App, e *Editor, winplot fyne.Window, inter2D *Inter
 	gatename := widget.NewEntry()
 	gatename.SetPlaceHolder("Selection name...")
 
+	// show choice of different gradien
+	grad := widget.NewRadioGroup([]string{"Turbo", "FullColor", "Gold - Turquoise", "Rainbow", "Sinebow", "Plasma", "Warm"}, func(s string) {
+		//fmt.Println("Selected <", s, ">")
+	})
+	// gradien default
+	def := "Turbo"
+	if grad.Selected == "" {
+		grad.Selected = def
+	}
+
 	content := container.NewVBox(
 		gatename,
+		grad,
 		widget.NewButton("Show Cells in Gates", func() {
-			go searchDotsInGates(e, inter2D, &plotbox, dotmap, imageMap, f)
+			go searchDotsInGates(e, inter2D, &plotbox, dotmap, imageMap, grad.Selected, f)
 		}),
 		widget.NewButton("Filter tables by Gates", func() {
 			go save2DGates(gatename.Text, inter2D)
@@ -178,13 +189,14 @@ func dotMapToPointMap(p *PlotBox, dotmap map[string]filter.Dot) map[string]filte
 // convert the scatter points to dots position in pixel
 // filter the dots that are in the gates
 // show the dots in gate in the microscopy image
-func searchDotsInGates(e *Editor, inter2D *Interactive2Dsurf, p *PlotBox, dotmap map[string]filter.Dot, imagemap map[string]filter.Point, f binding.Float) {
+func searchDotsInGates(e *Editor, inter2D *Interactive2Dsurf, p *PlotBox, dotmap map[string]filter.Dot, imagemap map[string]filter.Point, selectedGradient string, f binding.Float) {
 	f.Set(0.3)
 	scatter := dotMapToPointMap(p, dotmap)
 	cellsInGates := selectedCells(inter2D, scatter)
+	gradient := grad2D(selectedGradient)
 
-	go plotDotsMicrocop(e, cellsInGates, imagemap)
-	plotDotsInGates(p, inter2D, cellsInGates)
+	go plotDotsMicrocop(e, cellsInGates, imagemap, gradient)
+	plotDotsInGates(p, inter2D, cellsInGates, gradient)
 
 	inter2D.gateContainer.Refresh()
 	f.Set(0.)
@@ -201,7 +213,7 @@ func selectedCells(inter2D *Interactive2Dsurf, scatter map[string]filter.Point) 
 }
 
 // plot the dots in gates in color in the 2D scatter plot. dots are plotted in the gate container
-func plotDotsInGates(p *PlotBox, inter2D *Interactive2Dsurf, cellsInGates []map[string]filter.Point) {
+func plotDotsInGates(p *PlotBox, inter2D *Interactive2Dsurf, cellsInGates []map[string]filter.Point, gradient colorgrad.Gradient) {
 	prefs := fyne.CurrentApp().Preferences()
 	//get scatter dot size
 	ds := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
@@ -210,17 +222,22 @@ func plotDotsInGates(p *PlotBox, inter2D *Interactive2Dsurf, cellsInGates []map[
 
 	nbGates := len(cellsInGates)
 	for i := 0; i < nbGates; i++ {
-		dotcolor := dotColors(nbGates, i)
+		dotcolor := dotColors(nbGates, i, gradient)
 		p.gatesDotPlot(inter2D, dotsize, cellsInGates[i], dotcolor)
 	}
 }
 
 // dotColors computes the color of scatter dots
 // for a total number of clusters "nbGates"
-func dotColors(nbGates, gateIndex int) color.NRGBA {
-	grad := colorgrad.Rainbow().Sharp(uint(nbGates+1), 0.2)
+func dotColors(nbGates, gateIndex int, gradient colorgrad.Gradient) color.NRGBA {
+	grad := gradient.Sharp(uint(nbGates+1), 0.2)
 	return nrgbaModel(grad.Colors(uint(nbGates + 1))[gateIndex])
 }
+
+// func dotColors2(nbGates, gateIndex int) color.NRGBA {
+// 	grad := colorgrad.Rainbow().Sharp(uint(nbGates+1), 0.2)
+// 	return nrgbaModel(grad.Colors(uint(nbGates + 1))[gateIndex])
+// }
 
 func nrgbaModel(c color.Color) color.NRGBA {
 	r, g, b, a := c.RGBA()
@@ -228,13 +245,14 @@ func nrgbaModel(c color.Color) color.NRGBA {
 }
 
 // extract the cells ID of the cells in gates and get their corresponding XY coordinates for the microscopy image
-func plotDotsMicrocop(e *Editor, cellsInGates []map[string]filter.Point, imageMap map[string]filter.Point) {
+func plotDotsMicrocop(e *Editor, cellsInGates []map[string]filter.Point, imageMap map[string]filter.Point, gradient colorgrad.Gradient) {
 	initCluster(e) // remove all dots of the cluster container
 	nbGates := len(cellsInGates)
+
 	// get the image microscopy coordinates of the cells in one gate from the cells names in the 2D plot
 	for i, cellsingate := range cellsInGates {
 		var cellsXY []filter.Point
-		dotcolor := dotColors(nbGates, i)
+		dotcolor := dotColors(nbGates, i, gradient)
 		for cellid := range cellsingate {
 			cellsXY = append(cellsXY, imageMap[cellid])
 		}

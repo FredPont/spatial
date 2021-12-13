@@ -66,8 +66,20 @@ func BYRGradien(val float64) RGB {
 	return rgbModel(grad.At(val))
 }
 
+func rgbModel(c color.Color) RGB {
+	r, g, b, _ := c.RGBA()
+	return RGB{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}
+}
+
+//////////////////////
+// 2D plot gradients
+//////////////////////
+
+// these functions return a gradien, not a RGB value
+// the NRGBA value is computed by the dotColors function
+
 // FULLGradien Full color gradient blue to red for 2D plot
-func FULLGradien(val float64) RGB {
+func FULLGradien() colorgrad.Gradient {
 	grad, _ := colorgrad.NewGradient().
 		Colors(
 			color.RGBA{0, 206, 209, 255},
@@ -77,18 +89,66 @@ func FULLGradien(val float64) RGB {
 			colorful.Hsv(348, 0.9, 0.8),
 		).
 		Build()
-	return rgbModel(grad.At(val))
+	return grad
 }
 
 // YELLBLUEGradien color gradient yellow to rblue for 2D plot
-func YELLBLUEGradien(val float64) RGB {
+func YELLBLUEGradien() colorgrad.Gradient {
 	grad, _ := colorgrad.NewGradient().
 		HtmlColors("gold", "hotpink", "darkturquoise").
 		Build()
-	return rgbModel(grad.At(val))
+	return grad
 }
 
-func rgbModel(c color.Color) RGB {
-	r, g, b, _ := c.RGBA()
-	return RGB{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}
+// RAINBOWGradien color gradient yellow to rblue for 2D plot
+func RAINBOWGradien() colorgrad.Gradient {
+	grad := colorgrad.Rainbow()
+	return grad
+}
+
+// SINEBOWGradien color gradient yellow to rblue for 2D plot
+func SINEBOWGradien() colorgrad.Gradient {
+	grad := colorgrad.Sinebow()
+	return grad
+}
+
+// TURBOGradien color gradient yellow to rblue for 2D plot
+func TURBOGradien() colorgrad.Gradient {
+	grad := colorgrad.Turbo()
+	return grad
+}
+
+// PLASMAGradien color gradient yellow to rblue for 2D plot
+func PLASMAGradien() colorgrad.Gradient {
+	grad := colorgrad.Plasma()
+	return grad
+}
+
+// WARMGradien color gradient yellow to rblue for 2D plot
+func WARMGradien() colorgrad.Gradient {
+	grad := colorgrad.Warm()
+	return grad
+}
+
+// grad return the gradien function with name "gradien"
+func grad2D(gradient string) colorgrad.Gradient {
+	switch gradient {
+	case "Rainbow":
+		return RAINBOWGradien()
+	case "Sinebow":
+		return SINEBOWGradien()
+	case "Turbo":
+		return TURBOGradien()
+	case "Plasma":
+		return PLASMAGradien()
+	case "Warm":
+		return WARMGradien()
+	case "FullColor":
+		return FULLGradien()
+	case "Gold - Turquoise":
+		return YELLBLUEGradien()
+	default:
+		return FULLGradien()
+	}
+
 }

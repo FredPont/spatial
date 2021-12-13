@@ -254,7 +254,7 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 			f.Set(0.5) // 50 % progression for progress bar
 		}
 
-		clcolor := grad(gradien)(scaleExp[c])
+		clcolor := gradUser(gradien)(scaleExp[c])
 
 		e.drawcircle(ApplyZoomInt(e, pts[c].X), ApplyZoomInt(e, pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 
@@ -283,7 +283,7 @@ func expLegend(e *Editor, op uint8, diameter int, gradien string, min, max float
 		//exp := fmt.Sprintf("%.1f", unscale(float64(i)/5., min, max))
 		exp := TicksDecimals(unscale(float64(i)/5., min, max))
 		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, c)
-		co := grad(gradien)(float64(i) / 5.)
+		co := gradUser(gradien)(float64(i) / 5.)
 		e.drawcircle(x, y+150-sp*i, diameter*100/e.zoom, color.NRGBA{co.R, co.G, co.B, op})
 	}
 }
@@ -294,7 +294,7 @@ func unscale(v, min, max float64) float64 {
 }
 
 // grad return the gradien function with name "gradien"
-func grad(gradien string) func(float64) RGB {
+func gradUser(gradien string) func(float64) RGB {
 	switch gradien {
 	case "Turbo":
 		return func(val float64) RGB { return TurboGradien(val) }
@@ -380,7 +380,7 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 			f.Set(0.5) // 50 % progression for progress bar
 		}
 
-		clcolor := grad(gradien)(scaleExp[c])
+		clcolor := gradUser(gradien)(scaleExp[c])
 
 		e.drawcircle(ApplyZoomInt(e, tmp.Pts[c].X), ApplyZoomInt(e, tmp.Pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 
