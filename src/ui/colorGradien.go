@@ -100,34 +100,69 @@ func YELLBLUEGradien() colorgrad.Gradient {
 	return grad
 }
 
-// RAINBOWGradien color gradient yellow to rblue for 2D plot
+// RAINBOWGradien color gradient for 2D plot
 func RAINBOWGradien() colorgrad.Gradient {
 	grad := colorgrad.Rainbow()
 	return grad
 }
 
-// SINEBOWGradien color gradient yellow to rblue for 2D plot
+// SINEBOWGradien color gradient for 2D plot
 func SINEBOWGradien() colorgrad.Gradient {
 	grad := colorgrad.Sinebow()
 	return grad
 }
 
-// TURBOGradien color gradient yellow to rblue for 2D plot
+// TURBOGradien color gradient for 2D plot
 func TURBOGradien() colorgrad.Gradient {
 	grad := colorgrad.Turbo()
 	return grad
 }
 
-// PLASMAGradien color gradient yellow to rblue for 2D plot
+// PLASMAGradien color gradient for 2D plot
 func PLASMAGradien() colorgrad.Gradient {
 	grad := colorgrad.Plasma()
 	return grad
 }
 
-// WARMGradien color gradient yellow to rblue for 2D plot
+// WARMGradien color gradient for 2D plot
 func WARMGradien() colorgrad.Gradient {
 	grad := colorgrad.Warm()
 	return grad
+}
+
+// HEGradien color gradient for 2D plot
+func HEGradien() colorgrad.Gradient {
+	// grad, _ := colorgrad.NewGradient().Colors(
+
+	// ).Build()
+	grad, _ := colorgrad.NewGradient().
+		Colors(
+			color.RGBA{255, 255, 51, 255}, // yellow
+			color.RGBA{0, 213, 255, 255},  // cyan
+			//color.RGBA{255, 255, 255, 255}, // white
+			color.RGBA{255, 0, 0, 255},     // red
+			color.RGBA{128, 255, 128, 255}, // green
+			color.RGBA{255, 102, 25, 255},  // orange
+
+		).
+		Build()
+	return grad
+}
+
+// HEcustom return an array of custom colors
+func HEcustom() []color.NRGBA {
+	return []color.NRGBA{
+		{255, 255, 51, 255},  // yellow
+		{255, 0, 0, 255},     // red
+		{0, 213, 255, 255},   // cyan
+		{0, 204, 0, 255},     // green
+		{255, 102, 25, 255},  // orange
+		{255, 255, 255, 255}, // white
+	}
+}
+
+func chooseHE(gateIndex int) color.NRGBA {
+	return HEcustom()[gateIndex]
 }
 
 // grad return the gradien function with name "gradien"
@@ -147,6 +182,8 @@ func grad2D(gradient string) colorgrad.Gradient {
 		return FULLGradien()
 	case "Gold - Turquoise":
 		return YELLBLUEGradien()
+	case "Hematoxilin Eosine":
+		return HEGradien()
 	default:
 		return FULLGradien()
 	}
