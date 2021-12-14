@@ -130,24 +130,22 @@ func WARMGradien() colorgrad.Gradient {
 	return grad
 }
 
-// HEGradien color gradient for 2D plot
-func HEGradien() colorgrad.Gradient {
-	// grad, _ := colorgrad.NewGradient().Colors(
+// HEGradien color gradient for 2D plot - not used
+// func HEGradien() colorgrad.Gradient {
 
-	// ).Build()
-	grad, _ := colorgrad.NewGradient().
-		Colors(
-			color.RGBA{255, 255, 51, 255}, // yellow
-			color.RGBA{0, 213, 255, 255},  // cyan
-			//color.RGBA{255, 255, 255, 255}, // white
-			color.RGBA{255, 0, 0, 255},     // red
-			color.RGBA{128, 255, 128, 255}, // green
-			color.RGBA{255, 102, 25, 255},  // orange
+// 	grad, _ := colorgrad.NewGradient().
+// 		Colors(
+// 			color.RGBA{255, 255, 51, 255}, // yellow
+// 			color.RGBA{0, 213, 255, 255},  // cyan
+// 			//color.RGBA{255, 255, 255, 255}, // white
+// 			color.RGBA{255, 0, 0, 255},     // red
+// 			color.RGBA{128, 255, 128, 255}, // green
+// 			color.RGBA{255, 102, 25, 255},  // orange
 
-		).
-		Build()
-	return grad
-}
+// 		).
+// 		Build()
+// 	return grad
+// }
 
 // HEcustom return an array of custom colors
 func HEcustom() []color.NRGBA {
@@ -157,7 +155,8 @@ func HEcustom() []color.NRGBA {
 		{0, 213, 255, 255},   // cyan
 		{0, 204, 0, 255},     // green
 		{255, 102, 25, 255},  // orange
-		{255, 255, 255, 255}, // white
+		{205, 219, 209, 255}, //grey
+		//{255, 255, 255, 255}, // white
 	}
 }
 
@@ -182,8 +181,8 @@ func grad2D(gradient string) colorgrad.Gradient {
 		return FULLGradien()
 	case "Gold - Turquoise":
 		return YELLBLUEGradien()
-	case "Hematoxilin Eosine":
-		return HEGradien()
+	// case "Hematoxilin Eosine":
+	// 	return HEGradien()
 	default:
 		return FULLGradien()
 	}

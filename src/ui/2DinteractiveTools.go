@@ -228,10 +228,12 @@ func plotDotsInGates(p *PlotBox, inter2D *Interactive2Dsurf, cellsInGates []map[
 
 // dotColors computes the color of scatter dots
 // for a total number of clusters "nbGates"
+// colors are computed from gradients except "Hematoxilin Eosine" that return
+// an array of 6 choosen colors
 func dotColors(nbGates, gateIndex int, selectedGradient string) color.NRGBA {
 	if selectedGradient == "Hematoxilin Eosine" && nbGates > len(HEcustom()) {
 		selectedGradient = "Turbo"
-	} else {
+	} else if selectedGradient == "Hematoxilin Eosine" && nbGates <= len(HEcustom()) {
 		return chooseHE(gateIndex)
 	}
 	gradient := grad2D(selectedGradient)
