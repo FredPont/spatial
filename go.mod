@@ -3,7 +3,7 @@ module spatial
 go 1.17
 
 require (
-	fyne.io/fyne/v2 v2.1.0
+	fyne.io/fyne/v2 v2.1.2
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mazznoer/colorgrad v0.8.1
 	gonum.org/v1/plot v0.10.0
@@ -17,7 +17,7 @@ require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-fonts/liberation v0.2.0 // indirect
 	github.com/go-gl/gl v0.0.0-20210813123233-e4099ee2221f // indirect
-	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20210410170116-ea3d685f79fb // indirect
+	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20211024062804-40e447a793be // indirect
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
 	github.com/go-pdf/fpdf v0.5.0 // indirect
 	github.com/godbus/dbus/v5 v5.0.4 // indirect
