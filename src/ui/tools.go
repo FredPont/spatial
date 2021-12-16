@@ -42,8 +42,8 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 	gatename.SetPlaceHolder("Selection name...")
 
 	// cluster opacity
-	clustOpacity := binding.BindPreferenceFloat("clustOpacity", preference) // pref binding for the cluster dot opacity
-	clustOpacity.Set(255.)
+	//clustOpacity := binding.BindPreferenceFloat("clustOpacity", preference) // pref binding for the cluster dot opacity
+	//clustOpacity.Set(255.)
 	clusDotOpacity := widget.NewSlider(0., 255.)
 	clusDotOpacity.Value = 255.
 	clusDotOpacity.OnChanged = func(v float64) {

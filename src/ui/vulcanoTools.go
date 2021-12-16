@@ -114,8 +114,8 @@ func refreshVulanoTools(v *Vulcano) {
 	grad.OnChanged = func(s string) { pref.SetString("gradExpression", s) }
 
 	// Dot opacity
-	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the expression dot opacity
-	DotOp.Set(255.)
+	//DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the expression dot opacity
+	//DotOp.Set(255.)
 	DotOpacity := widget.NewSlider(0., 255.)
 	DotOpacity.Value = 255.
 	DotOpacity.OnChanged = func(v float64) {
