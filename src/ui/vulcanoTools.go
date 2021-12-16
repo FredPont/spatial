@@ -115,11 +115,12 @@ func refreshVulanoTools(v *Vulcano) {
 
 	// Dot opacity
 	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the expression dot opacity
-	DotOpacity := widget.NewSliderWithData(0, 255, DotOp)
-	DotOpacity.Step = 1
-	DotOpacity.OnChanged = func(v float64) {
-		pref.SetFloat("dotOpacity", v)
-	}
+	DotOpacity := widget.NewSliderWithData(0., 255., DotOp)
+	//DotOpacity.Step = 1.
+	//DotOpacity.Value = 255.
+	// DotOpacity.OnChanged = func(v float64) {
+	// 	pref.SetFloat("dotOpacity", v)
+	// }
 
 	//legend color - the results is store in preferences
 	legendcol := widget.NewButton("Legend Text Color", func() { LegendTxtscolor(a, v.tools) })

@@ -27,12 +27,12 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 
 	// Dot opacity
 	DotOp := binding.BindPreferenceFloat("dotOpacity", preference) // pref binding for the expression dot opacity
-	DotOpacity := widget.NewSliderWithData(0, 255, DotOp)
-	DotOpacity.Step = 1
-	DotOpacity.Value = 255
-	DotOpacity.OnChanged = func(v float64) {
-		preference.SetFloat("dotOpacity", v)
-	}
+	DotOpacity := widget.NewSliderWithData(0., 255., DotOp)
+	//DotOpacity.Step = 1.
+	//DotOpacity.Value = 255.
+	// DotOpacity.OnChanged = func(v float64) {
+	// 	preference.SetFloat("dotOpacity", v)
+	// }
 
 	// density plot
 	initDensityPlot() // clear previous density plot

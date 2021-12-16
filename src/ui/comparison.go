@@ -358,8 +358,11 @@ func getColum(c int, table [][]string) []float64 {
 }
 
 func folchange(x1, x2 []float64) (float64, bool) {
-	s1 := sumFloat(x1)
-	s2 := sumFloat(x2)
+	if len(x1) == 0 || len(x2) == 0 {
+		return 1., false
+	}
+	s1 := sumFloat(x1) / float64(len(x1)) // average
+	s2 := sumFloat(x2) / float64(len(x2)) // average
 	if s1 == 0 && s2 == 0 {
 		log.Println("fold-change undetermined (0/0) !")
 		return 1., false
