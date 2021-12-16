@@ -27,7 +27,14 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 
 	// Dot opacity
 	DotOp := binding.BindPreferenceFloat("dotOpacity", preference) // pref binding for the expression dot opacity
-	DotOpacity := widget.NewSliderWithData(0., 255., DotOp)
+	DotOp.Set(255.)
+	DotOpacity := widget.NewSlider(0., 255.)
+	DotOpacity.Value = 255.
+	DotOpacity.OnChanged = func(v float64) {
+		preference.SetFloat("dotOpacity", v)
+	}
+	//DotOp := binding.BindPreferenceFloat("dotOpacity", preference) // pref binding for the expression dot opacity
+	//DotOpacity := widget.NewSliderWithData(0., 255., DotOp)
 	//DotOpacity.Step = 1.
 	//DotOpacity.Value = 255.
 	// DotOpacity.OnChanged = func(v float64) {
