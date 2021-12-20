@@ -12,25 +12,21 @@ import (
 
 func main() {
 	title()
+	// initPref initialise some user preferences when not set
+	ui.InitPref()
 	a := app.NewWithID("SpatialGate")
 
 	w := a.NewWindow("image")
 	e, imgW, imgH := ui.NewEditor()
-	//e, imgW, imgH := ui.NewSmallEditor()
+
 	e.BuildUI(w)
 	// set the windows size to at least 500x500 and adjust the windows size
 	// to the size of the microscopy image if the pref size are below.
 	setImageWinSize(a, w, imgW, imgH)
 	w.SetFixedSize(true) // fix win size
-	//w.Show()
 
-	//w2 := a.NewWindow("Tool Box")
-	//w2 := fyne.CurrentApp().NewWindow("Tool Box")
-	//ui.BuildTools(a, w2, w, e)
 	ui.BuildTools(a, w, e)
-	//w2.Show()
 
-	//w2.ShowAndRun()
 	w.ShowAndRun()
 
 }
@@ -39,8 +35,8 @@ func main() {
 // preferences, the image is displayed with scroll bars.
 // if the size in pref is < 500 at first start, the minimal size will be 500x500
 func setImageWinSize(a fyne.App, w fyne.Window, imgW, imgH int) {
-	finalWidth := float32(imgW)
-	finalHeight := float32(imgH)
+	//finalWidth := float32(imgW)
+	//finalHeight := float32(imgH)
 
 	pref := a.Preferences()
 	// get width preference
@@ -50,8 +46,8 @@ func setImageWinSize(a fyne.App, w fyne.Window, imgW, imgH int) {
 	winH := binding.BindPreferenceFloat("winH", pref) // set the link to preferences for win width
 	wH, _ := winH.Get()
 
-	finalWidth = setMinWindow(wW, imgW)
-	finalHeight = setMinWindow(wH, imgH)
+	finalWidth := setMinWindow(wW, imgW)
+	finalHeight := setMinWindow(wH, imgH)
 	w.Resize(fyne.NewSize(finalWidth, finalHeight))
 }
 

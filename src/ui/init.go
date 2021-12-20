@@ -7,6 +7,7 @@ import (
 	"spatial/src/filter"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -131,4 +132,107 @@ func init2DScatterGates(inter2D *Interactive2Dsurf) {
 	inter2D.drawSurface.gatesNumbers.y = nil
 	inter2D.drawSurface.gatesNumbers.nb = 0
 	inter2D.gateContainer.Refresh()
+}
+
+////////////////////////////
+//     preferences
+////////////////////////////
+
+// InitPref initialise some user preferences when not set
+func InitPref() {
+
+	prefs := fyne.CurrentApp().Preferences()
+
+	// cluster dot diameter
+	cld := binding.BindPreferenceInt("clustDotDiam", prefs) // set the link to preferences for cluster diameter
+	clud, _ := cld.Get()
+	if clud == 0 {
+		prefs.SetInt("clustDotDiam", 12)
+	}
+
+	// chart dot size
+	dotsize := binding.BindPreferenceString("dotsize", prefs) // set the link to preferences for rotation
+	ds, _ := dotsize.Get()
+	if ds == "" {
+		prefs.SetString("dotsize", "3")
+	}
+
+	//2D interactive plot dot size
+	ds2D := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
+	dotsize2D, _ := ds2D.Get()
+	if dotsize2D == "" {
+		prefs.SetString("dotsize", "3")
+	}
+
+	// get scaleFactor and rotation from pref
+	sf := binding.BindPreferenceFloat("scaleFactor", prefs) // set the link to preferences for scaling factor
+	scaleFactor, _ := sf.Get()
+	if scaleFactor == 0 {
+		prefs.SetFloat("scaleFactor", 1.)
+	}
+
+	// vulcano selection square size in pixels
+	// record the vulcano selection square size in pixels in preferences
+	vs := binding.BindPreferenceInt("vulcSelectSize", prefs)
+	vsquare, _ := vs.Get()
+	if vsquare == 0 {
+		prefs.SetInt("vulcSelectSize", 20)
+	}
+
+	// Dot opacity
+	prefs.SetFloat("dotOpacity", 255)
+
+	// cluster opacity
+	prefs.SetFloat("clustOpacity", 255)
+
+	// vulcano default gradien
+	gradExpression := binding.BindPreferenceString("gradExpression", prefs) // pref binding for the expression gradien to avoid reset for each vulcano dot
+	selGrad, _ := gradExpression.Get()
+	if selGrad == "" {
+		prefs.SetString("gradExpression", "Turbo")
+	}
+
+	// plot background color
+	initBCKGColors([]string{"unselR", "unselG", "unselB", "unselA"})
+	// plot foreground colors
+	initFORGColors([]string{"gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA"})
+}
+
+// init background colors
+func initBCKGColors(rgba []string) {
+	pref := fyne.CurrentApp().Preferences()
+	if sumRGBA(rgba) == false {
+		return
+	}
+	for _, c := range rgba {
+		pref.SetInt(c, 170) // grey
+	}
+	pref.SetInt(rgba[3], 255) // full opacity
+}
+
+// init foreground colors
+func initFORGColors(rgba []string) {
+	pref := fyne.CurrentApp().Preferences()
+	if sumRGBA(rgba) == false {
+		return
+	}
+	for _, c := range rgba {
+		pref.SetInt(c, 1) // black
+	}
+	pref.SetInt(rgba[3], 255) // full opacity
+}
+
+func sumRGBA(rgba []string) bool {
+	pref := fyne.CurrentApp().Preferences()
+	sumRGBA := 0
+	for _, c := range rgba[:3] {
+		dotsRGBA := binding.BindPreferenceInt(c, pref)
+		mapRGBA, _ := dotsRGBA.Get()
+		sumRGBA += mapRGBA
+	}
+	// if the color is white sumRGBA == 3*255
+	if sumRGBA == 3*255 {
+		return true
+	}
+	return false
 }
