@@ -12,10 +12,9 @@ import (
 
 func main() {
 	title()
+	a := app.NewWithID("SpatialGate")
 	// initPref initialise some user preferences when not set
 	ui.InitPref()
-	a := app.NewWithID("SpatialGate")
-
 	w := a.NewWindow("image")
 	e, imgW, imgH := ui.NewEditor()
 

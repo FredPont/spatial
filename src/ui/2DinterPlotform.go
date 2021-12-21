@@ -43,6 +43,7 @@ func Plot2Dform(a fyne.App, e *Editor, win fyne.Window, zoom int, header []strin
 	// dot size
 	dotsize := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to preferences for rotation
 	ds, _ := dotsize.Get()
+
 	plotdot := widget.NewEntry()
 	plotdot.SetText(ds)
 

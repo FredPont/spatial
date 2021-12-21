@@ -153,15 +153,15 @@ func InitPref() {
 	// chart dot size
 	dotsize := binding.BindPreferenceString("dotsize", prefs) // set the link to preferences for rotation
 	ds, _ := dotsize.Get()
-	if ds == "" {
+	if len(ds) == 0 {
 		prefs.SetString("dotsize", "3")
 	}
 
 	//2D interactive plot dot size
 	ds2D := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
 	dotsize2D, _ := ds2D.Get()
-	if dotsize2D == "" {
-		prefs.SetString("dotsize", "3")
+	if len(dotsize2D) == 0 {
+		prefs.SetString("2Ddotsize", "3")
 	}
 
 	// get scaleFactor and rotation from pref
@@ -188,7 +188,7 @@ func InitPref() {
 	// vulcano default gradien
 	gradExpression := binding.BindPreferenceString("gradExpression", prefs) // pref binding for the expression gradien to avoid reset for each vulcano dot
 	selGrad, _ := gradExpression.Get()
-	if selGrad == "" {
+	if len(selGrad) == 0 {
 		prefs.SetString("gradExpression", "Turbo")
 	}
 
