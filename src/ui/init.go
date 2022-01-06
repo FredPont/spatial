@@ -164,7 +164,7 @@ func InitPref() {
 		prefs.SetString("dotsize", "3")
 	}
 
-	//2D interactive plot dot size
+	// 2D interactive plot dot size
 	ds2D := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
 	dotsize2D, _ := ds2D.Get()
 	if len(dotsize2D) == 0 {
@@ -203,6 +203,8 @@ func InitPref() {
 	initBCKGColors([]string{"unselR", "unselG", "unselB", "unselA"})
 	// plot foreground colors
 	initFORGColors([]string{"gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA"})
+	// legend text colors
+	initFORGColors([]string{"legendColR", "legendColG", "legendColB", "legendColA"})
 }
 
 // init background colors
