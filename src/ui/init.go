@@ -150,6 +150,13 @@ func InitPref() {
 		prefs.SetInt("clustDotDiam", 12)
 	}
 
+	// cluster column
+	clustercolumn := binding.BindPreferenceString("clustcol", prefs) // set the link to preferences for rotation
+	clucol, _ := clustercolumn.Get()
+	if len(clucol) == 0 {
+		prefs.SetString("clustcol", "num_cluster")
+	}
+
 	// chart dot size
 	dotsize := binding.BindPreferenceString("dotsize", prefs) // set the link to preferences for rotation
 	ds, _ := dotsize.Get()
