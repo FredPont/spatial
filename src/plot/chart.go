@@ -146,19 +146,6 @@ func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg
 
 }
 
-// func addLegend(n int, p *plot.Plot) {
-// 	pts := make(plotter.XYs, 1, 1)
-// 	log.Println("xmin", p.X.Min, "ymin", p.Y.Min)
-// 	//legColors := make([]color.RGBA, n)
-// 	pts[0].X = p.X.Min - (p.X.Max-p.X.Min)*3./100.
-// 	dy := (p.Y.Max - p.Y.Min)
-// 	for i := 0; i < n; i++ {
-// 		pts[0].Y = dy*2./100.*float64(i) + p.Y.Min
-// 		addPoints(pts, p, 5, dotColors(n, i))
-// 		//p.Add("text")
-// 	}
-// }
-
 // DotColors computes the color of scatter dots
 // for a total number of clusters "nbGates"
 func DotColors(nbGates, gateIndex int) color.RGBA {
@@ -166,6 +153,7 @@ func DotColors(nbGates, gateIndex int) color.RGBA {
 	return RgbaModel(grad.Colors(uint(nbGates + 1))[gateIndex])
 }
 
+// RgbaModel convert color.Color to color.RGBA
 func RgbaModel(c color.Color) color.RGBA {
 	r, g, b, a := c.RGBA()
 	return color.RGBA{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8), uint8(a >> 8)}

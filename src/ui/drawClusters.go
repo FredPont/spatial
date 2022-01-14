@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"log"
 	"spatial/src/filter"
+	"spatial/src/plot"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -64,13 +65,21 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 		}
 	}
 
+	titleLegend(e, "     clusters", getLegendColor(a))
 	e.clusterContainer.Refresh()
 	f.Set(0.) // reset progress bar
 }
 
+// draw the cluster legend : color + cluster number
 func drawLegend(e *Editor, R, G, B, op uint8, x, y, diameter, clusterName int) {
 	AbsText(e.clusterContainer, x+20, y+10, strconv.Itoa(clusterName), 20, color.NRGBA{50, 50, 50, 255})
 	e.drawcircle(x, y, diameter*100/e.zoom, color.NRGBA{R, G, B, op})
+}
+
+func getLegendColor(a fyne.App) color.NRGBA {
+	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
+	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
+	return colorText
 }
 
 // credits : https://github.com/ajstarks/fc
