@@ -41,7 +41,7 @@ Single-Cell Spatial Explorer is compatible with [FIJI](https://fiji.sc/) and [Im
  <a href="https://go.dev/">
     <img src="./src/web/go.jpg" height="30"> 
  </a>
-  with the library 
+  with the Fyne library 
  <a href="https://github.com/fyne-io">
     <img src="./src/web/fyne.png" height="30">
 </a>

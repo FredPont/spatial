@@ -342,7 +342,7 @@ func ReadExpress(a fyne.App, filename string, colIndexes []int) ([]float64, []Po
 	return expressions, pts
 }
 
-// ScaleSlice01 scale a slice between 0-1
+// ScaleSlice01 scale a slice between 0-1 and return the scaled 0-1 slice,  min and max
 func ScaleSlice01(s []float64) ([]float64, float64, float64) {
 	var norm []float64
 	min, max := FindMinAndMax(s)

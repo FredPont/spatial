@@ -95,7 +95,7 @@ func sma(period int) func(float64) float64 {
 func DensityPicture() fyne.CanvasObject {
 	var img = canvas.NewImageFromFile("temp/density.png")
 
-	img.SetMinSize(fyne.Size{Width: 350, Height: 350})
+	img.SetMinSize(fyne.Size{Width: 330, Height: 330})
 	img.FillMode = canvas.ImageFillContain
 	return img
 }

@@ -38,6 +38,32 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		preference.SetFloat("dotOpacity", v)
 	}
 
+	// opacity gradient : checkbox to enable a gradient of opacity based on expression values
+	opacityGradient := widget.NewCheck("Opacity gradient", func(v bool) {
+		preference.SetBool("gradOpacity", v)
+		log.Println("Check set to", v)
+	})
+	// max threshold of the opacity gradient
+	gradMaxWdgt := widget.NewEntry()
+	gradMaxWdgt.OnChanged = func(str string) {
+		v, err := strconv.ParseFloat(str, 64)
+		if err != nil {
+			log.Println(str, "is not a number !")
+			return
+		}
+		preference.SetFloat("gradMax", v)
+	}
+	// min threshold of the opacity gradient
+	gradMinWdgt := widget.NewEntry()
+	gradMinWdgt.OnChanged = func(str string) {
+		v, err := strconv.ParseFloat(str, 64)
+		if err != nil {
+			log.Println(str, "is not a number !")
+			return
+		}
+		preference.SetFloat("gradMin", v)
+	}
+
 	// density plot
 	initDensityPlot() // clear previous density plot
 	densityPlot := plot.DensityPicture()
@@ -173,6 +199,13 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		MinExp,
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,
+		container.NewHBox(
+			opacityGradient,
+			widget.NewLabel("Min"),
+			gradMinWdgt,
+			widget.NewLabel("Max"),
+			gradMaxWdgt,
+		),
 	)
 	ExpressWindow.SetContent(content)
 	ExpressWindow.Show()
@@ -257,7 +290,8 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 		if c == int(nbPts/2) {
 			f.Set(0.5) // 50 % progression for progress bar
 		}
-
+		// transparency gradient
+		//op = gradTransp(expressions[c], min, max)
 		clcolor := gradUser(gradien)(scaleExp[c])
 
 		e.drawcircle(ApplyZoomInt(e, pts[c].X), ApplyZoomInt(e, pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
@@ -271,6 +305,18 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 
 	e.clusterContainer.Refresh()
 	f.Set(0.) // reset progress bar
+}
+
+// gradTransp compute opacity based on expression score
+func gradTransp(exp, min, max float64) uint8 {
+	//op1 := 255. * (expressions[c] - min) / (max - min)
+	// if variableOpa != 1 {
+	// 	return op
+	// }
+	if max == min {
+		return 255
+	}
+	return uint8(255. * (exp - min) / (max - min))
 }
 
 // print pathway name on top of image
