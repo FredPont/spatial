@@ -107,7 +107,7 @@ func (p *PlotBox) xScatlabel(v *Interactive2Dsurf, y int) {
 	}
 	prefs := fyne.CurrentApp().Preferences()
 	// x coordinates of the 2D plot
-	xplot := binding.BindPreferenceString("2DxPlot", prefs) // set the link to preferences for rotation
+	xplot := binding.BindPreferenceString("2DxPlot", prefs) // set the link to preferences for X axis
 	xp, _ := xplot.Get()
 	// y label lenght
 	//labelSize := len([]rune(xp))-float64(labelSize)
@@ -130,13 +130,13 @@ func (p *PlotBox) yScatlabel(v *Interactive2Dsurf, x int) {
 	}
 	prefs := fyne.CurrentApp().Preferences()
 	// y coordinates of the 2D plot
-	yplot := binding.BindPreferenceString("2DyPlot", prefs) // set the link to preferences for rotation
+	yplot := binding.BindPreferenceString("2DyPlot", prefs) // set the link to preferences to Y axis
 	yp, _ := yplot.Get()
 	// y label lenght
 	labelSize := 8 * len([]rune(yp))
-	//log.Println("taille ", yp, " = ", labelSize)
+	ylabel := "Y : " + yp
 
-	AbsText(v.scatterContainer, x-labelSize, yCoord(p, p.Ymax)-25, yp, 12, color.NRGBA{0, 0, 0, 255}) // axis title
+	AbsText(v.scatterContainer, x-labelSize, yCoord(p, p.Ymax)-25, ylabel, 12, color.NRGBA{0, 0, 0, 255}) // axis title
 }
 
 // gatesDotPlot plot the cells inside one gate in the 2D plot
