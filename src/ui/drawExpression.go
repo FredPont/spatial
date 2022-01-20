@@ -41,7 +41,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	// opacity gradient : checkbox to enable a gradient of opacity based on expression values
 	opacityGradient := widget.NewCheck("Opacity gradient", func(v bool) {
 		preference.SetBool("gradOpacity", v)
-		log.Println("Check set to", v)
+		//log.Println("Check set to", v)
 	})
 	// max threshold of the opacity gradient
 	gradMaxWdgt := widget.NewEntry()
@@ -268,6 +268,17 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the  dot opacity
 	opacity, _ := DotOp.Get()
 	op := uint8(opacity)
+	// Dot opacity gradient
+	gradop := binding.BindPreferenceBool("gradOpacity", pref)
+	opGrad, _ := gradop.Get()                               // enabled/disabled opacity gradient
+	gradMax := binding.BindPreferenceFloat("gradMax", pref) // pref binding for user Max value for the opacity gradient
+	opMax, _ := gradMax.Get()
+	gradMin := binding.BindPreferenceFloat("gradMin", pref) // pref binding for user Min value for the opacity gradient
+	opMin, _ := gradMin.Get()
+	if opMin >= opMax {
+		log.Println("Min threshold, ", opMin, " must be <= Max threshold, ", opMax)
+	}
+
 	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) //  dot diameter
 	diameter, _ := clustDia.Get()
 	diameter = ApplyZoomInt(e, diameter)
@@ -282,7 +293,7 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	scaleExp, min, max := filter.ScaleSlice01(expressions)
 
 	// density plot of the expression distribution
-	go plot.BuildDensity(expressions, 100., expcol, ExpressWindow)
+	go plot.BuildDensity(expressions, 100., filter.TrimString(expcol, 40), ExpressWindow)
 	go saveTMPfiles(pts, expressions, min, max, nbPts)
 
 	for c := 0; c < nbPts; c++ {
@@ -291,6 +302,9 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 			f.Set(0.5) // 50 % progression for progress bar
 		}
 		// transparency gradient
+		if opGrad && opMin < opMax {
+			op = gradTransp(expressions[c], min, max, opMin, opMax)
+		}
 		//op = gradTransp(expressions[c], min, max)
 		clcolor := gradUser(gradien)(scaleExp[c])
 
@@ -308,20 +322,42 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 }
 
 // gradTransp compute opacity based on expression score
-func gradTransp(exp, min, max float64) uint8 {
-	//op1 := 255. * (expressions[c] - min) / (max - min)
-	// if variableOpa != 1 {
-	// 	return op
-	// }
+func gradTransp(exp, min, max, opMin, opMax float64) uint8 {
 	if max == min {
 		return 255
+	}
+	if exp <= opMin {
+		return 0
+	}
+	if exp >= opMax {
+		return 255
+	}
+	if opMax < max {
+		max = opMax
+	}
+	if opMin > min {
+		min = opMin
 	}
 	return uint8(255. * (exp - min) / (max - min))
 }
 
 // print pathway name on top of image
 func titleLegend(e *Editor, title string, c color.NRGBA) {
-	AbsText(e.clusterContainer, 50, 30, title, 20, c)
+	AbsText(e.clusterContainer, 50, 30, truncTitle(title), 20, c)
+}
+
+// truncTitle return a truncated title
+// if the title is larger than the window, there is an artefact and a shift between
+// expression dots and the image
+func truncTitle(title string) string {
+	// get the window width
+	prefs := fyne.CurrentApp().Preferences()
+	winW := binding.BindPreferenceFloat("winW", prefs) // set the link to preferences for win width
+	wW, _ := winW.Get()
+	if wW < 700 {
+		return filter.TrimString(title, int(40.*wW/800.))
+	}
+	return filter.TrimString(title, 40)
 }
 
 // draw expression legend with dots and values
@@ -414,6 +450,17 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the  dot opacity
 	opacity, _ := DotOp.Get()
 	op := uint8(opacity)
+	// Dot opacity gradient
+	gradop := binding.BindPreferenceBool("gradOpacity", pref)
+	opGrad, _ := gradop.Get()                               // enabled/disabled opacity gradient
+	gradMax := binding.BindPreferenceFloat("gradMax", pref) // pref binding for user Max value for the opacity gradient
+	opMax, _ := gradMax.Get()
+	gradMin := binding.BindPreferenceFloat("gradMin", pref) // pref binding for user Min value for the opacity gradient
+	opMin, _ := gradMin.Get()
+	if opMin >= opMax {
+		log.Println("Min threshold, ", opMin, " must be <= Max threshold, ", opMax)
+	}
+
 	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) //  dot diameter
 	diameter, _ := clustDia.Get()
 	diameter = ApplyZoomInt(e, diameter)
@@ -429,7 +476,10 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 		if c == int(tmp.NbPts/2) {
 			f.Set(0.5) // 50 % progression for progress bar
 		}
-
+		// transparency gradient
+		if opGrad && opMin < opMax {
+			op = gradTransp(tmp.Exp[c], newMin, newMax, opMin, opMax)
+		}
 		clcolor := gradUser(gradien)(scaleExp[c])
 
 		e.drawcircle(ApplyZoomInt(e, tmp.Pts[c].X), ApplyZoomInt(e, tmp.Pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})

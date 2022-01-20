@@ -21,7 +21,7 @@ require (
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
 	github.com/go-pdf/fpdf v0.5.0 // indirect
 	github.com/godbus/dbus/v5 v5.0.6 // indirect
-	github.com/goki/freetype v0.0.0-20181231101311-fa8a33aabaff // indirect
+	github.com/goki/freetype v0.0.0-20220119013949-7a161fd3728c // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/mazznoer/csscolorparser v0.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

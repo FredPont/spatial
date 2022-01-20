@@ -189,6 +189,9 @@ func InitPref() {
 	// Dot opacity
 	prefs.SetFloat("dotOpacity", 255)
 
+	// Dot opacity gradient
+	prefs.SetBool("gradOpacity", false)
+
 	// cluster opacity
 	prefs.SetFloat("clustOpacity", 255)
 
