@@ -121,13 +121,32 @@ func refreshVulanoTools(v *Vulcano) {
 	DotOpacity.OnChanged = func(v float64) {
 		pref.SetFloat("dotOpacity", v)
 	}
-	// DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the expression dot opacity
-	// DotOpacity := widget.NewSliderWithData(0., 255., DotOp)
-	// DotOpacity.Step = 1.
-	// DotOpacity.Value = 255.
-	// DotOpacity.OnChanged = func(v float64) {
-	// 	pref.SetFloat("dotOpacity", v)
-	// }
+
+	// opacity gradient : checkbox to enable a gradient of opacity based on expression values
+	opacityGradient := widget.NewCheck("Opacity gradient", func(v bool) {
+		pref.SetBool("gradOpacity", v)
+		//log.Println("Check set to", v)
+	})
+	// max threshold of the opacity gradient
+	gradMaxWdgt := widget.NewEntry()
+	gradMaxWdgt.OnChanged = func(str string) {
+		v, err := strconv.ParseFloat(str, 64)
+		if err != nil {
+			log.Println(str, "is not a number !")
+			return
+		}
+		pref.SetFloat("gradMax", v)
+	}
+	// min threshold of the opacity gradient
+	gradMinWdgt := widget.NewEntry()
+	gradMinWdgt.OnChanged = func(str string) {
+		v, err := strconv.ParseFloat(str, 64)
+		if err != nil {
+			log.Println(str, "is not a number !")
+			return
+		}
+		pref.SetFloat("gradMin", v)
+	}
 
 	//legend color - the results is store in preferences
 	legendcol := widget.NewButton("Legend Text Color", func() { LegendTxtscolor(a, v.tools) })
@@ -139,6 +158,13 @@ func refreshVulanoTools(v *Vulcano) {
 		grad,
 		widget.NewLabel("Dots Opacity [0-100%] :"),
 		DotOpacity,
+		container.NewHBox(
+			opacityGradient,
+			widget.NewLabel("Min"),
+			gradMinWdgt,
+			widget.NewLabel("Max"),
+			gradMaxWdgt,
+		),
 		legendcol,
 		widget.NewButton("Show Expression", func() {
 			//f := binding.NewFloat() // progress bar binding
@@ -161,6 +187,7 @@ func refreshVulanoTools(v *Vulcano) {
 
 			go drawExp(a, v.imageEditor, v.header, v.tableName, choosedItem, grad.Selected, f, PathwayIndex, v.tools)
 		}),
+
 		widget.NewButton("Save vulcano plot", func() {
 			imgName := filter.FormatOutFile("vulcano", "", "")
 			go screenShot(v.win, imgName, f)
