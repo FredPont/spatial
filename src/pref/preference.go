@@ -2,6 +2,7 @@ package pref
 
 import (
 	"fmt"
+	"spatial/src/filter"
 
 	"log"
 	"strconv"
@@ -100,6 +101,17 @@ func BuildPref(a fyne.App, head []string) {
 	vstxt := fmt.Sprintf("%d", vsquare)
 	vulcSquare.SetPlaceHolder(vstxt)
 
+	// show choice of different gradien
+	// read the custom palettes
+	listPalet := []string{"Turbo", "Rainbow", "Sinebow"}
+	listPalet = append(listPalet, listPalette()...)
+
+	grad := widget.NewRadioGroup(listPalet, func(s string) {
+	})
+	cG := binding.BindPreferenceString("clusterGradient", prefs)
+	clusterGrad, _ := cG.Get()
+	grad.SetSelected(clusterGrad)
+
 	// create form
 	form := &widget.Form{
 		Items: []*widget.FormItem{ // we can specify items in the constructor
@@ -112,6 +124,7 @@ func BuildPref(a fyne.App, head []string) {
 			{Text: "Cluster column", Widget: clco},
 			{Text: "Cluster dots diameter", Widget: clustDotDiam},
 			{Text: "vulcano selection square size in pixels", Widget: vulcSquare},
+			{Text: "Clusters color gradient", Widget: grad},
 		},
 		OnSubmit: func() { // optional, handle form submission
 
@@ -148,6 +161,14 @@ func BuildPref(a fyne.App, head []string) {
 			vulSelTXT := vulcSquare.Text
 			setPrefToInt(vulSelTXT, "vulcSelectSize", prefs)
 
+			// cluster gradient selection
+			// gradien default
+			def := "Turbo"
+			if grad.Selected == "" {
+				grad.Selected = def
+			}
+
+			prefs.SetString("clusterGradient", grad.Selected)
 			//log.Println("Form submitted:", scalingFactor.Text)
 
 			myWindow.Close()
@@ -178,4 +199,8 @@ func setPrefToInt(s, prefID string, prefs fyne.Preferences) {
 		}
 		prefs.SetInt(prefID, integ)
 	}
+}
+
+func listPalette() []string {
+	return filter.ListFiles("src/palette/")
 }
