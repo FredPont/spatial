@@ -512,3 +512,11 @@ func ShuffleInt(s []int) []int {
 
 	return a
 }
+
+func FillSliceInt(n int) []int {
+	var slice = make([]int, n)
+	for i, _ := range slice {
+		slice[i] = i
+	}
+	return slice
+}

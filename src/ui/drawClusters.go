@@ -49,10 +49,13 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 
 	legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
 
+	colors := allClustColors(nbCluster)
+
 	for c := 0; c < nbCluster; c++ {
 		// f.Set(float64(c) / float64(nbCluster-1)) // % progression for progress bar. This is too fast to be seen
 		coordinates := clusterMap[clustNames[c]]
-		clcolor := ClusterColors(nbCluster, c)
+		//clcolor := ClusterColors(nbCluster, c)
+		clcolor := colors[c]
 		for i := 0; i < len(coordinates); i++ {
 			e.drawcircle(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 		}

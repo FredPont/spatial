@@ -2,7 +2,10 @@ package ui
 
 import (
 	"image/color"
+	"spatial/src/filter"
 
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/data/binding"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/mazznoer/colorgrad"
 )
@@ -10,6 +13,59 @@ import (
 // RGB color
 type RGB struct {
 	R, G, B uint8
+}
+
+func allClustColors(nbCluster int) []RGB {
+	pref := fyne.CurrentApp().Preferences()
+	clustIndex := filter.FillSliceInt(nbCluster) // []int{0,1,...,n} slice of increasing int of nbcluster numbers
+	//randClust := filter.ShuffleInt(clustIndex)
+	cG := binding.BindPreferenceString("clusterGradient", pref)
+	clusterGrad, _ := cG.Get()
+
+	switch clusterGrad {
+	case "Turbo":
+		return clusTurbo(nbCluster, clustIndex)
+	case "Rainbow":
+		return clusRainbow(nbCluster, clustIndex)
+	case "Sinebow":
+		return clusSinebow(nbCluster, clustIndex)
+	
+	default:
+		return clusTurbo(nbCluster, clustIndex)
+	}
+}
+
+func clusRainbow(nbCluster int, clustIndex []int) []RGB {
+	RGBarray := make([]RGB, nbCluster)
+	for i, cluster := range clustIndex {
+		grad := colorgrad.Rainbow().Sharp(uint(nbCluster+1), 0.2)
+		color := rgbModel(grad.Colors(uint(nbCluster + 1))[cluster])
+		RGBarray[i] = color
+	}
+	//log.Println("clustIndex", clustIndex, "RGB", RGBarray)
+	return RGBarray
+}
+
+func clusTurbo(nbCluster int, clustIndex []int) []RGB {
+	RGBarray := make([]RGB, nbCluster)
+	for i, cluster := range clustIndex {
+		grad := colorgrad.Turbo().Sharp(uint(nbCluster+1), 0.2)
+		color := rgbModel(grad.Colors(uint(nbCluster + 1))[cluster])
+		RGBarray[i] = color
+	}
+	//log.Println("clustIndex", clustIndex, "RGB", RGBarray)
+	return RGBarray
+}
+
+func clusSinebow(nbCluster int, clustIndex []int) []RGB {
+	RGBarray := make([]RGB, nbCluster)
+	for i, cluster := range clustIndex {
+		grad := colorgrad.Sinebow().Sharp(uint(nbCluster+1), 0.2)
+		color := rgbModel(grad.Colors(uint(nbCluster + 1))[cluster])
+		RGBarray[i] = color
+	}
+	//log.Println("clustIndex", clustIndex, "RGB", RGBarray)
+	return RGBarray
 }
 
 // ClusterColors computes the color of cluster number "cluster"

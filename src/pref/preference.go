@@ -112,6 +112,12 @@ func BuildPref(a fyne.App, head []string) {
 	clusterGrad, _ := cG.Get()
 	grad.SetSelected(clusterGrad)
 
+	// shuffle cluster gradient
+	shuffleGradient := widget.NewCheck("", func(v bool) {
+		prefs.SetBool("shuffClustgrad", v)
+		//log.Println("Check set to", v)
+	})
+
 	// create form
 	form := &widget.Form{
 		Items: []*widget.FormItem{ // we can specify items in the constructor
@@ -125,6 +131,7 @@ func BuildPref(a fyne.App, head []string) {
 			{Text: "Cluster dots diameter", Widget: clustDotDiam},
 			{Text: "vulcano selection square size in pixels", Widget: vulcSquare},
 			{Text: "Clusters color gradient", Widget: grad},
+			{Text: "Shuffle gradient", Widget: shuffleGradient},
 		},
 		OnSubmit: func() { // optional, handle form submission
 
