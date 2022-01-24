@@ -113,10 +113,14 @@ func BuildPref(a fyne.App, head []string) {
 	grad.SetSelected(clusterGrad)
 
 	// shuffle cluster gradient
+
 	shuffleGradient := widget.NewCheck("", func(v bool) {
 		prefs.SetBool("shuffClustgrad", v)
 		//log.Println("Check set to", v)
 	})
+	shuf := binding.BindPreferenceBool("shuffClustgrad", prefs)
+	shuffle, _ := shuf.Get()
+	shuffleGradient.SetChecked(shuffle)
 
 	// create form
 	form := &widget.Form{

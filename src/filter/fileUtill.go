@@ -504,9 +504,9 @@ func TrimString(str string, length int) string {
 }
 
 // ShuffleInt randomise a slice of int
-func ShuffleInt(s []int) []int {
-	var a []int
-	copy(a, s)
+func ShuffleInt(a []int) []int {
+	//var a []int
+	//copy(a, s)
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(a), func(i, j int) { a[i], a[j] = a[j], a[i] })
 

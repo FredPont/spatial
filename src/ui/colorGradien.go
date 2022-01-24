@@ -2,6 +2,7 @@ package ui
 
 import (
 	"image/color"
+	"log"
 	"spatial/src/filter"
 
 	"fyne.io/fyne/v2"
@@ -18,6 +19,13 @@ type RGB struct {
 func allClustColors(nbCluster int) []RGB {
 	pref := fyne.CurrentApp().Preferences()
 	clustIndex := filter.FillSliceInt(nbCluster) // []int{0,1,...,n} slice of increasing int of nbcluster numbers
+	shuf := binding.BindPreferenceBool("shuffClustgrad", pref)
+	shuffle, _ := shuf.Get()
+
+	if shuffle {
+		filter.ShuffleInt(clustIndex)
+		log.Println("shuffle", clustIndex)
+	}
 	//randClust := filter.ShuffleInt(clustIndex)
 	cG := binding.BindPreferenceString("clusterGradient", pref)
 	clusterGrad, _ := cG.Get()
@@ -29,7 +37,7 @@ func allClustColors(nbCluster int) []RGB {
 		return clusRainbow(nbCluster, clustIndex)
 	case "Sinebow":
 		return clusSinebow(nbCluster, clustIndex)
-	
+
 	default:
 		return clusTurbo(nbCluster, clustIndex)
 	}
