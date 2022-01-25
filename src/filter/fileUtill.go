@@ -505,14 +505,14 @@ func TrimString(str string, length int) string {
 
 // ShuffleInt randomise a slice of int
 func ShuffleInt(a []int) []int {
-	//var a []int
-	//copy(a, s)
+
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(a), func(i, j int) { a[i], a[j] = a[j], a[i] })
 
 	return a
 }
 
+// FillSliceInt fills a slice with n integers from 0 to n-1
 func FillSliceInt(n int) []int {
 	var slice = make([]int, n)
 	for i, _ := range slice {

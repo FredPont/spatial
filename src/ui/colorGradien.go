@@ -4,6 +4,8 @@ import (
 	"image/color"
 	"log"
 	"spatial/src/filter"
+	"strconv"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"
@@ -24,11 +26,15 @@ func allClustColors(nbCluster int) []RGB {
 
 	if shuffle {
 		filter.ShuffleInt(clustIndex)
-		log.Println("shuffle", clustIndex)
+		//log.Println("shuffle", clustIndex)
 	}
-	//randClust := filter.ShuffleInt(clustIndex)
+
 	cG := binding.BindPreferenceString("clusterGradient", pref)
 	clusterGrad, _ := cG.Get()
+
+	if strings.Contains(clusterGrad, "json") {
+		return customGrad(nbCluster, clustIndex, clusterGrad)
+	}
 
 	switch clusterGrad {
 	case "Turbo":
@@ -37,10 +43,31 @@ func allClustColors(nbCluster int) []RGB {
 		return clusRainbow(nbCluster, clustIndex)
 	case "Sinebow":
 		return clusSinebow(nbCluster, clustIndex)
-
 	default:
 		return clusTurbo(nbCluster, clustIndex)
 	}
+}
+
+func customGrad(nbCluster int, clustIndex []int, clusterGrad string) []RGB {
+	pal := loadPalette("src/palette/" + clusterGrad)
+
+	// check if the palette is too small to plot all clusters
+	if len(pal.Pal) < nbCluster {
+		log.Println("palette length ", len(pal.Pal), " is too small to plot ", nbCluster, " clusters ! Turbo gradient is used instead.")
+		return clusTurbo(nbCluster, clustIndex)
+	}
+	RGBarray := make([]RGB, nbCluster)
+	for i, cluster := range clustIndex {
+		R, err := strconv.ParseUint(pal.Pal[cluster].R, 10, 32)
+		checkError("cannot convert json file to RGB", err)
+		G, err := strconv.ParseUint(pal.Pal[cluster].G, 10, 32)
+		checkError("cannot convert json file to RGB", err)
+		B, err := strconv.ParseUint(pal.Pal[cluster].B, 10, 32)
+		checkError("cannot convert json file to RGB", err)
+
+		RGBarray[i] = RGB{uint8(R), uint8(G), uint8(B)}
+	}
+	return RGBarray
 }
 
 func clusRainbow(nbCluster int, clustIndex []int) []RGB {

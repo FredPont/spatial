@@ -2,7 +2,6 @@ package ui
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -33,6 +32,6 @@ func loadPalette(fname string) Palette {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(plt)
+	//fmt.Println(plt)
 	return plt
 }
