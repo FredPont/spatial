@@ -515,8 +515,25 @@ func ShuffleInt(a []int) []int {
 // FillSliceInt fills a slice with n integers from 0 to n-1
 func FillSliceInt(n int) []int {
 	var slice = make([]int, n)
-	for i, _ := range slice {
+	for i := range slice {
 		slice[i] = i
 	}
 	return slice
+}
+
+// WriteCSV export a [][]string as CSV file
+func WriteCSV(data [][]string, path string) {
+	file, err := os.Create(path)
+	check(err)
+
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	writer.Comma = '\t' // tab separator
+	defer writer.Flush()
+
+	for _, value := range data {
+		err := writer.Write(value)
+		check(err)
+	}
 }

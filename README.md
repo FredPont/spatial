@@ -28,11 +28,11 @@ Demo videos can be found in the supplemental data of the [reference article](htt
 
 
 
-Single-Cell Spatial Explorer can display clusters :
-![clusters](./src/web/clusters.png)
+Single-Cell Spatial Explorer can display clusters with preset color gradients. In this example with 11 clusters there is 159667200 possible representations :
+![clusters](./src/web/clusters6.png)
 
 In combination with [Single-Cell Signature Explorer](https://doi.org/10.1093/nar/gkz601), Single-Cell Spatial Explorer can display about 30,000 Human pathways or gene signatures as tunable overlays on a microscopy image. Both transparency and image contrast can be adjusted by the user  :
-![expression](./src/web/expression.png)
+![expression](./src/web/expression6.png)
 
 
 

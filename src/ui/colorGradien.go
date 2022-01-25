@@ -26,7 +26,7 @@ func allClustColors(nbCluster int) []RGB {
 
 	if shuffle {
 		filter.ShuffleInt(clustIndex)
-		//log.Println("shuffle", clustIndex)
+		log.Println("shuffle", clustIndex)
 	}
 
 	cG := binding.BindPreferenceString("clusterGradient", pref)
@@ -67,7 +67,25 @@ func customGrad(nbCluster int, clustIndex []int, clusterGrad string) []RGB {
 
 		RGBarray[i] = RGB{uint8(R), uint8(G), uint8(B)}
 	}
+	exportPalette(clustIndex, RGBarray)
 	return RGBarray
+}
+
+// export the clusters # folowed by the RVB palette
+func exportPalette(clustIndex []int, RGBarray []RGB) {
+	table := [][]string{{"Color_Number", "R", "G", "B", "R_code"}}
+	for i, j := range clustIndex {
+		R := strconv.FormatUint(uint64(RGBarray[i].R), 10)
+		G := strconv.FormatUint(uint64(RGBarray[i].G), 10)
+		B := strconv.FormatUint(uint64(RGBarray[i].B), 10)
+		nb := strconv.Itoa(j)
+
+		table = append(table, []string{nb, R, G, B, "rgb(" + R + "," + G + "," + B + ", maxColorValue=255)"})
+	}
+	out := filter.FormatOutFile("palette", "", ".csv")
+	// export the palette as CSV in the "palettes" dir
+	filter.WriteCSV(table, "palettes/"+out)
+	log.Println("palette saved in palettes/", out)
 }
 
 func clusRainbow(nbCluster int, clustIndex []int) []RGB {
@@ -78,6 +96,7 @@ func clusRainbow(nbCluster int, clustIndex []int) []RGB {
 		RGBarray[i] = color
 	}
 	//log.Println("clustIndex", clustIndex, "RGB", RGBarray)
+	exportPalette(clustIndex, RGBarray)
 	return RGBarray
 }
 
@@ -89,6 +108,7 @@ func clusTurbo(nbCluster int, clustIndex []int) []RGB {
 		RGBarray[i] = color
 	}
 	//log.Println("clustIndex", clustIndex, "RGB", RGBarray)
+	exportPalette(clustIndex, RGBarray)
 	return RGBarray
 }
 
@@ -100,6 +120,7 @@ func clusSinebow(nbCluster int, clustIndex []int) []RGB {
 		RGBarray[i] = color
 	}
 	//log.Println("clustIndex", clustIndex, "RGB", RGBarray)
+	exportPalette(clustIndex, RGBarray)
 	return RGBarray
 }
 
