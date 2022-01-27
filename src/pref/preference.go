@@ -135,7 +135,7 @@ func BuildPref(a fyne.App, head []string) {
 			{Text: "Cluster dots diameter", Widget: clustDotDiam},
 			{Text: "vulcano selection square size in pixels", Widget: vulcSquare},
 			{Text: "Clusters color gradient", Widget: grad},
-			{Text: "Shuffle gradient", Widget: shuffleGradient},
+			{Text: "Shuffle colors", Widget: shuffleGradient},
 		},
 		OnSubmit: func() { // optional, handle form submission
 

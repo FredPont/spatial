@@ -26,7 +26,7 @@ func allClustColors(nbCluster int) []RGB {
 
 	if shuffle {
 		filter.ShuffleInt(clustIndex)
-		log.Println("shuffle", clustIndex)
+		log.Println("shuffled color order", clustIndex)
 	}
 
 	cG := binding.BindPreferenceString("clusterGradient", pref)
