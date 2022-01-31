@@ -62,7 +62,7 @@ To install the software, download the zip archive and unzip it.
  <a href="https://github.com/fyne-io">
     <img src="./src/web/fyne.png" height="30">
 </a>
-statically linked. Precompiled static  binaries are areavailable for Linux, Mac, and Windows. Installation of Single-Cell Spatial Explorer is immediate.
+statically linked. Precompiled static  binaries are are available for Linux, Mac, and Windows. Installation of Single-Cell Spatial Explorer is immediate.
 
 ## Documentation
 
@@ -80,16 +80,13 @@ The documentation is available as a PDF file in the "doc" directory
 4.  compatible with any PNG image associated with any CSV file (TAB
     separated) containing XY coordinates of the image.
 
-5.  compatible with any numeric data : gene expression, pathway scores,
-    antibody expression etc...
+5.  compatible with any numeric data : gene expression, pathway scores, antibody expression etc...
 
 6.  unlimited number of gates.
 
 7.  import/export gates in ImageJ/FIJI format.
 
-8.  extract cells and sub-tables delimited by the gates on an unlimited
-    number of tables. Exportation is done in CSV file for great
-    interoperability.
+8.  extract cells and sub-tables delimited by the gates on an unlimited number of tables. Exportation is done in CSV file for great interoperability.
 
 9.  2D plots of the cells inside the gates with any XY coordinates :
     t-SNE, UMAP, gene expression, pathway scores, antibody expression
@@ -105,10 +102,9 @@ The documentation is available as a PDF file in the "doc" directory
     with 7 preset gradients, custom legend color, dot opacity and custom
     dot size. The gradients are simple two colors maps and rainbow
     colors maps Turbo, Viridis and Inferno to optimize accuracy and
-    details visualisation.
+    details visualization.
 
-13. Min/Max intensity sliders to tune image contrast or remove artefacts
-    due to outliers.
+13. Min/Max intensity sliders to tune image contrast or remove artifacts due to outliers.
 
 14. Expression opacity gradient with min/max threshold.
 
@@ -117,9 +113,7 @@ The documentation is available as a PDF file in the "doc" directory
 
 16. screenshot or native resolution image exportation.
 
-17. import and display an unlimited number of cells list by repetitive
-    click on the "import cells" button. The format is directly
-    compatible with Single-Cell Virtual Cytometer .
+17. import and display an unlimited number of cells list by repetitive click on the "import cells" button. The format is directly compatible with Single-Cell Virtual Cytometer .
 
 18. compare two groups of gates together in the whole dataset .
 
@@ -134,7 +128,7 @@ The documentation is available as a PDF file in the "doc" directory
 23. image zoom 10-200%
 
 
-## Acknowledgements
+## Acknowledgments
 Special thanks to Andrew Williams, CTO and technical leader of [Fyne](https://github.com/fyne-io) project, for  his  useful  technical  advises  about  the usage  of  the  [Fyne  graphical  library](https://fyne.io/).
 
 The GO developpment team is aknowledged as well as the contributors of the following projects :
