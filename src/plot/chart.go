@@ -146,10 +146,32 @@ func showGates(a fyne.App, alldotsInGates [][][]string, p *plot.Plot, dotsize vg
 
 }
 
+// customRGBA return an array of custom colors
+func customRGBA() []color.RGBA {
+	return []color.RGBA{
+		{255, 0, 0, 255},     // red
+		{0, 0, 255, 255},     // blue
+		{70, 185, 70, 255},   // green
+		{255, 102, 25, 255},  // orange
+		{100, 60, 160, 255},  // violet
+		{0, 0, 0, 255},       // black
+		{0, 213, 255, 255},   // cyan
+		{255, 255, 51, 255},  // yellow
+		{150, 200, 230, 255}, // blue
+		{0, 204, 0, 255},     // green 2
+		//{255, 255, 255, 255}, // white
+	}
+}
+
 // DotColors computes the color of scatter dots
 // for a total number of clusters "nbGates"
 func DotColors(nbGates, gateIndex int) color.RGBA {
-	grad := colorgrad.Rainbow().Sharp(uint(nbGates+1), 0.2)
+
+	if nbGates <= len(customRGBA()) {
+		return customRGBA()[gateIndex]
+	}
+	//grad := colorgrad.Rainbow().Sharp(uint(nbGates+1), 0.2)
+	grad := colorgrad.Turbo().Sharp(uint(nbGates+1), 0.2)
 	return RgbaModel(grad.Colors(uint(nbGates + 1))[gateIndex])
 }
 
