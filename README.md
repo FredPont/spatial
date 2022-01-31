@@ -36,11 +36,12 @@ In combination with [Single-Cell Signature Explorer](https://doi.org/10.1093/nar
 Screenshot of Single-Cell Spatial Explorer gate comparison. It is possible to compare gates (or groups of gates) across the whole dataset. A vulcano plot is obtained and relevant dots can be clicked to reveal the differential genes, antibodies, biological functions or gene signatures. :
 ![vulcano](./src/web/screenshot_1.png)
 
-Single-Cell Spatial Explorer can draw an interactive 2D plot with any coordinates (t-SNE, UMAP, genes, gene signatures, antibodies ...). On this 2D plot it is possible to select dots, display them on the microscopy image and filter datasets to extract sub-tables and cell names corresponding to these dots:
+To localize cells of interest on the microscopy image, Single-Cell Spatial Explorer can draw an interactive 2D plot with any coordinates (t-SNE, UMAP, genes, gene signatures, antibodies ...). On this 2D plot it is possible to select dots, display them on the microscopy image and filter datasets to extract sub-tables and cell names corresponding to these dots:
 ![FIJI](./src/web/2Dinter.png)
 
-Single-Cell Spatial Explorer can plot the gates content on a 2D scatter plot with any coordinates (t-SNE, UMAP, genes, gene signatures, antibodies ...). It is possible to filter datasets to extract sub-tables and cell names corresponding to these dots:
-![FIJI](./src/web/2Dplot.png)
+To better characterize cells, Single-Cell Spatial Explorer can plot the gates content on a 2D scatter plot with any coordinates (t-SNE, UMAP, genes, gene signatures, antibodies ...). It is possible to filter datasets to extract sub-tables and cell names corresponding to these dots. Selected cells can be exported to [Single-Cell Virtual Cytometer](https://doi.org/10.1093/nargab/lqaa025) (available 
+[here](https://github.com/FredPont/single-cell-virtual-cytometer)) to refine the analysis :
+![2Dplot](./src/web/2Dplot.png)
 
 
 Single-Cell Spatial Explorer is compatible with [FIJI](https://fiji.sc/) and [ImageJ](https://imagej.nih.gov/ij/). In this picture the contours of tumoral cells have been obtained by FIJI analysis and were imported into Single-Cell Spatial Explorer:
