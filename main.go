@@ -13,6 +13,7 @@ import (
 func main() {
 	title()
 	a := app.NewWithID("SpatialGate")
+	log.Println("preferences saved in :", a.Storage().RootURI())
 	// initPref initialise some user preferences when not set
 	ui.InitPref()
 	w := a.NewWindow("image")
