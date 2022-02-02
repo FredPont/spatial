@@ -7,7 +7,7 @@
 *.svg
 #*.mod
 *.sum
-*.tsv
+#*.tsv
 *.txt
 lasso
 spatial
