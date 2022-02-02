@@ -9,7 +9,6 @@
 *.sum
 *.tsv
 *.txt
-*.json
 lasso
 spatial
 #*.bin
