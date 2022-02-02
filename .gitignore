@@ -1,22 +1,28 @@
-*.png
+# comment png, csv, mod, sum
+#*.png
+#*.csv
+*.back
 *.jpg
 *.jpeg
-*.mod
+*.svg
+#*.mod
 *.sum
-*.csv
 *.tsv
 *.txt
+*.json
 lasso
-*.bin
-*.exe
-*.back
-comparison
+spatial
+#*.bin
+#*.exe
+#comparison
 demo
-image
-import_gates
-results
-data
-gates
-import_cells
-plots
-linux_spatial_Gate.bin
+# image
+# import_gates
+# results
+# data
+# gates
+# import_cells
+# plots
+#linux_spatial_Gate.bin
+test_files
+#temp

@@ -131,6 +131,9 @@ The documentation is available as a PDF file in the "doc" directory
 ## Acknowledgments
 Special thanks to Andrew Williams, CTO and technical leader of [Fyne](https://github.com/fyne-io) project, for  his  useful  technical  advises  about  the usage  of  the  [Fyne  graphical  library](https://fyne.io/).
 
+Thanks to [Miguel Madrid](https://github.com/mimame) for his advices on Github.
+
+
 The GO developpment team is aknowledged as well as the contributors of the following projects :
 
 [gonum](https://www.gonum.org/), [fc](https://github.com/ajstarks/fc), [colorgrad](https://github.com/mazznoer/colorgrad), [go-colorful](github.com/lucasb-eyer/go-colorful), [stats](github.com/aclements/go-moremath/stats)
