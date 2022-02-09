@@ -129,7 +129,7 @@ The documentation is available as a PDF file in the "doc" directory
 
 
 ## Acknowledgments
-Special thanks to Andrew Williams, CTO and technical leader of [Fyne](https://github.com/fyne-io) project, for  his  useful  technical  advises  about  the usage  of  the  [Fyne  graphical  library](https://fyne.io/).
+Special thanks to [Andrew Williams](https://github.com/andydotxyz), CTO and technical leader of [Fyne](https://github.com/fyne-io) project, for  his  useful  technical  advises  about  the usage  of  the  [Fyne  graphical  library](https://fyne.io/).
 
 Thanks to [Miguel Madrid](https://github.com/mimame) for his advices on Github.
 
