@@ -26,6 +26,9 @@ inside the doc folder
 
 ## ScreenShots
 
+Single-Cell Spatial Explorer is a compiled software, easy to install and to use. It produces beautiful pictures from microcopy image and single cell data sets. Many information can be visualized on top on the microscopy image, such as gene expression, clusters, pathways (screenshot), antibodies... :
+![clusters](./src/web/overview.png)
+
 
 Single-Cell Spatial Explorer can display clusters with preset color gradients. In this example with 11 clusters there is 159667200 possible representations :
 ![clusters](./src/web/clusters6.png)
