@@ -20,7 +20,7 @@ inside the doc folder
 
 <!---How to [Cite](https://doi.org/10.1093/nargab/lqaa025) --->
 
-Demo videos can be found in the supplemental data of the [reference article](https://doi.org/10.1093/nargab/lqaa025)
+<!---Demo videos can be found in the supplemental data of the [reference article](https://doi.org/10.1093/nargab/lqaa025) --->
 
 <br/>
 
