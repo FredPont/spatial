@@ -26,7 +26,7 @@ inside the doc folder
 
 ## ScreenShots
 
-Single-Cell Spatial Explorer is a compiled software, easy to install and to use. It produces beautiful pictures from microcopy image and single cell data sets. Many information can be visualized on top on the microscopy image, such as gene expression, clusters, pathways (screenshot), antibodies... :
+Single-Cell Spatial Explorer is a compiled software, easy to install and to use. It produces beautiful pictures from microcopy images and single cell data sets. Many information can be visualized on top on the microscopy image, such as gene expression, clusters, pathways (screenshot), antibodies... :
 ![clusters](./src/web/overview.png)
 
 
@@ -35,6 +35,10 @@ Single-Cell Spatial Explorer can display clusters with preset color gradients. I
 
 In combination with [Single-Cell Signature Explorer](https://doi.org/10.1093/nar/gkz601), Single-Cell Spatial Explorer can display about 29,000 Human pathways or gene signatures (+ genes, antibodies...) as tunable overlays on a microscopy image. Both transparency and image contrast can be adjusted by the user  :
 ![expression](./src/web/expression6.png)
+
+Single-Cell Spatial Explorer displaying a biological function with different settings of contrast and opacity. A) original image. B) Contrast was increased with the min/max slider. C) Same image as B) with a wide opacity gradient. D) Same image as C) with a narrow opacity gradient.
+![opacity](./src/web/opacity.png)
+
 
 Screenshot of Single-Cell Spatial Explorer gate comparison. It is possible to compare gates (or groups of gates) across the whole dataset. A vulcano plot is obtained and relevant dots can be clicked to reveal the differential genes, antibodies, biological functions or gene signatures. :
 ![vulcano](./src/web/screenshot_1.png)
