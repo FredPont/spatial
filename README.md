@@ -18,6 +18,8 @@ Single-Cell Spatial Explorer is a software for user-friendly and versatile explo
 For more details see the <b><a href="doc/Manual_Single_Cell_Spatial_Explorer.pdf" target="_blank">Manual</a></b>
 inside the doc folder
 
+[Contact](frederic.pont@inserm.fr)
+
 <!---How to [Cite](https://doi.org/10.1093/nargab/lqaa025) --->
 
 <!---Demo videos can be found in the supplemental data of the [reference article](https://doi.org/10.1093/nargab/lqaa025) --->
