@@ -66,8 +66,8 @@ func build2DplotWin(imageEditor *Editor) (fyne.Window, *Interactive2Dsurf) {
 	w := fyne.CurrentApp().NewWindow("2D Plot")
 	p, finalWidth, finalHeight := NewInterative2D()
 	p.build2DinterPlot(w)
-	w.Resize(fyne.NewSize(float32(finalWidth), float32(finalHeight)))
 	w.SetFixedSize(true)
+	w.Resize(fyne.NewSize(float32(finalWidth), float32(finalHeight)))
 	w.Show()
 
 	//p.imageEditor = imageEditor // store the image Editor to enable expression display from the 2D plot

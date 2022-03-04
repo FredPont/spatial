@@ -54,8 +54,9 @@ func makeplot(a fyne.App, zoom int, header []string, filename, colX, colY, plotN
 	img := canvas.NewImageFromFile("plots/" + plotName + ".png")
 	f.Set(0.) // reset progress bar
 	plotWindow.SetContent(img)
-	plotWindow.Resize(fyne.NewSize(800, 800))
 	plotWindow.SetFixedSize(true)
+	plotWindow.Resize(fyne.NewSize(800, 800))
+
 	plotWindow.Show()
 
 }

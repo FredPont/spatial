@@ -144,83 +144,49 @@ func InitPref() {
 	prefs := fyne.CurrentApp().Preferences()
 
 	// cluster dot diameter
-	cld := binding.BindPreferenceInt("clustDotDiam", prefs) // set the link to preferences for cluster diameter
-	clud, _ := cld.Get()
-	if clud == 0 {
-		prefs.SetInt("clustDotDiam", 12)
-	}
+	cld := prefs.IntWithFallback("clustDotDiam", 12)
+	prefs.SetInt("clustDotDiam", cld)
 
 	// cluster column
-	clustercolumn := binding.BindPreferenceString("clustcol", prefs) // set the link to preferences for rotation
-	clucol, _ := clustercolumn.Get()
-	if len(clucol) == 0 {
-		prefs.SetString("clustcol", "num_cluster")
-	}
+	clustercolumn := prefs.StringWithFallback("clustcol", "num_cluster")
+	prefs.SetString("clustcol", clustercolumn)
 
 	// chart dot size
-	dotsize := binding.BindPreferenceString("dotsize", prefs) // set the link to preferences for rotation
-	ds, _ := dotsize.Get()
-	if len(ds) == 0 {
-		prefs.SetString("dotsize", "3")
-	}
+	dotsize := prefs.StringWithFallback("dotsize", "3")
+	prefs.SetString("dotsize", dotsize)
 
 	// 2D interactive plot dot size
-	ds2D := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
-	dotsize2D, _ := ds2D.Get()
-	if len(dotsize2D) == 0 {
-		prefs.SetString("2Ddotsize", "3")
-	}
+	ds2D := prefs.StringWithFallback("2Ddotsize", "3")
+	prefs.SetString("2Ddotsize", ds2D)
 
 	// get scaleFactor and rotation from pref
-	sf := binding.BindPreferenceFloat("scaleFactor", prefs) // set the link to preferences for scaling factor
-	scaleFactor, _ := sf.Get()
-	if scaleFactor == 0 {
-		prefs.SetFloat("scaleFactor", 0.107869044)
-	}
+	sf := prefs.FloatWithFallback("scaleFactor", 0.107869044)
+	prefs.SetFloat("scaleFactor", sf)
 
 	// set rotate pref to true
-	r := binding.BindPreferenceBool("rotate", prefs) // set the link to preferences for rotation
-	_, rot_err := r.Get()
-	//log.Println("rotate error", rot_err)
-	if rot_err != nil {
-		prefs.SetBool("rotate", true)
-	}
+	rot := prefs.BoolWithFallback("rotate", true)
+	prefs.SetBool("rotate", rot)
 
 	// X coordinates
-	xcor := binding.BindPreferenceString("xcor", prefs) // set the link to preferences for x coordinates
-	xc, _ := xcor.Get()
-	if len(xc) == 0 {
-		prefs.SetString("xcor", "x_image")
-	}
+	xcor := prefs.StringWithFallback("xcor", "x_image")
+	prefs.SetString("xcor", xcor)
 
 	// y coordinates
-	ycor := binding.BindPreferenceString("ycor", prefs) // set the link to preferences for y coordinates
-	yc, _ := ycor.Get()
-	if len(yc) == 0 {
-		prefs.SetString("ycor", "y_image")
-	}
+	ycor := prefs.StringWithFallback("ycor", "y_image")
+	prefs.SetString("ycor", ycor)
 
 	//microscop windows W
-	winW := binding.BindPreferenceFloat("winW", prefs) // set the link to preferences for win width
-	wW, _ := winW.Get()
-	if wW == 0 {
-		prefs.SetFloat("winW", 500)
-	}
+	winW := prefs.FloatWithFallback("winW", 500)
+	prefs.SetFloat("winW", winW)
 
 	//microscop windows Height
-	winH := binding.BindPreferenceFloat("winH", prefs) // set the link to preferences for win width
-	wH, _ := winH.Get()
-	if wH == 0 {
-		prefs.SetFloat("winH", 500)
-	}
+	winH := prefs.FloatWithFallback("winH", 500)
+	prefs.SetFloat("winH", winH)
 
 	// vulcano selection square size in pixels
 	// record the vulcano selection square size in pixels in preferences
-	vs := binding.BindPreferenceInt("vulcSelectSize", prefs)
-	vsquare, _ := vs.Get()
-	if vsquare == 0 {
-		prefs.SetInt("vulcSelectSize", 20)
-	}
+	vs := prefs.IntWithFallback("vulcSelectSize", 20)
+	prefs.SetInt("vulcSelectSize", vs)
 
 	// Dot opacity
 	prefs.SetFloat("dotOpacity", 255)
@@ -232,11 +198,8 @@ func InitPref() {
 	prefs.SetFloat("clustOpacity", 255)
 
 	// vulcano default gradien
-	gradExpression := binding.BindPreferenceString("gradExpression", prefs) // pref binding for the expression gradien to avoid reset for each vulcano dot
-	selGrad, _ := gradExpression.Get()
-	if len(selGrad) == 0 {
-		prefs.SetString("gradExpression", "Turbo")
-	}
+	gradExpression := prefs.StringWithFallback("gradExpression", "Turbo")
+	prefs.SetString("gradExpression", gradExpression)
 
 	// plot background color
 	initBCKGColors([]string{"unselR", "unselG", "unselB", "unselA"})
@@ -249,11 +212,13 @@ func InitPref() {
 // init background colors
 func initBCKGColors(rgba []string) {
 	pref := fyne.CurrentApp().Preferences()
-	if sumRGBA(rgba) == false {
+	if !sumRGBA(rgba) {
+		log.Println("background is not white")
 		return
 	}
 	for _, c := range rgba {
-		pref.SetInt(c, 170) // grey
+		val := pref.IntWithFallback(c, 170)
+		pref.SetInt(c, val) // grey
 	}
 	pref.SetInt(rgba[3], 255) // full opacity
 }
@@ -261,11 +226,12 @@ func initBCKGColors(rgba []string) {
 // init foreground colors
 func initFORGColors(rgba []string) {
 	pref := fyne.CurrentApp().Preferences()
-	if sumRGBA(rgba) == false {
+	if !sumRGBA(rgba) {
 		return
 	}
 	for _, c := range rgba {
-		pref.SetInt(c, 1) // black
+		val := pref.IntWithFallback(c, 1)
+		pref.SetInt(c, val) // black
 	}
 	pref.SetInt(rgba[3], 255) // full opacity
 }
@@ -279,8 +245,11 @@ func sumRGBA(rgba []string) bool {
 		sumRGBA += mapRGBA
 	}
 	// if the color is white sumRGBA == 3*255
-	if sumRGBA == 3*255 {
+	log.Println("sumRGBA = ", sumRGBA)
+	if sumRGBA == 3*255 || sumRGBA == 0 {
 		return true
 	}
+
 	return false
+
 }

@@ -74,8 +74,8 @@ func buildVulcWin(imageEditor *Editor) *Vulcano {
 	w := fyne.CurrentApp().NewWindow("Vulcano Plot")
 	v, finalWidth, finalHeight := NewVulcano()
 	v.buildVulc(w)
-	w.Resize(fyne.NewSize(float32(finalWidth), float32(finalHeight)))
 	w.SetFixedSize(true)
+	w.Resize(fyne.NewSize(float32(finalWidth), float32(finalHeight)))
 	w.Show()
 	v.imageEditor = imageEditor // store the image Editor to enable expression display from the vulcano plot
 	return v

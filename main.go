@@ -21,10 +21,11 @@ func main() {
 	e, imgW, imgH := ui.NewEditor()
 
 	e.BuildUI(w)
+	w.SetFixedSize(true) // fix win size
+
 	// set the windows size to at least 500x500 and adjust the windows size
 	// to the size of the microscopy image if the pref size are below.
 	setImageWinSize(a, w, imgW, imgH)
-	w.SetFixedSize(true) // fix win size
 
 	ui.BuildTools(a, w, e)
 
