@@ -175,7 +175,43 @@ func InitPref() {
 	sf := binding.BindPreferenceFloat("scaleFactor", prefs) // set the link to preferences for scaling factor
 	scaleFactor, _ := sf.Get()
 	if scaleFactor == 0 {
-		prefs.SetFloat("scaleFactor", 1.)
+		prefs.SetFloat("scaleFactor", 0.107869044)
+	}
+
+	// set rotate pref to true
+	r := binding.BindPreferenceBool("rotate", prefs) // set the link to preferences for rotation
+	_, rot_err := r.Get()
+	//log.Println("rotate error", rot_err)
+	if rot_err != nil {
+		prefs.SetBool("rotate", true)
+	}
+
+	// X coordinates
+	xcor := binding.BindPreferenceString("xcor", prefs) // set the link to preferences for x coordinates
+	xc, _ := xcor.Get()
+	if len(xc) == 0 {
+		prefs.SetString("xcor", "x_image")
+	}
+
+	// y coordinates
+	ycor := binding.BindPreferenceString("ycor", prefs) // set the link to preferences for y coordinates
+	yc, _ := ycor.Get()
+	if len(yc) == 0 {
+		prefs.SetString("ycor", "y_image")
+	}
+
+	//microscop windows W
+	winW := binding.BindPreferenceFloat("winW", prefs) // set the link to preferences for win width
+	wW, _ := winW.Get()
+	if wW == 0 {
+		prefs.SetFloat("winW", 500)
+	}
+
+	//microscop windows Height
+	winH := binding.BindPreferenceFloat("winH", prefs) // set the link to preferences for win width
+	wH, _ := winH.Get()
+	if wH == 0 {
+		prefs.SetFloat("winH", 500)
 	}
 
 	// vulcano selection square size in pixels
