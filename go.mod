@@ -3,7 +3,7 @@ module spatial
 go 1.17
 
 require (
-	fyne.io/fyne/v2 v2.1.3
+	fyne.io/fyne/v2 v2.1.2
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mazznoer/colorgrad v0.8.1
 	gonum.org/v1/plot v0.10.0

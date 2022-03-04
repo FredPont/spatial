@@ -49,7 +49,9 @@ func setImageWinSize(a fyne.App, w fyne.Window, imgW, imgH int) {
 
 	finalWidth := setMinWindow(wW, imgW)
 	finalHeight := setMinWindow(wH, imgH)
+	//log.Println("finalSize", finalWidth, finalHeight)
 	w.Resize(fyne.NewSize(finalWidth, finalHeight))
+	//w.Resize(fyne.NewSize(1000, 1000))
 }
 
 // image size must be at least 500x500
@@ -67,6 +69,7 @@ func setMinWindow(prefSize float64, imgSize int) float32 {
 	} else if float64(imgSize) < prefSize && prefSize >= float64(minSize) {
 		finalSize = float32(imgSize)
 	}
+
 	return finalSize
 }
 
