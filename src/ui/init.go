@@ -213,7 +213,7 @@ func InitPref() {
 func initBCKGColors(rgba []string) {
 	pref := fyne.CurrentApp().Preferences()
 	if !sumRGBA(rgba) {
-		log.Println("background is not white")
+		//log.Println("background is not white")
 		return
 	}
 	for _, c := range rgba {
@@ -245,7 +245,7 @@ func sumRGBA(rgba []string) bool {
 		sumRGBA += mapRGBA
 	}
 	// if the color is white sumRGBA == 3*255
-	log.Println("sumRGBA = ", sumRGBA)
+	//log.Println("sumRGBA = ", sumRGBA)
 	if sumRGBA == 3*255 || sumRGBA == 0 {
 		return true
 	}

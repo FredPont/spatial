@@ -1,6 +1,7 @@
 package plot
 
 import (
+	"log"
 	"spatial/src/filter"
 
 	"fyne.io/fyne/v2"
@@ -17,6 +18,10 @@ func Density(data []float64, n float64) plotter.XYs {
 	var pts plotter.XYs
 	//copy(s2, data)
 	min, max := filter.FindMinAndMax(data)
+	if min == max {
+		log.Println("density plot cannot be build because min = ", min, " max = ", max)
+		return plotter.XYs{}
+	}
 	step := (max - min) / n
 	dataLen := len(data)
 
