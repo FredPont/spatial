@@ -18,6 +18,7 @@ func Density(data []float64, n float64) plotter.XYs {
 	var pts plotter.XYs
 	//copy(s2, data)
 	min, max := filter.FindMinAndMax(data)
+	// the density cannot be computed if all values are constant
 	if min == max {
 		log.Println("density plot cannot be build because min = ", min, " max = ", max)
 		return plotter.XYs{}
