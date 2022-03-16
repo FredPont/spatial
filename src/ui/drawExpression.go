@@ -137,7 +137,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 
 				}),
 				legendcol,
-
+				widget.NewSeparator(),
 				slidePause,
 				widget.NewButton("Slide show", func() {
 					anim.Set(true)
@@ -315,7 +315,12 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
 	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
 	titleLegend(e, expcol, colorText)
-	expLegend(e, op, diameter, gradien, min, max, colorText)
+	// transparency gradient
+	if opGrad && opMin < opMax {
+		gradOpLegend(e, diameter, gradien, min, max, opMin, opMax, colorText)
+	} else {
+		expLegend(e, op, diameter, gradien, min, max, colorText) // not transparency gradien in legend
+	}
 
 	e.clusterContainer.Refresh()
 	f.Set(0.) // reset progress bar
@@ -364,12 +369,26 @@ func truncTitle(title string) string {
 func expLegend(e *Editor, op uint8, diameter int, gradien string, min, max float64, c color.NRGBA) {
 	x, y := 13, 30
 	sp := 25
-	//AbsText(e.clusterContainer, x+20, y+10, "toto", 20, color.NRGBA{50, 50, 50, 255})
+
 	for i := 5; i >= 0; i-- {
 		//exp := fmt.Sprintf("%.1f", unscale(float64(i)/5., min, max))
 		exp := TicksDecimals(unscale(float64(i)/5., min, max))
 		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, c)
 		co := gradUser(gradien)(float64(i) / 5.)
+		e.drawcircle(x, y+150-sp*i, diameter*100/e.zoom, color.NRGBA{co.R, co.G, co.B, op})
+	}
+}
+
+// draw expression legend with dots and values and gradient opacity
+func gradOpLegend(e *Editor, diameter int, gradien string, min, max, opMin, opMax float64, c color.NRGBA) {
+	x, y := 13, 30
+	sp := 25
+
+	for i := 5; i >= 0; i-- {
+		exp := TicksDecimals(unscale(float64(i)/5., min, max))
+		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, c)
+		co := gradUser(gradien)(float64(i) / 5.)
+		op := gradTransp(unscale(float64(i)/5., min, max), min, max, opMin, opMax)
 		e.drawcircle(x, y+150-sp*i, diameter*100/e.zoom, color.NRGBA{co.R, co.G, co.B, op})
 	}
 }
