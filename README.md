@@ -43,8 +43,8 @@ Single-Cell Spatial Explorer displaying a biological function with different set
 ![opacity](./src/web/opacity.png)
 
 
-Screenshot of Single-Cell Spatial Explorer gate comparison. It is possible to compare gates (or groups of gates) across the whole dataset. A vulcano plot is obtained and relevant dots can be clicked to reveal the differential genes, antibodies, biological functions or gene signatures. :
-![vulcano](./src/web/screenshot_1.png)
+Screenshot of Single-Cell Spatial Explorer gate comparison. It is possible to compare gates (or groups of gates) across the whole dataset. A volcano plot is obtained and relevant dots can be clicked to reveal the differential genes, antibodies, biological functions or gene signatures. :
+![volcano](./src/web/screenshot_1.png)
 
 To localize cells of interest on the microscopy image, Single-Cell Spatial Explorer can draw an interactive 2D plot with any coordinates (t-SNE, UMAP, genes, gene signatures, antibodies ...). On this 2D plot it is possible to select dots, display them on the microscopy image and filter datasets to extract sub-tables and cell names corresponding to these dots:
 ![FIJI](./src/web/2Dinter.png)
@@ -129,11 +129,11 @@ The documentation is available as a PDF file in the "doc" directory
 
 19. compare one group of gates against all the remaining cells.
 
-20. draw an interactive vulcano plot after gate comparison.
+20. draw an interactive volcano plot after gate comparison.
 
-21. plot cell expression of a selected dot in the vulcano plot.
+21. plot cell expression of a selected dot in the volcano plot.
 
-22. export vulcano plot and the corresponding data table.
+22. export volcano plot and the corresponding data table.
 
 23. image zoom 10-200%
 

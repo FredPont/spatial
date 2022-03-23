@@ -71,7 +71,7 @@ func (v *Vulcano) buildVulc(w fyne.Window) {
 
 // buildVulWin creates display vulcano window
 func buildVulcWin(imageEditor *Editor) *Vulcano {
-	w := fyne.CurrentApp().NewWindow("Vulcano Plot")
+	w := fyne.CurrentApp().NewWindow("Volcano Plot")
 	v, finalWidth, finalHeight := NewVulcano()
 	v.buildVulc(w)
 	w.SetFixedSize(true)

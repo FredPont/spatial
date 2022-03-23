@@ -48,9 +48,9 @@ func buildVulcanoTools(v *Vulcano) {
 
 	content := container.New(layout.
 		NewGridLayoutWithColumns(2), container.NewVBox(
-		widget.NewLabel("Left click and right click on the vulcano plot to select points"),
-		widget.NewButton("Save vulcano plot", func() {
-			imgName := filter.FormatOutFile("vulcano", "", "")
+		widget.NewLabel("Left click and right click on the volcano plot to select points"),
+		widget.NewButton("Save volcano plot", func() {
+			imgName := filter.FormatOutFile("volcano", "", "")
 			go screenShot(v.win, imgName, f)
 		}),
 		widget.NewButton("Close", func() {
@@ -61,7 +61,7 @@ func buildVulcanoTools(v *Vulcano) {
 
 		table,
 	)
-	w := fyne.CurrentApp().NewWindow("Vulcano Tools")
+	w := fyne.CurrentApp().NewWindow("Volcano Tools")
 
 	w.SetContent(content)
 	v.tools = w
@@ -153,7 +153,7 @@ func refreshVulanoTools(v *Vulcano) {
 
 	content := container.New(layout.
 		NewGridLayoutWithColumns(2), container.NewVBox(
-		widget.NewLabel("Left click and right click on the vulcano plot to select points"),
+		widget.NewLabel("Left click and right click on the volcano plot to select points"),
 		widget.NewLabel("Select your gradient"),
 		grad,
 		widget.NewLabel("Dots Opacity [0-100%] :"),
@@ -188,8 +188,8 @@ func refreshVulanoTools(v *Vulcano) {
 			go drawExp(a, v.imageEditor, v.header, v.tableName, choosedItem, grad.Selected, f, PathwayIndex, v.tools)
 		}),
 
-		widget.NewButton("Save vulcano plot", func() {
-			imgName := filter.FormatOutFile("vulcano", "", "")
+		widget.NewButton("Save volcano plot", func() {
+			imgName := filter.FormatOutFile("volcano", "", "")
 			go screenShot(v.win, imgName, f)
 		}),
 		widget.NewButton("Close", func() {
