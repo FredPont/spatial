@@ -7,7 +7,7 @@
 </h1>
 
 
-Single-Cell Spatial Explorer is a software for user-friendly and versatile exploration of spatial transcriptomic datasets. It is compatible with 
+Single-Cell Spatial Explorer (scSpatial Explorer) is a software for user-friendly and versatile exploration of spatial transcriptomic datasets. It is compatible with 
 [Single-Cell Signature Explorer](https://doi.org/10.1093/nar/gkz601) (available 
 [here](https://sites.google.com/site/fredsoftwares/products/single-cell-signature-explorer)) and 
 [Single-Cell Virtual Cytometer](https://doi.org/10.1093/nargab/lqaa025) (available 
@@ -25,7 +25,11 @@ inside the doc folder
 
 <!---Demo videos can be found in the supplemental data of the [reference article](https://doi.org/10.1093/nargab/lqaa025) --->
 
-<br/>
+
+## How to cite
+Single-Cell Spatial Explorer is submitted for publication
+
+## Demo videos
 
 ## ScreenShots
 
@@ -144,6 +148,6 @@ Special thanks to [Andrew Williams](https://andy.xyz), creator of the [Fyne](htt
 Thanks to [Miguel Madrid](https://github.com/mimame) for his advices on Github.
 
 
-The GO developpment team is aknowledged as well as the contributors of the following projects :
+The GO developpment team is aknowledged as well as the contributors of the the contributors to Go's GUI ([Fyne](https://github.com/fyne-io)), data and color ecosystem, especially the following projects :
 
 [gonum](https://www.gonum.org/), [fc](https://github.com/ajstarks/fc), [colorgrad](https://github.com/mazznoer/colorgrad), [go-colorful](github.com/lucasb-eyer/go-colorful), [stats](github.com/aclements/go-moremath/stats)
