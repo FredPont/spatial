@@ -31,6 +31,14 @@ Single-Cell Spatial Explorer is submitted for publication
 
 ## Demo videos
 
+[Quick overview](https://youtu.be/mId538e5JDk)
+
+[Overview](https://youtu.be/dqudL36Dg1M)
+
+[How to install scSpatial Explorer](https://youtu.be/dqudL36Dg1M)
+
+[High throughput data extraction with scSpatial Explorer](https://youtu.be/dqudL36Dg1M)
+
 ## ScreenShots
 
 Single-Cell Spatial Explorer is a compiled software, easy to install and to use. It produces beautiful pictures from microcopy images and single cell data sets. Many information can be visualized on top on the microscopy image, such as gene expression, clusters, pathways (screenshot), antibodies... :
