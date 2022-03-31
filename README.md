@@ -31,13 +31,13 @@ Single-Cell Spatial Explorer is submitted for publication
 
 ## Demo videos
 
-[Quick overview](https://youtu.be/mId538e5JDk)
+[Quick 2' overview](https://youtu.be/mId538e5JDk)
 
 [Overview](https://youtu.be/dqudL36Dg1M)
 
-[How to install scSpatial Explorer](https://youtu.be/dqudL36Dg1M)
+[How to install scSpatial Explorer in less than 2'](https://youtu.be/LBBkN_rJHuc)
 
-[High throughput data extraction with scSpatial Explorer](https://youtu.be/dqudL36Dg1M)
+[High throughput data extraction with scSpatial Explorer](https://youtu.be/rSefd0pmc7g)
 
 ## ScreenShots
 
@@ -74,7 +74,7 @@ A computer with at least 8 Go RAM and a HD display with at least a HD resolution
 
 ## Installing
 
-To install the software, download the zip archive and unzip it.
+[scSpatial Explorer is installed in less than 2'](https://youtu.be/dqudL36Dg1M). To install the software, download the zip archive and unzip it.
 
  Single-Cell Spatial Explorer is written in pure 
  <a href="https://go.dev/">
@@ -84,7 +84,7 @@ To install the software, download the zip archive and unzip it.
  <a href="https://github.com/fyne-io">
     <img src="./src/web/fyne.png" height="30">
 </a>
-statically linked. Precompiled static  binaries are are available for Linux, Mac, and Windows. Installation of Single-Cell Spatial Explorer is immediate.
+statically linked. Precompiled static  binaries are are available for Linux, Mac, and Windows.
 
 ## Documentation
 
@@ -99,8 +99,7 @@ The documentation is available as a PDF file in the "doc" directory
 
 3.  low memory usage
 
-4.  compatible with any PNG image associated with any CSV file (TAB
-    separated) containing XY coordinates of the image.
+4.  compatible with any PNG image associated with any TAB separated files containing XY coordinates of the image.
 
 5.  compatible with any numeric data : gene expression, pathway scores, antibody expression etc...
 
