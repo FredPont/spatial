@@ -2,11 +2,10 @@
 #*.png
 #*.csv
 *.back
-*.jpg
-*.jpeg
+#*.jpg
 *.svg
 #*.mod
-*.sum
+#*.sum
 #*.tsv
 *.txt
 lasso
