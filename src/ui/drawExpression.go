@@ -21,18 +21,12 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	ExpressWindow := a.NewWindow("Expression")
 
 	// show choice of different gradien
-	grad := widget.NewRadioGroup([]string{"Turbo", "Viridis", "Inferno", "White - Red", "Yellow - Red", "Purple - Red", "Blue - Yellow - Red"}, func(s string) {
+	grad := widget.NewRadioGroup([]string{"Turbo", "Viridis", "Inferno", "Plasma", "White - Red", "Yellow - Red", "Purple - Red", "Red - Yellow ", "Custom"}, func(s string) {
 		//fmt.Println("Selected <", s, ">")
 	})
 
 	// Dot opacity
-	//DotOp := binding.BindPreferenceFloat("dotOpacity", preference) // pref binding for the expression dot opacity
-	//DotOp.Set(255.)
 	DotOpacity := widget.NewSlider(0., 255.)
-	//DotOp := binding.BindPreferenceFloat("dotOpacity", preference) // pref binding for the expression dot opacity
-	//DotOp.Set(255.)
-	//DotOpacity := widget.NewSliderWithData(0., 255., DotOp)
-	//DotOpacity.Step = 1.
 	DotOpacity.Value = 255.
 	DotOpacity.OnChanged = func(v float64) {
 		preference.SetFloat("dotOpacity", v)
@@ -398,7 +392,7 @@ func unscale(v, min, max float64) float64 {
 	return v*(max-min) + min
 }
 
-// grad return the gradien function with name "gradien"
+// gradUser return the gradien value with name "gradien"
 func gradUser(gradien string) func(float64) RGB {
 	switch gradien {
 	case "Turbo":
@@ -413,8 +407,12 @@ func gradUser(gradien string) func(float64) RGB {
 		return func(val float64) RGB { return PuRdGradien(val) }
 	case "Inferno":
 		return func(val float64) RGB { return InferGrad(val) }
-	case "Blue - Yellow - Red":
-		return func(val float64) RGB { return BYRGradien(val) }
+	case "Plasma":
+		return func(val float64) RGB { return PlasmaGradien(val) }
+	case "Red - Yellow ":
+		return func(val float64) RGB { return RDYLGradien(val) }
+	case "Custom":
+		return func(val float64) RGB { return CustomGradien(val) }
 	default:
 		return func(val float64) RGB { return WRgradien(val) }
 	}

@@ -114,7 +114,7 @@ func ReadColumns(filename string, colIndexes []int) [][]string {
 	if err != nil {
 		log.Fatalln("Couldn't open the csv file", err)
 	}
-
+	defer csvfile.Close()
 	// Parse the file
 	r := csv.NewReader(bufio.NewReader(csvfile))
 	//r := csv.NewReader(csvfile)
@@ -156,7 +156,7 @@ func ReadClusters(a fyne.App, filename string, colIndexes []int) map[int][]Point
 	if err != nil {
 		log.Fatalln("Couldn't open the csv file", err)
 	}
-
+	defer csvfile.Close()
 	// Parse the file
 	r := csv.NewReader(bufio.NewReader(csvfile))
 	//r := csv.NewReader(csvfile)
@@ -214,7 +214,7 @@ func ReadImportedCells(filename string) []string {
 	if err != nil {
 		log.Fatalln("Couldn't open the file", err)
 	}
-
+	defer csvfile.Close()
 	// Parse the file
 	r := csv.NewReader(bufio.NewReader(csvfile))
 	//r := csv.NewReader(csvfile)
@@ -261,7 +261,7 @@ func ClustersByCells(a fyne.App, filename string, colIndexes []int, cellImport m
 	//r := csv.NewReader(csvfile)
 	r.Comma = '\t'
 	r.Read() // skip header
-
+	defer csvfile.Close()
 	// Iterate through the records
 	for {
 		// Read each record from csv
@@ -312,7 +312,7 @@ func ReadExpress(a fyne.App, filename string, colIndexes []int) ([]float64, []Po
 	if err != nil {
 		log.Fatalln("Couldn't open the csv file", err)
 	}
-
+	defer csvfile.Close()
 	// Parse the file
 	r := csv.NewReader(bufio.NewReader(csvfile))
 	//r := csv.NewReader(csvfile)
@@ -341,6 +341,35 @@ func ReadExpress(a fyne.App, filename string, colIndexes []int) ([]float64, []Po
 		expressions = append(expressions, exp)
 	}
 	return expressions, pts
+}
+
+// ReadGradient import CSV list of hexadecimal colors into []string
+func ReadGradient(filename string) []string {
+	var str []string
+	// Open the file
+	csvfile, err := os.Open(filename)
+	if err != nil {
+		log.Fatalln("Couldn't open the file", err)
+	}
+	defer csvfile.Close()
+	// Parse the file
+	r := csv.NewReader(bufio.NewReader(csvfile))
+	//r := csv.NewReader(csvfile)
+	//r.Comma = '\t'
+
+	// Iterate through the records
+	for {
+		// Read each record from csv
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		str = append(str, record[0])
+	}
+	return str
 }
 
 // ScaleSlice01 scale a slice between 0-1 and return the scaled 0-1 slice,  min and max

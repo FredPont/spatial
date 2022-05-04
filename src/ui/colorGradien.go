@@ -18,6 +18,10 @@ type RGB struct {
 	R, G, B uint8
 }
 
+//////////////////////////////////////////////////////
+//			clusters gradients
+//////////////////////////////////////////////////////
+
 func allClustColors(nbCluster int) []RGB {
 	pref := fyne.CurrentApp().Preferences()
 	clustIndex := filter.FillSliceInt(nbCluster) // []int{0,1,...,n} slice of increasing int of nbcluster numbers
@@ -131,6 +135,9 @@ func ClusterColors(nbCluster, cluster int) RGB {
 	return rgbModel(grad.Colors(uint(nbCluster + 1))[cluster])
 }
 
+//////////////////////////////////////////////////////
+// 			Expression gradients
+//////////////////////////////////////////////////////
 // credits https://github.com/mazznoer/colorgrad
 
 // WRgradien white -> red gradien
@@ -169,10 +176,34 @@ func PuRdGradien(val float64) RGB {
 	return rgbModel(grad.At(val))
 }
 
+// PlasmaGradien blue orange yellow - colorgrad.Plasma()
+func PlasmaGradien(val float64) RGB {
+	grad := colorgrad.Plasma()
+	return rgbModel(grad.At(val))
+}
 // BYRGradien blue yellow red
 func BYRGradien(val float64) RGB {
 	grad, _ := colorgrad.NewGradient().
 		HtmlColors("#1726BD", "03F6FA", "03FA03", "#E8FB02", "FAE403", "FA6803", "#FA0303").
+		Build()
+
+	return rgbModel(grad.At(val))
+}
+
+// RDYLGradien yellow red
+func RDYLGradien(val float64) RGB {
+	grad, _ := colorgrad.NewGradient().
+		HtmlColors("#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc").
+		Build()
+
+	return rgbModel(grad.At(val))
+}
+
+// CustomGradien from src/gradient/custom.csv
+func CustomGradien(val float64) RGB {
+	colArray := filter.ReadGradient("src/gradient/custom.csv")
+	grad, _ := colorgrad.NewGradient().
+		HtmlColors(colArray...).
 		Build()
 
 	return rgbModel(grad.At(val))
