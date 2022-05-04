@@ -15,6 +15,7 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"github.com/mazznoer/colorgrad"
 )
 
 func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, firstTable string) {
@@ -262,6 +263,10 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the  dot opacity
 	opacity, _ := DotOp.Get()
 	op := uint8(opacity)
+
+	// pre-build expression gradient
+	grad := preBuildGradient(gradien)
+
 	// Dot opacity gradient
 	gradop := binding.BindPreferenceBool("gradOpacity", pref)
 	opGrad, _ := gradop.Get()                               // enabled/disabled opacity gradient
@@ -300,7 +305,7 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 			op = gradTransp(expressions[c], min, max, opMin, opMax)
 		}
 		//op = gradTransp(expressions[c], min, max)
-		clcolor := gradUser(gradien)(scaleExp[c])
+		clcolor := gradUser(gradien, grad, scaleExp[c])
 
 		e.drawcircle(ApplyZoomInt(e, pts[c].X), ApplyZoomInt(e, pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 
@@ -311,9 +316,9 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	titleLegend(e, expcol, colorText)
 	// transparency gradient
 	if opGrad && opMin < opMax {
-		gradOpLegend(e, diameter, gradien, min, max, opMin, opMax, colorText)
+		gradOpLegend(e, diameter, gradien, grad, min, max, opMin, opMax, colorText)
 	} else {
-		expLegend(e, op, diameter, gradien, min, max, colorText) // not transparency gradien in legend
+		expLegend(e, op, diameter, gradien, grad, min, max, colorText) // not transparency gradien in legend
 	}
 
 	e.clusterContainer.Refresh()
@@ -360,7 +365,7 @@ func truncTitle(title string) string {
 }
 
 // draw expression legend with dots and values
-func expLegend(e *Editor, op uint8, diameter int, gradien string, min, max float64, c color.NRGBA) {
+func expLegend(e *Editor, op uint8, diameter int, gradien string, grad colorgrad.Gradient, min, max float64, c color.NRGBA) {
 	x, y := 13, 30
 	sp := 25
 
@@ -368,20 +373,20 @@ func expLegend(e *Editor, op uint8, diameter int, gradien string, min, max float
 		//exp := fmt.Sprintf("%.1f", unscale(float64(i)/5., min, max))
 		exp := TicksDecimals(unscale(float64(i)/5., min, max))
 		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, c)
-		co := gradUser(gradien)(float64(i) / 5.)
+		co := gradUser(gradien, grad, float64(i)/5.)
 		e.drawcircle(x, y+150-sp*i, diameter*100/e.zoom, color.NRGBA{co.R, co.G, co.B, op})
 	}
 }
 
 // draw expression legend with dots and values and gradient opacity
-func gradOpLegend(e *Editor, diameter int, gradien string, min, max, opMin, opMax float64, c color.NRGBA) {
+func gradOpLegend(e *Editor, diameter int, gradien string, grad colorgrad.Gradient, min, max, opMin, opMax float64, c color.NRGBA) {
 	x, y := 13, 30
 	sp := 25
 
 	for i := 5; i >= 0; i-- {
 		exp := TicksDecimals(unscale(float64(i)/5., min, max))
 		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, c)
-		co := gradUser(gradien)(float64(i) / 5.)
+		co := gradUser(gradien, grad, float64(i)/5.)
 		op := gradTransp(unscale(float64(i)/5., min, max), min, max, opMin, opMax)
 		e.drawcircle(x, y+150-sp*i, diameter*100/e.zoom, color.NRGBA{co.R, co.G, co.B, op})
 	}
@@ -393,30 +398,33 @@ func unscale(v, min, max float64) float64 {
 }
 
 // gradUser return the gradien value with name "gradien"
-func gradUser(gradien string) func(float64) RGB {
-	switch gradien {
-	case "Turbo":
-		return func(val float64) RGB { return TurboGradien(val) }
-	case "Viridis":
-		return func(val float64) RGB { return ViridisGrad(val) }
-	case "White - Red":
-		return func(val float64) RGB { return WRgradien(val) }
-	case "Yellow - Red":
-		return func(val float64) RGB { return YlRdGradien(val) }
-	case "Purple - Red":
-		return func(val float64) RGB { return PuRdGradien(val) }
-	case "Inferno":
-		return func(val float64) RGB { return InferGrad(val) }
-	case "Plasma":
-		return func(val float64) RGB { return PlasmaGradien(val) }
-	case "Red - Yellow ":
-		return func(val float64) RGB { return RDYLGradien(val) }
-	case "Custom":
-		return func(val float64) RGB { return CustomGradien(val) }
-	default:
-		return func(val float64) RGB { return WRgradien(val) }
-	}
+// func gradUser(gradien string) func(float64) RGB {
+// 	switch gradien {
+// 	case "Turbo":
+// 		return func(val float64) RGB { return TurboGradien(val) }
+// 	case "Viridis":
+// 		return func(val float64) RGB { return ViridisGrad(val) }
+// 	case "White - Red":
+// 		return func(val float64) RGB { return WRgradien(val) }
+// 	case "Yellow - Red":
+// 		return func(val float64) RGB { return YlRdGradien(val) }
+// 	case "Purple - Red":
+// 		return func(val float64) RGB { return PuRdGradien(val) }
+// 	case "Inferno":
+// 		return func(val float64) RGB { return InferGrad(val) }
+// 	case "Plasma":
+// 		return func(val float64) RGB { return PlasmaGradien(val) }
+// 	case "Red - Yellow ":
+// 		return func(val float64) RGB { return RDYLGradien(val) }
+// 	case "Custom":
+// 		return func(val float64) RGB { return CustomGradien(val) }
+// 	default:
+// 		return func(val float64) RGB { return WRgradien(val) }
+// 	}
 
+// }
+func gradUser(gradien string, grad colorgrad.Gradient, val float64) RGB {
+	return rgbModel(grad.At(val))
 }
 
 // LegendTxtscolor color picker for the legend text color
@@ -467,6 +475,8 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the  dot opacity
 	opacity, _ := DotOp.Get()
 	op := uint8(opacity)
+	// pre-build expression gradient
+	grad := preBuildGradient(gradien)
 	// Dot opacity gradient
 	gradop := binding.BindPreferenceBool("gradOpacity", pref)
 	opGrad, _ := gradop.Get()                               // enabled/disabled opacity gradient
@@ -497,7 +507,7 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 		if opGrad && opMin < opMax {
 			op = gradTransp(tmp.Exp[c], newMin, newMax, opMin, opMax)
 		}
-		clcolor := gradUser(gradien)(scaleExp[c])
+		clcolor := gradUser(gradien, grad, scaleExp[c])
 
 		e.drawcircle(ApplyZoomInt(e, tmp.Pts[c].X), ApplyZoomInt(e, tmp.Pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 
@@ -506,7 +516,7 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
 	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
 	titleLegend(e, expcol, colorText)
-	expLegend(e, op, diameter, gradien, newMin, newMax, colorText)
+	expLegend(e, op, diameter, gradien, grad, newMin, newMax, colorText)
 
 	e.clusterContainer.Refresh()
 	ExpressWindow.Content().Refresh()

@@ -106,7 +106,7 @@ func refreshVulanoTools(v *Vulcano) {
 	// show choice of different gradien
 	gradExpression := binding.BindPreferenceString("gradExpression", pref) // pref binding for the expression gradien to avoid reset for each vulcano dot
 	selGrad, _ := gradExpression.Get()
-	grad := widget.NewRadioGroup([]string{"Turbo", "Viridis", "Inferno", "White - Red", "Yellow - Red", "Purple - Red", "Blue - Yellow - Red"}, func(s string) {
+	grad := widget.NewRadioGroup([]string{"Turbo", "Viridis", "Inferno", "Plasma", "White - Red", "Yellow - Red", "Purple - Red", "Red - Yellow ", "Custom"}, func(s string) {
 	})
 	if selGrad != "" {
 		grad.Selected = selGrad

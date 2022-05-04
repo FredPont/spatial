@@ -140,6 +140,39 @@ func ClusterColors(nbCluster, cluster int) RGB {
 //////////////////////////////////////////////////////
 // credits https://github.com/mazznoer/colorgrad
 
+// pre-build the user selected gradient
+func preBuildGradient(gradien string) colorgrad.Gradient {
+	switch gradien {
+	case "Turbo":
+		return colorgrad.Turbo()
+	case "Viridis":
+		return colorgrad.Viridis()
+	case "White - Red":
+		return colorgrad.Reds()
+	case "Yellow - Red":
+		return colorgrad.YlOrRd()
+	case "Purple - Red":
+		return colorgrad.PuRd()
+	case "Inferno":
+		return colorgrad.Inferno()
+	case "Plasma":
+		return colorgrad.Plasma()
+	case "Red - Yellow ":
+		grad, _ := colorgrad.NewGradient().
+			HtmlColors("#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc").
+			Build()
+		return grad
+	case "Custom":
+		colArray := filter.ReadGradient("src/gradient/custom.csv")
+		grad, _ := colorgrad.NewGradient().
+			HtmlColors(colArray...).
+			Build()
+		return grad
+	default:
+		return colorgrad.Reds()
+	}
+}
+
 // WRgradien white -> red gradien
 func WRgradien(val float64) RGB {
 	grad := colorgrad.Reds()
@@ -181,6 +214,7 @@ func PlasmaGradien(val float64) RGB {
 	grad := colorgrad.Plasma()
 	return rgbModel(grad.At(val))
 }
+
 // BYRGradien blue yellow red
 func BYRGradien(val float64) RGB {
 	grad, _ := colorgrad.NewGradient().
