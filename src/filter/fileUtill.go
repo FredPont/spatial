@@ -80,6 +80,7 @@ func GetColIndex(header, list []string) []int {
 	}
 
 	//indexes = append(indexes, 0) // append the first column containing cells names
+	//log.Println("list columns", list, header)
 
 	for _, v := range list {
 		value, exist := indDic[v]
@@ -89,7 +90,7 @@ func GetColIndex(header, list []string) []int {
 	}
 
 	if len(indexes) < 2 {
-		log.Fatal("XY columns not found in table !")
+		log.Fatal("XY columns not found in table !", list)
 	}
 	return indexes
 }
@@ -146,7 +147,7 @@ func ReadClusters(a fyne.App, filename string, colIndexes []int) map[int][]Point
 	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
 	scaleFactor, _ := sf.Get()                             // read the preference for scaling factor
 
-	rot := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	rot := binding.BindPreferenceString("rotate", pref) // set the link to preferences for rotation
 	rotate, _ := rot.Get()
 
 	// map with cluster number => slice of xy coordinates scaled
@@ -183,7 +184,7 @@ func ReadClusters(a fyne.App, filename string, colIndexes []int) map[int][]Point
 }
 
 // scaleXY apply scaling factor and rotation to xy
-func scaleXY(X, Y string, scaleFactor float64, rotate bool) (int64, int64) {
+func scaleXY(X, Y string, scaleFactor float64, rotate string) (int64, int64) {
 
 	x, err := strconv.ParseFloat(X, 64)
 	if err != nil {
@@ -197,13 +198,42 @@ func scaleXY(X, Y string, scaleFactor float64, rotate bool) (int64, int64) {
 	}
 	yScaled := int64(math.Round(y * scaleFactor))
 
-	if rotate == true {
+	return Rotation(xScaled, yScaled, rotate)
+
+}
+
+// Rotation set the image rotation to + 90 or -90
+func Rotation(xScaled, yScaled int64, rotate string) (int64, int64) {
+	pref := fyne.CurrentApp().Preferences()
+
+	switch rotate {
+	case "no rotation":
+		return xScaled, yScaled
+	case "+90":
 		xRot := yScaled
 		yRot := xScaled
 		return xRot, yRot
+	case "-90":
+		
+		// get the image width
+		// imgWidth := binding.BindPreferenceInt("imgW", pref)
+		// imgW, err := imgWidth.Get()
+		// if err != nil {
+		// 	log.Println("cannot read image width from preferences !", err)
+		// }
+
+		// get the image heigth
+		imgHeight := binding.BindPreferenceInt("imgH", pref)
+		imgH, err := imgHeight.Get()
+		if err != nil {
+			log.Println("cannot read image width from preferences !", err)
+		}
+
+		xRot := yScaled
+		yRot := int64(imgH) - xScaled
+		return xRot, yRot
 	}
 	return xScaled, yScaled
-
 }
 
 // ReadImportedCells read cell names into []string
@@ -245,7 +275,7 @@ func ClustersByCells(a fyne.App, filename string, colIndexes []int, cellImport m
 	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
 	scaleFactor, _ := sf.Get()                             // read the preference for scaling factor
 
-	rot := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	rot := binding.BindPreferenceString("rotate", pref) // set the link to preferences for rotation
 	rotate, _ := rot.Get()
 
 	// map with cluster number => slice of xy coordinates scaled
@@ -301,7 +331,7 @@ func ReadExpress(a fyne.App, filename string, colIndexes []int) ([]float64, []Po
 	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
 	scaleFactor, _ := sf.Get()                             // read the preference for scaling factor
 
-	rot := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	rot := binding.BindPreferenceString("rotate", pref) // set the link to preferences for rotation
 	rotate, _ := rot.Get()
 
 	// array of expression valules and xy coordinates scaled

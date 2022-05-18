@@ -15,13 +15,13 @@ func Plot2Dform(a fyne.App, e *Editor, win fyne.Window, zoom int, header []strin
 	prefs := a.Preferences()
 
 	// plot name
-	plotFileTitle := binding.BindPreferenceString("2DplotName", prefs) // set the link to preferences for rotation
+	plotFileTitle := binding.BindPreferenceString("2DplotName", prefs) // set the link to preferences for plot name
 	plotFT, _ := plotFileTitle.Get()
 	plotName := widget.NewEntry()
 	plotName.SetText(plotFT)
 
 	// x coordinates
-	xplot := binding.BindPreferenceString("2DxPlot", prefs) // set the link to preferences for rotation
+	xplot := binding.BindPreferenceString("2DxPlot", prefs) // set the link to preferences for x coordinates
 	xp, _ := xplot.Get()
 	//x := widget.NewSelectEntry(header)
 	//x.SetText(xp)
@@ -31,7 +31,7 @@ func Plot2Dform(a fyne.App, e *Editor, win fyne.Window, zoom int, header []strin
 	})
 
 	// y coordinates
-	yplot := binding.BindPreferenceString("2DyPlot", prefs) // set the link to preferences for rotation
+	yplot := binding.BindPreferenceString("2DyPlot", prefs) // set the link to preferences for y coordinates
 	yp, _ := yplot.Get()
 	//y := widget.NewSelectEntry(header)
 	//y.SetText(yp)
@@ -41,7 +41,7 @@ func Plot2Dform(a fyne.App, e *Editor, win fyne.Window, zoom int, header []strin
 	})
 
 	// dot size
-	dotsize := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to preferences for rotation
+	dotsize := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to preferences for dot size
 	ds, _ := dotsize.Get()
 
 	plotdot := widget.NewEntry()

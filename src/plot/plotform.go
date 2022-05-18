@@ -18,13 +18,13 @@ func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable
 	prefs := a.Preferences()
 
 	// plot name
-	plotFileTitle := binding.BindPreferenceString("plotName", prefs) // set the link to preferences for rotation
+	plotFileTitle := binding.BindPreferenceString("plotName", prefs) // set the link to preferences for plot name
 	plotFT, _ := plotFileTitle.Get()
 	plotName := widget.NewEntry()
 	plotName.SetText(plotFT)
 
 	// x coordinates
-	xplot := binding.BindPreferenceString("xPlot", prefs) // set the link to preferences for rotation
+	xplot := binding.BindPreferenceString("xPlot", prefs) // set the link to preferences for x coordinates
 	xp, _ := xplot.Get()
 	//x := widget.NewSelectEntry(header)
 	//x.SetText(xp)
@@ -34,7 +34,7 @@ func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable
 	})
 
 	// y coordinates
-	yplot := binding.BindPreferenceString("yPlot", prefs) // set the link to preferences for rotation
+	yplot := binding.BindPreferenceString("yPlot", prefs) // set the link to preferences for  y coordinates
 	yp, _ := yplot.Get()
 	//y := widget.NewSelectEntry(header)
 	//y.SetText(yp)
@@ -44,7 +44,7 @@ func Plotform(a fyne.App, win fyne.Window, zoom int, header []string, firstTable
 	})
 
 	// dot size
-	dotsize := binding.BindPreferenceString("dotsize", prefs) // set the link to preferences for rotation
+	dotsize := binding.BindPreferenceString("dotsize", prefs) // set the link to preferences for dot size
 	ds, _ := dotsize.Get()
 	plotdot := widget.NewEntry()
 	plotdot.SetText(ds)

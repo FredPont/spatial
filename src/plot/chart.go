@@ -295,9 +295,9 @@ func prefToConf(pref fyne.Preferences) filter.Conf {
 	scale, _ := sf.Get()
 
 	// get coordinates +90° rotation : necessary for 10x Genomics
-	r := binding.BindPreferenceBool("rotate", pref) // set the link to preferences for rotation
+	r := binding.BindPreferenceString("rotate", pref) // set the link to preferences for rotation
 	rotate, _ := r.Get()
 
-	return filter.Conf{x, y, scale, rotate}
+	return filter.Conf{X:x, Y:y, Scale:scale, Rotate:rotate}
 
 }

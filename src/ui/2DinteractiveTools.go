@@ -125,11 +125,11 @@ func plotColIndex(prefs fyne.Preferences, header []string) []int {
 	yMi, _ := yMic.Get()
 
 	// x coordinates of the 2D plot
-	xplot := binding.BindPreferenceString("2DxPlot", prefs) // set the link to preferences for rotation
+	xplot := binding.BindPreferenceString("2DxPlot", prefs) // set the link to preferences for x coordinates of the 2D plot
 	xp, _ := xplot.Get()
 
 	// y coordinates of the 2D plot
-	yplot := binding.BindPreferenceString("2DyPlot", prefs) // set the link to preferences for rotation
+	yplot := binding.BindPreferenceString("2DyPlot", prefs) // set the link to preferences for y coordinates of the 2D plot
 	yp, _ := yplot.Get()
 
 	list := []string{xMi, yMi, xp, yp}
@@ -284,7 +284,7 @@ func drawCells(e *Editor, cellsXY []filter.Point, dotcolor color.NRGBA) {
 	diameter = ApplyZoomInt(e, diameter)
 	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
 	scaleFactor, _ := sf.Get()                             // read the preference for scaling factor
-	rot := binding.BindPreferenceBool("rotate", pref)      // set the link to preferences for rotation
+	rot := binding.BindPreferenceString("rotate", pref)    // set the link to preferences for rotation
 	rotate, _ := rot.Get()
 
 	for _, xy := range cellsXY {
@@ -297,18 +297,14 @@ func drawCells(e *Editor, cellsXY []filter.Point, dotcolor color.NRGBA) {
 }
 
 // apply the scaling factor and rotation to xy coordinates
-func scale(x, y int, scaleFactor float64, rotate bool) (int, int) {
+func scale(x, y int, scaleFactor float64, rotate string) (int, int) {
 
-	xScaled := int(math.Round(float64(x) * scaleFactor))
-	yScaled := int(math.Round(float64(y) * scaleFactor))
+	xScaled := int64(math.Round(float64(x) * scaleFactor))
+	yScaled := int64(math.Round(float64(y) * scaleFactor))
 
-	if rotate {
-		xRot := yScaled
-		yRot := xScaled
-		return xRot, yRot
-	}
-	return xScaled, yScaled
+	xRot, yRot := filter.Rotation(xScaled, yScaled, rotate)
 
+	return int(xRot), int(yRot)
 }
 
 // save the gates to csv files withe ImageJ format

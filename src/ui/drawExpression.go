@@ -243,11 +243,11 @@ func setDelay(slidePause *widget.Entry, slideDelay binding.Float) {
 func getExpress(a fyne.App, header []string, filename string, expcol string, curPathwayIndex binding.Int) ([]float64, []filter.Point) {
 	pref := a.Preferences()
 	// X coordinates
-	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
+	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for X coordinates
 	xc, _ := xcor.Get()
 
 	// y coordinates
-	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for rotation
+	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for y coordinates
 	yc, _ := ycor.Get()
 
 	colIndexes := filter.GetColIndex(header, []string{expcol, xc, yc})

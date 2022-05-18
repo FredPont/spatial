@@ -272,11 +272,11 @@ func selColIndex(header []string, headerMap map[string]interface{}, pref fyne.Pr
 	var xidx, yidx int
 
 	// X coordinates
-	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
+	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for X coordinates
 	xc, _ := xcor.Get()
 
 	// y coordinates
-	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for rotation
+	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for y coordinates
 	yc, _ := ycor.Get()
 
 	index := []int{0} // index initialized with cell names = col0
@@ -363,7 +363,7 @@ func folchange(x1, x2 []float64) (float64, bool) {
 	}
 	s1 := sumFloat(x1) / float64(len(x1)) // average
 	s2 := sumFloat(x2) / float64(len(x2)) // average
-	
+
 	if s1 == 0 && s2 == 0 {
 		log.Println("fold-change undetermined (0/0) !")
 		return 1., false

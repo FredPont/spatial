@@ -163,9 +163,13 @@ func InitPref() {
 	sf := prefs.FloatWithFallback("scaleFactor", 0.107869044)
 	prefs.SetFloat("scaleFactor", sf)
 
-	// set rotate pref to true
-	rot := prefs.BoolWithFallback("rotate", true)
-	prefs.SetBool("rotate", rot)
+	// set rotate pref to +90
+	rot := prefs.StringWithFallback("rotate", "+90")
+	prefs.SetString("rotate", rot)
+
+	// set antirotate pref to false
+	//antirot := prefs.BoolWithFallback("rot-90", false)
+	//prefs.SetBool("rot-90", antirot)
 
 	// X coordinates
 	xcor := prefs.StringWithFallback("xcor", "x_image")

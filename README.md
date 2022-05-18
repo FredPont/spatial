@@ -148,6 +148,8 @@ The documentation is available as a PDF file in the "doc" directory
 
 23. image zoom 10-200%
 
+## Licence
+[GNU GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 ## Acknowledgments
 Special thanks to [Andrew Williams](https://andy.xyz), creator of the [Fyne](https://github.com/fyne-io) project and CEO at [Fyne Labs](https://fynelabs.com/), for his useful technical advice about the usage of the [Fyne graphical toolkit](https://fyne.io/).

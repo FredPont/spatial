@@ -32,11 +32,43 @@ func BuildPref(a fyne.App, head []string) {
 	sftxt := fmt.Sprintf("%.10f", x)                        // convert scaling factor to txt
 	scalingFactor.SetPlaceHolder(sftxt)                     // display the preference value for scaling factor
 
-	// coordinates +90° rotation : necessary for 10x Genomics
-	r := binding.BindPreferenceBool("rotate", prefs) // set the link to preferences for rotation
+	// // coordinates +90° rotation : necessary for 10x Genomics
+	// r := binding.BindPreferenceBool("rotate", prefs) // set the link to preferences for rotation
+	// b, _ := r.Get()
+	// rot := widget.NewCheck("rotate coordinates +90°", func(value bool) {})
+	// rot.SetChecked(b)
+
+	// // get the rotation direction : +90 by default if antiRotation is false
+	// antiRotation := binding.BindPreferenceBool("rot-90", prefs)
+	// antiRot, err := antiRotation.Get()
+	// if err != nil {
+	// 	log.Println("cannot read rotation direction from preferences !", err)
+	// }
+
+	// get the rotation direction : +90 by default necessary for 10x Genomics or -90 or no rotation
+	r := binding.BindPreferenceString("rotate", prefs) // set the link to preferences for rotation
 	b, _ := r.Get()
-	rot := widget.NewCheck("rotate coordinates +90°", func(value bool) {})
-	rot.SetChecked(b)
+	// coordinates +90° / -90° / no rotation
+	rot := widget.NewRadioGroup([]string{"no rotation", "+90", "-90"}, func(s string) {
+		fmt.Println("Selected", s)
+		switch s {
+		case "no rotation":
+			prefs.SetString("rotate", "no rotation")
+		case "+90°":
+			prefs.SetString("rotate", "+90")
+		case "-90°":
+			prefs.SetString("rotate", "-90")
+		}
+	})
+	
+	switch b {
+	case "no rotation":
+		rot.SetSelected("no rotation")
+	case "+90":
+		rot.SetSelected("+90")
+	case "-90":
+		rot.SetSelected("-90")
+	}
 
 	// X coordinates
 	xcor := binding.BindPreferenceString("xcor", prefs) // set the link to preferences for x coordinates
@@ -143,8 +175,8 @@ func BuildPref(a fyne.App, head []string) {
 			sftxt := scalingFactor.Text
 			setPrefToF64(sftxt, "scaleFactor", prefs)
 
-			// coordinates +90° rotation
-			prefs.SetBool("rotate", rot.Checked)
+			// coordinates +90°/-90/ no rotation
+			prefs.SetString("rotate", rot.Selected)
 
 			// X coordinates
 			//prefs.SetString("xcor", xc)

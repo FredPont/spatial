@@ -15,15 +15,15 @@ import (
 func getClusters(a fyne.App, header []string, filename string) map[int][]filter.Point {
 	pref := a.Preferences()
 	// X coordinates
-	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for rotation
+	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for  X coordinates
 	xc, _ := xcor.Get()
 
 	// y coordinates
-	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for rotation
+	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for y coordinates
 	yc, _ := ycor.Get()
 
 	// cluster column
-	clustercolumn := binding.BindPreferenceString("clustcol", pref) // set the link to preferences for rotation
+	clustercolumn := binding.BindPreferenceString("clustcol", pref) // set the link to preferences for cluster column
 	clucol, _ := clustercolumn.Get()
 
 	colIndexes := filter.GetColIndex(header, []string{clucol, xc, yc})

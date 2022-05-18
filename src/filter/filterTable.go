@@ -33,7 +33,7 @@ import (
 type Conf struct {
 	X, Y   string
 	Scale  float64
-	Rotate bool
+	Rotate string
 }
 
 // DotsGate stores the dots in one gate and the index of the gate
@@ -110,12 +110,14 @@ func filterRow(zoom int, record []string, XYindex []int, polygon []Point, param 
 	}
 	yScaled := int64(math.Round(y * scaleFactor))
 
-	if rotate == true {
-		xRot := yScaled
-		yRot := xScaled
-		return inGate(zoom, xRot, yRot, polygon)
-	}
-	return inGate(zoom, xScaled, yScaled, polygon)
+	xRot, yRot := Rotation(xScaled, yScaled, rotate)
+
+	// if rotate == true {
+	// 	xRot := yScaled
+	// 	yRot := xScaled
+	return inGate(zoom, xRot, yRot, polygon)
+	//}
+	//return inGate(zoom, xScaled, yScaled, polygon)
 
 }
 
@@ -149,17 +151,19 @@ func TablePlot(zoom int, tableXYxy [][]string, polygon []Point, param Conf, colu
 		xScaled := int64(math.Round(x * scaleFactor))
 		yScaled := int64(math.Round(y * scaleFactor))
 
-		if rotate == true {
-			xRot := yScaled
-			yRot := xScaled
-			if inGate(zoom, xRot, yRot, polygon) {
-				xy = append(xy, []string{dot[0], dot[1]})
-			}
-		} else {
-			if inGate(zoom, xScaled, yScaled, polygon) {
-				xy = append(xy, []string{dot[0], dot[1]})
-			}
+		xRot, yRot := Rotation(xScaled, yScaled, rotate)
+
+		// if rotate == true {
+		// 	xRot := yScaled
+		// 	yRot := xScaled
+		if inGate(zoom, xRot, yRot, polygon) {
+			xy = append(xy, []string{dot[0], dot[1]})
 		}
+		// } else {
+		// 	if inGate(zoom, xScaled, yScaled, polygon) {
+		// 		xy = append(xy, []string{dot[0], dot[1]})
+		// 	}
+		// }
 	}
 	//log.Println("xy extract gates", xy)
 	ch1 <- DotsGate{Dots: xy, Idx: idx}

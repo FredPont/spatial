@@ -12,7 +12,7 @@ import (
 
 func main() {
 	title()
-	a := app.NewWithID("SpatialGate")
+	a := app.NewWithID("SpatialExplorer")
 	log.Println("preferences saved in :", a.Storage().RootURI())
 	// initPref initialise some user preferences when not set
 	ui.InitPref()
@@ -37,15 +37,18 @@ func main() {
 // preferences, the image is displayed with scroll bars.
 // if the size in pref is < 500 at first start, the minimal size will be 500x500
 func setImageWinSize(a fyne.App, w fyne.Window, imgW, imgH int) {
-	//finalWidth := float32(imgW)
-	//finalHeight := float32(imgH)
 
 	pref := a.Preferences()
+
+	// store the original image size
+	pref.SetInt("imgW", imgW)
+	pref.SetInt("imgH", imgH)
+
 	// get width preference
-	winW := binding.BindPreferenceFloat("winW", pref)
+	winW := binding.BindPreferenceFloat("winW", pref) // set the link to preferences for win Width
 	wW, _ := winW.Get()
 	// get height preference
-	winH := binding.BindPreferenceFloat("winH", pref) // set the link to preferences for win width
+	winH := binding.BindPreferenceFloat("winH", pref) // set the link to preferences for win Height
 	wH, _ := winH.Get()
 
 	finalWidth := setMinWindow(wW, imgW)
