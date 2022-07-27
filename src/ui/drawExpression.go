@@ -106,7 +106,10 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	content := container.NewVBox(
 		container.NewHBox(
 			widget.NewLabel("Select the variable and gradient :"),
-			widget.NewButtonWithIcon("Close", theme.LogoutIcon(), func() { ExpressWindow.Close() }),
+			widget.NewButtonWithIcon("Close", theme.LogoutIcon(), func() {
+				initOpacityGdt()	// remove the opacity preferences before closing the window
+				ExpressWindow.Close()
+			}),
 		),
 		expSel,
 		container.NewHBox(

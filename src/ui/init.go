@@ -81,6 +81,13 @@ func initGateDots(e *Editor) {
 	e.gateDotsContainer.Refresh()
 }
 
+// remove opacity gradient
+func initOpacityGdt() {
+	prefs := fyne.CurrentApp().Preferences()
+	// Dot opacity gradient
+	prefs.SetBool("gradOpacity", false)
+}
+
 ////////////////////////////
 // Expression map INIT
 ////////////////////////////

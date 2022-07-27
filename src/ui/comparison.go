@@ -23,6 +23,8 @@ type PVrecord struct {
 
 // showCompareWindow show compare gate window
 func showCompareWindow(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, header []string, firstTable string) {
+	// initialize opacity gradient
+	initOpacityGdt()
 	// map that store the check boxes state
 	headerMap := make(map[string]interface{}, len(header[1:]))
 	buildMapTrue(header[1:], headerMap)

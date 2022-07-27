@@ -193,6 +193,7 @@ func refreshVulanoTools(v *Vulcano) {
 			go screenShot(v.win, imgName, f)
 		}),
 		widget.NewButton("Close", func() {
+			initOpacityGdt() // remove the opacity preferences before closing the window
 			v.tools.Close()
 			v.win.Close()
 		}),

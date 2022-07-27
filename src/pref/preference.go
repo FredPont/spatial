@@ -60,7 +60,7 @@ func BuildPref(a fyne.App, head []string) {
 			prefs.SetString("rotate", "-90")
 		}
 	})
-	
+
 	switch b {
 	case "no rotation":
 		rot.SetSelected("no rotation")
@@ -216,6 +216,7 @@ func BuildPref(a fyne.App, head []string) {
 
 			myWindow.Close()
 		},
+		OnCancel: func() { myWindow.Close() },
 	}
 
 	myWindow.SetContent(form)
