@@ -157,6 +157,6 @@ Special thanks to [Andrew Williams](https://andy.xyz), creator of the [Fyne](htt
 Thanks to [Miguel Madrid](https://github.com/mimame) for his advices on Github.
 
 
-The GO developpment team is aknowledged as well as the contributors of the the contributors to Go's GUI ([Fyne](https://github.com/fyne-io)), data and color ecosystem, especially the following projects :
+The GO developpment team is aknowledged as well as the contributors to Go's GUI ([Fyne](https://github.com/fyne-io)), data and color ecosystem, especially the following projects :
 
 [gonum](https://www.gonum.org/), [fc](https://github.com/ajstarks/fc), [colorgrad](https://github.com/mazznoer/colorgrad), [go-colorful](github.com/lucasb-eyer/go-colorful), [stats](github.com/aclements/go-moremath/stats)
