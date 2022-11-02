@@ -107,7 +107,7 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 		container.NewHBox(
 			widget.NewLabel("Select the variable and gradient :"),
 			widget.NewButtonWithIcon("Close", theme.LogoutIcon(), func() {
-				initOpacityGdt()	// remove the opacity preferences before closing the window
+				initOpacityGdt() // remove the opacity preferences before closing the window
 				ExpressWindow.Close()
 			}),
 		),
@@ -319,6 +319,7 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	titleLegend(e, expcol, colorText)
 	// transparency gradient
 	if opGrad && opMin < opMax {
+		//fmt.Println("opGrad", opGrad, " opMin opMax", opMin, opMax)
 		gradOpLegend(e, diameter, gradien, grad, min, max, opMin, opMax, colorText)
 	} else {
 		expLegend(e, op, diameter, gradien, grad, min, max, colorText) // not transparency gradien in legend
@@ -377,7 +378,12 @@ func expLegend(e *Editor, op uint8, diameter int, gradien string, grad colorgrad
 		exp := TicksDecimals(unscale(float64(i)/5., min, max))
 		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, c)
 		co := gradUser(gradien, grad, float64(i)/5.)
-		e.drawcircle(x, y+150-sp*i, diameter*100/e.zoom, color.NRGBA{co.R, co.G, co.B, op})
+		// compute the spot max diameter to avoid overlap
+		spotDiam := diameter * 100 / e.zoom
+		if spotDiam >= 11 {
+			spotDiam = 11
+		}
+		e.drawcircle(x, y+150-sp*i, spotDiam, color.NRGBA{co.R, co.G, co.B, op})
 	}
 }
 
@@ -391,7 +397,13 @@ func gradOpLegend(e *Editor, diameter int, gradien string, grad colorgrad.Gradie
 		AbsText(e.clusterContainer, x+20, y+155-sp*i, exp, 15, c)
 		co := gradUser(gradien, grad, float64(i)/5.)
 		op := gradTransp(unscale(float64(i)/5., min, max), min, max, opMin, opMax)
-		e.drawcircle(x, y+150-sp*i, diameter*100/e.zoom, color.NRGBA{co.R, co.G, co.B, op})
+		// compute the spot max diameter to avoid overlap
+		spotDiam := diameter * 100 / e.zoom
+		if spotDiam >= 11 {
+			spotDiam = 11
+		}
+		e.drawcircle(x, y+150-sp*i, spotDiam, color.NRGBA{co.R, co.G, co.B, op})
+		//fmt.Println(exp, op)
 	}
 }
 
@@ -519,7 +531,14 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
 	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
 	titleLegend(e, expcol, colorText)
-	expLegend(e, op, diameter, gradien, grad, newMin, newMax, colorText)
+	// transparency gradient
+	if opGrad && opMin < opMax {
+		//fmt.Println("opGrad", opGrad, " opMin opMax", opMin, opMax)
+		gradOpLegend(e, diameter, gradien, grad, newMin, newMax, opMin, opMax, colorText)
+	} else {
+		expLegend(e, op, diameter, gradien, grad, newMin, newMax, colorText) // not transparency gradien in legend
+	}
+	//expLegend(e, op, diameter, gradien, grad, newMin, newMax, colorText)
 
 	e.clusterContainer.Refresh()
 	ExpressWindow.Content().Refresh()

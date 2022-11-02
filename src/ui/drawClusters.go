@@ -76,7 +76,12 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 // draw the cluster legend : color + cluster number
 func drawLegend(e *Editor, R, G, B, op uint8, x, y, diameter, clusterName int) {
 	AbsText(e.clusterContainer, x+20, y+10, strconv.Itoa(clusterName), 20, color.NRGBA{50, 50, 50, 255})
-	e.drawcircle(x, y, diameter*100/e.zoom, color.NRGBA{R, G, B, op})
+	// compute the spot max diameter to avoid overlap
+	spotDiam := diameter * 100 / e.zoom
+	if spotDiam >= 15 {
+		spotDiam = 15
+	}
+	e.drawcircle(x, y, spotDiam, color.NRGBA{R, G, B, op})
 }
 
 func getLegendColor(a fyne.App) color.NRGBA {
