@@ -35,7 +35,9 @@ Single-Cell Spatial Explorer is submitted for publication
 
 [Overview](https://youtu.be/dqudL36Dg1M)
 
-[How to install scSpatial Explorer in less than 2'](https://youtu.be/LBBkN_rJHuc)
+[How to install scSpatial Explorer in less than 2'on Windows](https://youtu.be/LBBkN_rJHuc)
+
+[How to install scSpatial Explorer in less than 2'on MacOS](https://youtu.be/tm8lzlP3m_4)
 
 [High throughput data extraction with scSpatial Explorer](https://youtu.be/rSefd0pmc7g)
 
@@ -92,34 +94,34 @@ The documentation is available as a PDF file in the "doc" directory
 
 ## Single-Cell Spatial Explorer features.
 
-1.  Single-Cell Spatial Explorer is ready to use in a pre-compiled
+1.  Single-Cell Spatial Explorer has a graphical interface is ready to use in a pre-compiled
     binary, no installation required
 
-2.  cross-platform (the interface and the software are coded in pure Go)
+2.  Cross-platform (the interface and the software are coded in pure Go)
 
-3.  low memory usage
+3.  Low memory usage
 
-4.  compatible with any PNG image associated with any TAB separated files containing XY coordinates of the image.
+4.  Compatible with any PNG image associated with any TAB separated files containing XY coordinates of the image.
 
-5.  compatible with any numeric data : gene expression, pathway scores, antibody expression etc...
+5.  Compatible with any numeric data : gene expression, pathway scores, antibody expression etc...
 
-6.  unlimited number of gates.
+6.  An unlimited number of gates can be drawn in the microscopy image or in the 2D interactive plot.
 
-7.  import/export gates in ImageJ/FIJI format.
+7.  Import/export gates in ImageJ/FIJI format.
 
-8.  extract cells and sub-tables delimited by the gates on an unlimited number of tables. Exportation is done in CSV file for great interoperability.
+8.  Extract spots and sub-tables delimited by the gates on an unlimited number of tables. Exportation is done in TAB separated files for great interoperability. 
 
 9.  2D plots of the cells inside the gates with any XY coordinates :
     t-SNE, UMAP, gene expression, pathway scores, antibody expression
     etc...
 
-10. interactive 2D plot to show the selected cells on a t-SNE, UMAP or
+10. Interactive 2D plot to show the selected cells on a t-SNE, UMAP or
     any other coordinates on the image and to filter the data tables
     into sub-tables.
 
-11. cluster display with custom dot opacity and custom dot size.
+11. Cluster display with 3 color gradients, custom color palette, custom dot opacity and custom dot size. Shuffle color option change color positions on the map leading to almost 2 billions of possible images with 12 clusters.
 
-12. display any kind of cell expression (genes, pathways, antibodies...)
+12. Display any kind of cell expression (genes, pathways, antibodies...)
     with 7 preset gradients, custom legend color, dot opacity and custom
     dot size. The gradients are simple two colors maps and rainbow
     colors maps Turbo, Viridis and Inferno to optimize accuracy and
@@ -129,24 +131,24 @@ The documentation is available as a PDF file in the "doc" directory
 
 14. Expression opacity gradient with min/max threshold.
 
-15. slide show to review many cell expression maps without need of
+15. Slide show to review many cell expression maps without need of
     repetitive click.
 
-16. screenshot or native resolution image exportation.
+16. Screenshot or native resolution image exportation.
 
 17. import and display an unlimited number of cells list by repetitive click on the "import cells" button. The format is directly compatible with Single-Cell Virtual Cytometer .
 
-18. compare two groups of gates together in the whole dataset .
+18. Comparison of two groups of gates together across the whole dataset.
 
-19. compare one group of gates against all the remaining cells.
+19. Comparison of one group of gates against all the remaining spots.
 
-20. draw an interactive volcano plot after gate comparison.
+20. Draw an interactive volcano plot after gate comparison.
 
-21. plot cell expression of a selected dot in the volcano plot.
+21. Plot cell expression of a selected dot in the volcano plot.
 
-22. export volcano plot and the corresponding data table.
+22. Export volcano plot and the corresponding data table.
 
-23. image zoom 10-200%
+23. Image zoom 10-200%
 
 ## Licence
 [GNU GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.en.html)
