@@ -314,17 +314,21 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 
 	}
 	// draw legend title, dot and value for the current cexpression
-	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
-	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
-	titleLegend(e, expcol, colorText)
-	// transparency gradient
-	if opGrad && opMin < opMax {
-		//fmt.Println("opGrad", opGrad, " opMin opMax", opMin, opMax)
-		gradOpLegend(e, diameter, gradien, grad, min, max, opMin, opMax, colorText)
-	} else {
-		expLegend(e, op, diameter, gradien, grad, min, max, colorText) // not transparency gradien in legend
+	// if the hide legend preference is checked, the legend is not drawn
+	hideL := binding.BindPreferenceBool("hideLegend", pref)
+	hideLgd, _ := hideL.Get()
+	if !hideLgd {
+		R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
+		colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
+		titleLegend(e, expcol, colorText)
+		// transparency gradient
+		if opGrad && opMin < opMax {
+			//fmt.Println("opGrad", opGrad, " opMin opMax", opMin, opMax)
+			gradOpLegend(e, diameter, gradien, grad, min, max, opMin, opMax, colorText)
+		} else {
+			expLegend(e, op, diameter, gradien, grad, min, max, colorText) // not transparency gradien in legend
+		}
 	}
-
 	e.clusterContainer.Refresh()
 	f.Set(0.) // reset progress bar
 }

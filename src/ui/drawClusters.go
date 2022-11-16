@@ -51,6 +51,10 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 
 	colors := allClustColors(nbCluster)
 
+	// if the hide legend preference is checked, the legend is not drawn
+	hideL := binding.BindPreferenceBool("hideLegend", pref)
+	hideLgd, _ := hideL.Get()
+
 	for c := 0; c < nbCluster; c++ {
 		// f.Set(float64(c) / float64(nbCluster-1)) // % progression for progress bar. This is too fast to be seen
 		coordinates := clusterMap[clustNames[c]]
@@ -60,6 +64,10 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 			e.drawcircle(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
 		}
 		// draw legend dot and name for the current cluster
+		// if the hide legend preference is checked, the legend is not drawn
+		if hideLgd {
+			continue
+		}
 		drawLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, diameter, clustNames[c])
 		legendPosition.Y = legendPosition.Y + 30
 		// set progress bar to 50% when half cluster have been computed
@@ -67,8 +75,10 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 			f.Set(0.5) // progress bar
 		}
 	}
-
-	titleLegend(e, "     clusters", getLegendColor(a))
+	// if the hide legend preference is checked, the legend name is not drawn
+	if !hideLgd {
+		titleLegend(e, "     clusters", getLegendColor(a))
+	}
 	e.clusterContainer.Refresh()
 	f.Set(0.) // reset progress bar
 }

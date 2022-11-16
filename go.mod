@@ -3,7 +3,7 @@ module spatial
 go 1.17
 
 require (
-	fyne.io/fyne/v2 v2.2.3
+	fyne.io/fyne/v2 v2.2.4
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mazznoer/colorgrad v0.9.1
 	gonum.org/v1/plot v0.12.0
@@ -36,11 +36,11 @@ require (
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
 	github.com/tevino/abool v1.2.0 // indirect
-	github.com/yuin/goldmark v1.5.2 // indirect
+	github.com/yuin/goldmark v1.5.3 // indirect
 	golang.org/x/image v0.1.0 // indirect
-	golang.org/x/mobile v0.0.0-20221020085226-b36e6246172e // indirect
-	golang.org/x/net v0.1.0 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/mobile v0.0.0-20221110043201-43a038452099 // indirect
+	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/js/dom v0.0.0-20221001195520-26252dedbe70 // indirect

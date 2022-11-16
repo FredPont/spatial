@@ -46,11 +46,12 @@ func BuildPref(a fyne.App, head []string) {
 	// }
 
 	// get the rotation direction : +90 by default necessary for 10x Genomics or -90 or no rotation
-	r := binding.BindPreferenceString("rotate", prefs) // set the link to preferences for rotation
-	b, _ := r.Get()
+	rota := binding.BindPreferenceString("rotate", prefs) // set the link to preferences for rotation
+	rotstr, _ := rota.Get()
+	log.Println("rotation : ", rotstr)
 	// coordinates +90° / -90° / no rotation
-	rot := widget.NewRadioGroup([]string{"no rotation", "+90", "-90"}, func(s string) {
-		fmt.Println("Selected", s)
+	rot := widget.NewRadioGroup([]string{"no rotation", "+90", "-90", "Vertical mirror"}, func(s string) {
+		//fmt.Println("Selected", s)
 		switch s {
 		case "no rotation":
 			prefs.SetString("rotate", "no rotation")
@@ -58,16 +59,20 @@ func BuildPref(a fyne.App, head []string) {
 			prefs.SetString("rotate", "+90")
 		case "-90°":
 			prefs.SetString("rotate", "-90")
+		case "Vertical mirror":
+			prefs.SetString("rotate", "Vertical mirror")
 		}
 	})
 
-	switch b {
+	switch rotstr {
 	case "no rotation":
 		rot.SetSelected("no rotation")
 	case "+90":
 		rot.SetSelected("+90")
 	case "-90":
 		rot.SetSelected("-90")
+	case "Vertical mirror":
+		rot.SetSelected("Vertical mirror")
 	}
 
 	// X coordinates
@@ -154,6 +159,15 @@ func BuildPref(a fyne.App, head []string) {
 	shuffle, _ := shuf.Get()
 	shuffleGradient.SetChecked(shuffle)
 
+	// hide legend in clusters and expression
+	hideLegend := widget.NewCheck("", func(v bool) {
+		prefs.SetBool("hideLegend", v)
+		//log.Println("Check set to", v)
+	})
+	hideL := binding.BindPreferenceBool("hideLegend", prefs)
+	hideLgd, _ := hideL.Get()
+	hideLegend.SetChecked(hideLgd)
+
 	// create form
 	form := &widget.Form{
 		Items: []*widget.FormItem{ // we can specify items in the constructor
@@ -168,6 +182,7 @@ func BuildPref(a fyne.App, head []string) {
 			{Text: "vulcano selection square size in pixels", Widget: vulcSquare},
 			{Text: "Clusters color gradient", Widget: grad},
 			{Text: "Shuffle colors", Widget: shuffleGradient},
+			{Text: "Hide Legend (cluster & expression)", Widget: hideLegend},
 		},
 		OnSubmit: func() { // optional, handle form submission
 
@@ -175,7 +190,7 @@ func BuildPref(a fyne.App, head []string) {
 			sftxt := scalingFactor.Text
 			setPrefToF64(sftxt, "scaleFactor", prefs)
 
-			// coordinates +90°/-90/ no rotation
+			// coordinates +90°/-90/ no rotation / vertical mirror
 			prefs.SetString("rotate", rot.Selected)
 
 			// X coordinates
