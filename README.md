@@ -27,7 +27,8 @@ inside the doc folder
 
 
 ## How to cite
-Single-Cell Spatial Explorer is submitted for publication
+Pont, F., Cerapio, J.P., Gravelle, P. et al. Single-cell spatial explorer: easy exploration of spatial and multimodal transcriptomics. BMC Bioinformatics 24, 30 (2023). 
+https://doi.org/10.1186/s12859-023-05150-1
 
 ## Demo videos
 
@@ -161,4 +162,4 @@ Thanks to [Miguel Madrid](https://github.com/mimame) for his advices on Github.
 
 The GO developpment team is aknowledged as well as the contributors to Go's GUI ([Fyne](https://github.com/fyne-io)), data and color ecosystem, especially the following projects :
 
-[gonum](https://www.gonum.org/), [fc](https://github.com/ajstarks/fc), [colorgrad](https://github.com/mazznoer/colorgrad), [go-colorful](github.com/lucasb-eyer/go-colorful), [stats](github.com/aclements/go-moremath/stats)
+[gonum](https://www.gonum.org/), [fc](https://github.com/ajstarks/fc), [colorgrad](https://github.com/mazznoer/colorgrad), [go-colorful](https://github.com/lucasb-eyer/go-colorful), [stats](https://pkg.go.dev/github.com/aclements/go-moremath/stats)
