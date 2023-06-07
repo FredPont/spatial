@@ -287,7 +287,7 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 
 	expressions, pts := getExpress(a, header, filename, expcol, curPathwayIndex) // []expressions and []Point
 	if len(expressions) < 1 {
-		log.Println("Intensities not availble for column", expcol)
+		log.Println("Intensities not available for column", expcol)
 		return
 	}
 	f.Set(0.3) // progress bar set to 30% after data reading
