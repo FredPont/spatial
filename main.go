@@ -34,6 +34,7 @@ func main() {
 	log.Println("preferences saved in :", a.Storage().RootURI())
 	// initPref initialise some user preferences when not set
 	ui.InitPref()
+
 	w := a.NewWindow("image")
 	w.SetMaster()
 	e, imgW, imgH := ui.NewEditor()

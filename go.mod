@@ -1,22 +1,20 @@
 module spatial
 
-go 1.17
+go 1.20
 
 require (
-	fyne.io/fyne/v2 v2.3.5
+	fyne.io/fyne/v2 v2.3.6-0.20230724073606-6fd3c286b9c2
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mazznoer/colorgrad v0.9.1
 	gonum.org/v1/plot v0.13.0
 )
 
 require (
-	fyne.io/systray v1.10.1-0.20230602210930-b6a2d6ca2a7b // indirect
+	fyne.io/systray v1.10.1-0.20230722100817-88df1e0ffa9a // indirect
 	git.sr.ht/~sbinet/gg v0.5.0 // indirect
 	github.com/ajstarks/svgo v0.0.0-20211024235047-1546f124cd8b // indirect
-	github.com/benoitkugler/textlayout v0.3.0 // indirect
 	github.com/campoy/embedmd v1.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/fredbi/uri v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/fyne-io/gl-js v0.0.0-20230506162202-1fdaa286a934 // indirect
@@ -27,9 +25,9 @@ require (
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20221017161538-93cebf72946b // indirect
 	github.com/go-latex/latex v0.0.0-20230307184459-12ec69307ad9 // indirect
 	github.com/go-pdf/fpdf v0.8.0 // indirect
+	github.com/go-text/render v0.0.0-20230619120952-35bccb6164b8 // indirect
 	github.com/go-text/typesetting v0.0.0-20230723131405-1ab587dd27cf // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
-	github.com/goki/freetype v1.0.1 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/jsummers/gobmp v0.0.0-20230614200233-a9de23ed2e25 // indirect

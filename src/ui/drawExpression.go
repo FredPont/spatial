@@ -285,11 +285,13 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	diameter, _ := clustDia.Get()
 	diameter = ApplyZoomInt(e, diameter)
 
+	log.Println("start reading data")
 	expressions, pts := getExpress(a, header, filename, expcol, curPathwayIndex) // []expressions and []Point
 	if len(expressions) < 1 {
 		log.Println("Intensities not available for column", expcol)
 		return
 	}
+	log.Println("stop reading data")
 	f.Set(0.3) // progress bar set to 30% after data reading
 	nbPts := len(pts)
 	scaleExp, min, max := filter.ScaleSlice01(expressions)

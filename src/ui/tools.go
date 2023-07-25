@@ -21,6 +21,8 @@ import (
 	"fyne.io/fyne/v2/driver/software"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+
+	"spatial/src/resampling"
 )
 
 func checkError(message string, err error) {
@@ -57,6 +59,11 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 	// progress bar binding
 	f := binding.NewFloat()
 
+	// Resampling button
+	resampButton := widget.NewButton("Resampling", func() {
+		go resampling.ResampWin(a, &firstTable, header, f)
+	})
+
 	// brush buttons
 	brush1, brush2 := brushesButtons(e, a)
 
@@ -82,6 +89,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 				//os.Exit(0)
 			}),
 		),
+		resampButton,
 		widget.NewButtonWithIcon("Filter tables by gates", iconFilter, func() {
 			// get the edges of all selected polygons
 			alledges := e.drawSurface.alledges

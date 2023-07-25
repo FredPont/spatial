@@ -50,25 +50,30 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 	legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
 
 	colors := allClustColors(nbCluster)
+	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
+	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
 
 	// if the hide legend preference is checked, the legend is not drawn
 	hideL := binding.BindPreferenceBool("hideLegend", pref)
 	hideLgd, _ := hideL.Get()
-
+	circlesObjets := make([]fyne.CanvasObject, countDataPoints(clusterMap))
+	idxObjct := 0 // number of objects
 	for c := 0; c < nbCluster; c++ {
 		// f.Set(float64(c) / float64(nbCluster-1)) // % progression for progress bar. This is too fast to be seen
 		coordinates := clusterMap[clustNames[c]]
 		//clcolor := ClusterColors(nbCluster, c)
 		clcolor := colors[c]
 		for i := 0; i < len(coordinates); i++ {
-			e.drawcircle(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+			circle := drawRoundedRect(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+			circlesObjets[idxObjct] = circle //add the spot to the slice of objects
+			idxObjct++
 		}
 		// draw legend dot and name for the current cluster
 		// if the hide legend preference is checked, the legend is not drawn
 		if hideLgd {
 			continue
 		}
-		drawLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, diameter, clustNames[c])
+		drawLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, diameter, clustNames[c], colorText)
 		legendPosition.Y = legendPosition.Y + 30
 		// set progress bar to 50% when half cluster have been computed
 		if c == int(nbCluster/2) {
@@ -79,13 +84,16 @@ func drawClusters(a fyne.App, e *Editor, header []string, filename string, f bin
 	if !hideLgd {
 		titleLegend(e, "     clusters", getLegendColor(a))
 	}
+	//e.clusterContainer.Objects = circlesObjets
+	e.clusterContainer.Objects = append(e.clusterContainer.Objects, circlesObjets...)
 	e.clusterContainer.Refresh()
+
 	f.Set(0.) // reset progress bar
 }
 
 // draw the cluster legend : color + cluster number
-func drawLegend(e *Editor, R, G, B, op uint8, x, y, diameter, clusterName int) {
-	AbsText(e.clusterContainer, x+20, y+10, strconv.Itoa(clusterName), 20, color.NRGBA{50, 50, 50, 255})
+func drawLegend(e *Editor, R, G, B, op uint8, x, y, diameter, clusterName int, colorText color.NRGBA) {
+	AbsText(e.clusterContainer, x+20, y+10, strconv.Itoa(clusterName), 20, colorText)
 	// compute the spot max diameter to avoid overlap
 	spotDiam := diameter * 100 / e.zoom
 	if spotDiam >= 15 {
@@ -100,6 +108,15 @@ func getLegendColor(a fyne.App) color.NRGBA {
 	return colorText
 }
 
+// countDataPoints get the number of data points to estimate the number of cluster to draw
+func countDataPoints(clusterMap map[int][]filter.Point) int {
+	ct := 0
+	for _, clu := range clusterMap {
+		ct = ct + len(clu)
+	}
+	return ct
+}
+
 // credits : https://github.com/ajstarks/fc
 // iCircle draws a circle centered at (x,y)
 func iCircle(x, y, r int, color color.NRGBA) *canvas.Circle {
@@ -110,12 +127,31 @@ func iCircle(x, y, r int, color color.NRGBA) *canvas.Circle {
 	return c
 }
 
-// drawline a circle at x,y position to the cluster container
+// credits : https://github.com/ajstarks/fc
+// roundRect makes a rectangle centered at x,y with rounded angles such as it is displayed like a circle :)
+// the reason is that rectangle is hardware accelerated and not (yet) the circle
+func drawRoundedRect(x, y, rad int, color color.NRGBA) *canvas.Rectangle {
+	w := float32(2 * rad) // w=h, we draw a square with rounded corners
+	//h := 2 * rad
+	fx, fy, fw, fh := float32(x), float32(y), w, w
+	r := &canvas.Rectangle{FillColor: color, CornerRadius: float32(rad)}
+	r.Move(fyne.Position{X: fx - (fw / 2), Y: fy - (fh / 2)})
+	r.Resize(fyne.Size{Width: fw, Height: fh})
+	return r
+}
+
+// drawcircle, draws a circle at x,y position to the cluster container
 func (e *Editor) drawcircle(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
 	c := iCircle(x, y, ray, color)  // draw circle rayon ray
 	e.clusterContainer.AddObject(c) // add the cicle to the cluster container
+	//e.clusterContainer.Objects = append(e.clusterContainer.Objects, c)
 	return c
 }
+
+// drawcircle, draws a circle at x,y position to the cluster container
+//func (e *Editor) drawRoundedRect(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
+//	return roundRect(x, y, ray, color) // draw rectangle
+//}
 
 // AbsText places text within a container
 // credits : https://github.com/ajstarks/fc
