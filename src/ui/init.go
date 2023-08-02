@@ -25,11 +25,17 @@ func initLastedges(e *Editor) {
 
 func initCluster(e *Editor) {
 	e.clusterContainer.Objects = nil
+	// imgs := filter.ReadDir("image/")
+	// filter.CopyFile("image/"+imgs[0], "temp/imgOut.png")
+	// e.layer.Refresh()
 }
 
 func clearCluster(e *Editor) {
 	e.clusterContainer.Objects = nil
-	e.clusterContainer.Refresh()
+	imgs := filter.ReadDir("image/")
+	filter.CopyFile("image/"+imgs[0], "temp/imgOut.png")
+	e.layer.Refresh()
+	//e.clusterContainer.Refresh()
 }
 
 func initGates(e *Editor) {
@@ -86,6 +92,11 @@ func initOpacityGdt() {
 	prefs := fyne.CurrentApp().Preferences()
 	// Dot opacity gradient
 	prefs.SetBool("gradOpacity", false)
+}
+
+// clear the tempdir for clusters or expression
+func initTempDir(tempdir string) {
+	filter.ClearDir(tempdir)
 }
 
 ////////////////////////////
@@ -218,6 +229,13 @@ func InitPref() {
 	initFORGColors([]string{"gateDotsR", "gateDotsG", "gateDotsB", "gateDotsA"})
 	// legend text colors
 	initFORGColors([]string{"legendColR", "legendColG", "legendColB", "legendColA"})
+
+	// multithread cluster computation
+	clustThreads := prefs.BoolWithFallback("multithreadCluster", false)
+	prefs.SetBool("multithreadCluster", clustThreads)
+	// number of threads for expression
+	expThreads := prefs.IntWithFallback("nbExpressThreads", 1)
+	prefs.SetInt("nbExpressThreads", expThreads)
 }
 
 // init background colors

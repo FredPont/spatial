@@ -21,6 +21,7 @@ package filter
 import (
 	"bufio"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"math"
 	"math/rand"
@@ -43,7 +44,7 @@ func check(e error) {
 	}
 }
 
-//ReadHeader read header of table
+// ReadHeader read header of table
 func ReadHeader(path string) []string {
 
 	csvFile, err := os.Open(path)
@@ -214,7 +215,7 @@ func Rotation(xScaled, yScaled int64, rotate string) (int64, int64) {
 		yRot := xScaled
 		return xRot, yRot
 	case "-90":
-		
+
 		// get the image width
 		// imgWidth := binding.BindPreferenceInt("imgW", pref)
 		// imgW, err := imgWidth.Get()
@@ -487,18 +488,113 @@ func ListFiles(dir string) []string {
 	return filesList
 }
 
-//WriteOneLine write line to file
+// FileExist check if a file exists
+func FileExist(filename string) bool {
+	// Check if file exists
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		fmt.Printf("File %s does not exist\n", filename)
+		return false
+	} else {
+		fmt.Printf("File %s exists\n", filename)
+		return true
+	}
+}
+
+// CopyFile copy a file from src to dst
+// credits https://github.com/mactsouk/opensource.com/blob/master/cp1.go
+func CopyFile(src, dst string) (int64, error) {
+	sourceFileStat, err := os.Stat(src)
+	if err != nil {
+		return 0, err
+	}
+
+	if !sourceFileStat.Mode().IsRegular() {
+		return 0, fmt.Errorf("%s is not a regular file", src)
+	}
+
+	source, err := os.Open(src)
+	if err != nil {
+		return 0, err
+	}
+	defer source.Close()
+
+	destination, err := os.Create(dst)
+	if err != nil {
+		return 0, err
+	}
+	defer destination.Close()
+	nBytes, err := io.Copy(destination, source)
+	return nBytes, err
+}
+
+// ReadDir read dir directory and return the file names
+func ReadDir(dir string) []string {
+	// Read the contents of the directory
+	files, err := os.ReadDir(dir)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fileNames := make([]string, len(files))
+	// Print the name of each file and folder in the directory
+	for i, file := range files {
+		fileNames[i] = file.Name()
+		//fmt.Println(file.Name())
+	}
+	return fileNames
+}
+
+// ClearDir removes all files in dir
+func ClearDir(dir string) {
+	// delete dir
+	err := os.RemoveAll(dir)
+	if err != nil {
+		fmt.Println("Error clearing directory:", err)
+		return
+	}
+	// restore the deleted dir
+	err = os.Mkdir(dir, 0777)
+	if err != nil {
+		fmt.Println("Error creating directory:", err)
+		return
+	}
+
+	//fmt.Println("Directory cleared successfully.")
+}
+
+// RmFiles removes file by name
+func RmFile(fileName string) {
+
+	err := os.Remove(fileName)
+	if err != nil {
+		fmt.Println("Error deleting file:", err)
+		return
+	}
+	//fmt.Println("File deleted successfully")
+}
+
+// MvFiles moves a file
+func MvFile(oldPath, newPath string) {
+
+	err := os.Rename(oldPath, newPath)
+	if err != nil {
+		fmt.Println("Error moving file:", err)
+		return
+	}
+	//fmt.Println("File moved successfully")
+}
+
+// WriteOneLine write line to file
 func WriteOneLine(f *os.File, line string) {
 	_, err := f.WriteString(line)
 	check(err)
 }
 
-//FLstr convert float to string
+// FLstr convert float to string
 func FLstr(f float64) string {
 	return strconv.FormatFloat(f, 'e', 3, 64)
 }
 
-//FormatOutFile add extension csv to file name or build a file name with time string when the filename is not given by the user
+// FormatOutFile add extension csv to file name or build a file name with time string when the filename is not given by the user
 func FormatOutFile(prefix, name string, ext string) string {
 	var outfile string
 
@@ -578,6 +674,69 @@ func FillSliceInt(n int) []int {
 		slice[i] = i
 	}
 	return slice
+}
+
+// DivideNB divide a number into integer parts
+func DivideNB(number, numParts int) []int {
+
+	// Calculate the quotient and remainder
+	quotient := number / numParts
+	remainder := number % numParts
+
+	// Create an array to store the resulting parts
+	parts := make([]int, numParts)
+
+	// Fill the array with the quotient value
+	for i := 0; i < numParts; i++ {
+		parts[i] = quotient
+	}
+
+	// Distribute the remainder evenly among the parts
+	for i := 0; i < remainder; i++ {
+		parts[i]++
+	}
+
+	// Print the resulting parts
+	//fmt.Println(parts)
+	return parts
+}
+
+// DivideSlice divide a slice into  parts
+func DivideSlice(slice []Point, parts int) [][]Point {
+
+	length := len(slice)
+	if length < parts {
+		parts = length
+	}
+
+	result := make([][]Point, parts)
+	partSize := length / parts
+	remainder := length % parts
+
+	start := 0
+	for i := 0; i < parts; i++ {
+		end := start + partSize
+		if remainder > 0 {
+			end++
+			remainder--
+		}
+
+		result[i] = slice[start:end]
+		start = end
+	}
+
+	return result
+}
+
+// SumSliceInt, make the sum of the n first numbers in a slice
+func SumSliceInt(n int, numbers []int) int {
+	// Sum of first n numbers
+	sum := 0
+	for i := 0; i < n; i++ {
+		sum += numbers[i]
+	}
+	return sum
+	//fmt.Printf("Sum of first %d numbers: %d", n, sum)
 }
 
 // WriteCSV export a [][]string as CSV file

@@ -4,6 +4,7 @@ import (
 	//"fmt"
 	"image"
 	"image/color"
+	"spatial/src/filter"
 
 	//"log"
 
@@ -21,6 +22,7 @@ import (
 type Editor struct {
 	drawSurface                     *interactiveRaster
 	microscop                       *canvas.Image
+	calc                            *canvas.Image   // image calc to display cluster and expression
 	min                             fyne.Size       // size of the microscop image and the gate/clusters containers
 	layer                           *fyne.Container // container with image and interactive drawsurface
 	win                             fyne.Window
@@ -47,17 +49,24 @@ func (e *Editor) draw(w, h int) image.Image {
 // NewEditor creates a new image interactive editor
 func NewEditor() (*Editor, int, int) {
 	imgFile, w, h := ImgSize()
-
+	// read the microscopy image
 	micro := canvas.NewImageFromFile(imgDir + "/" + imgFile)
+	// copy the microscopy image in the temp dir to initialize the calc cluster/express image
+	filter.CopyFile(imgDir+"/"+imgFile, "temp/imgOut.png")
+	calcImg := canvas.NewImageFromFile("temp/imgOut.png")
+	// calcName := "temp/imgOut.png" // calcl image with cluster/expression
+	// if filter.FileExist(calcName) {
+	// 	calcImg = canvas.NewImageFromFile(calcName)
+	// }
 	//micro.FillMode = canvas.ImageFillOriginal
 
-	gc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))  // gate container
-	gdc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // gate dots container
-	gnc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // gate number container
-	cc := fyne.NewContainer(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))  // cluster container should be independant of gate container for separate initialisaion
+	gc := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))  // gate container
+	gdc := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // gate dots container
+	gnc := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0})) // gate number container
+	cc := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))  // cluster container should be independant of gate container for separate initialisaion
 	//fgCol := color.Transparent
 	//edit := &editor{fg: fgCol, fgPreview: canvas.NewRectangle(fgCol), img: image.NewRGBA(image.Rect(0, 0, 600, 600)), microscop: micro}
-	edit := &Editor{microscop: micro, min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: cc, gateDotsContainer: gdc, gateNumberContainer: gnc, clusterContainer: gc, zoom: 100, microOrigWidth: w, microOrigHeight: h, zooMin: 10}
+	edit := &Editor{microscop: micro, calc: calcImg, min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: cc, gateDotsContainer: gdc, gateNumberContainer: gnc, clusterContainer: gc, zoom: 100, microOrigWidth: w, microOrigHeight: h, zooMin: 10}
 	edit.drawSurface = newInteractiveRaster(edit)
 
 	return edit, w, h
@@ -66,7 +75,7 @@ func NewEditor() (*Editor, int, int) {
 // BuildUI creates the main window of our application
 func (e *Editor) BuildUI(w fyne.Window) {
 	e.win = w
-	e.layer = container.NewMax(e.drawSurface, e.microscop, e.clusterContainer, e.gateContainer, e.gateDotsContainer, e.gateNumberContainer)
+	e.layer = container.NewStack(e.drawSurface, e.microscop, e.calc, e.clusterContainer, e.gateContainer, e.gateDotsContainer, e.gateNumberContainer)
 
 	w.SetContent(container.NewScroll(e.layer))
 }

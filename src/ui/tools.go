@@ -128,7 +128,10 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		container.NewHBox(
 			//widget.NewLabel("Show :"),
 			widget.NewButton("Show Clusters", func() {
-				go drawClusters(a, e, header, firstTable, f)
+				//go drawClusters(a, e, header, firstTable, f)
+				//go DrawImageClusters(a, e, header, firstTable, f)
+				//go MTDrawImageClusters(a, e, header, firstTable, f)
+				go startClusterComput(a, e, header, firstTable, f)
 			}),
 			widget.NewButton("Expression", func() {
 				go buttonDrawExpress(a, e, preference, f, header, firstTable)

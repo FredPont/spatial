@@ -125,7 +125,7 @@ func BuildPref(a fyne.App, head []string) {
 	cld := binding.BindPreferenceInt("clustDotDiam", prefs) // set the link to preferences for cluster diameter
 	clud, _ := cld.Get()                                    // read the preference for cluster diameter
 	cldtxt := fmt.Sprintf("%d", clud)                       // convert cluster diameter to txt
-	clustDotDiam.SetPlaceHolder(cldtxt)                     // display the prefsence value for cluster diameter
+	clustDotDiam.SetPlaceHolder(cldtxt)                     // display the preference value for cluster diameter
 
 	// vulcano selection square size in pixels
 	// record the vulcano selection square size in pixels in preferences
@@ -137,6 +137,27 @@ func BuildPref(a fyne.App, head []string) {
 	}
 	vstxt := fmt.Sprintf("%d", vsquare)
 	vulcSquare.SetPlaceHolder(vstxt)
+
+	// Expression number of threads
+	expThreads := widget.NewEntry()
+	exptrds := binding.BindPreferenceInt("nbExpressThreads", prefs) // set the link to preferences for Expression number of threads
+	expT, err := exptrds.Get()                                      // read the preference for Expression number of threads
+	if err != nil {
+		log.Println("wrong number of threads !", err)
+	}
+	expTtxt := fmt.Sprintf("%d", expT) // convert Expression number of threads to txt
+	expThreads.SetPlaceHolder(expTtxt) // display the preference value for Expression number of threads
+
+	// Multithread check box for cluster computation
+	clusterMTcheck := widget.NewCheck("", func(v bool) {
+		prefs.SetBool("multithreadCluster", v)
+	})
+	clusterMT := binding.BindPreferenceBool("multithreadCluster", prefs)
+	clMT, _ := clusterMT.Get()
+	if err != nil {
+		log.Println("wrong value for cluster multithread !", err)
+	}
+	clusterMTcheck.SetChecked(clMT)
 
 	// show choice of different gradien
 	// read the custom palettes
@@ -150,7 +171,6 @@ func BuildPref(a fyne.App, head []string) {
 	grad.SetSelected(clusterGrad)
 
 	// shuffle cluster gradient
-
 	shuffleGradient := widget.NewCheck("", func(v bool) {
 		prefs.SetBool("shuffClustgrad", v)
 		//log.Println("Check set to", v)
@@ -180,6 +200,8 @@ func BuildPref(a fyne.App, head []string) {
 			{Text: "Cluster column", Widget: clco},
 			{Text: "Cluster dots diameter", Widget: clustDotDiam},
 			{Text: "vulcano selection square size in pixels", Widget: vulcSquare},
+			{Text: "Use multithreads for clusters", Widget: clusterMTcheck},
+			{Text: "Expression number of threads", Widget: expThreads},
 			{Text: "Clusters color gradient", Widget: grad},
 			{Text: "Shuffle colors", Widget: shuffleGradient},
 			{Text: "Hide Legend (cluster & expression)", Widget: hideLegend},
@@ -218,6 +240,10 @@ func BuildPref(a fyne.App, head []string) {
 			// vulcano selection square size in pixels
 			vulSelTXT := vulcSquare.Text
 			setPrefToInt(vulSelTXT, "vulcSelectSize", prefs)
+
+			// Expression number of threads
+			expThreadTXT := expThreads.Text
+			setPrefToInt(expThreadTXT, "nbExpressThreads", prefs)
 
 			// cluster gradient selection
 			// gradien default

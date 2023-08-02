@@ -99,9 +99,11 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	curPathwayIndex := binding.NewInt() // column index of current pathway displayed by slide show
 	curPathwayIndex.Set(1)              // start with column 1 by default
 	slideDelay := binding.NewFloat()    // default pause between slides
-	slideDelay.Set(1)                   // 1 sec pause
+	slideDelay.Set(15)                  // 15 sec pause
+
 	slidePause := widget.NewEntry()
 	slidePause.SetPlaceHolder("Pause between slides (sec)")
+	slidePause.SetText("15")
 
 	content := container.NewVBox(
 		container.NewHBox(
@@ -130,8 +132,9 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 					}
 
 					initSliderExp(MaxExp, MinExp) // reset expression min max sliders values
-
-					go drawExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex, ExpressWindow)
+					go startEspressComput(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex, ExpressWindow)
+					//go drawImageExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex, ExpressWindow)
+					//go MTdrawImageExp(a, e, header, firstTable, userSel, grad.Selected, f, curPathwayIndex, ExpressWindow)
 
 				}),
 				legendcol,
@@ -148,8 +151,20 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 					an, _ := anim.Get()
 					if an {
 						anim.Set(false)
+						startIdx, _ := curPathwayIndex.Get()
+						log.Println("curPathwayIndex=", startIdx)
+						log.Println("stop slide show")
+						return
 					} else {
 						anim.Set(true)
+						log.Println("start slide show")
+						startIdx, _ := curPathwayIndex.Get()
+						log.Println("curPathwayIndex=", startIdx)
+						if startIdx >= len(header)-2 {
+							log.Println("Column", startIdx+1, "cannot be accessed, final column reached !")
+							return
+						}
+						//curPathwayIndex.Set(startIdx + 1) // start slide show with the next pathway
 						go startSlideShow(a, e, header, firstTable, grad.Selected, f, anim, curPathwayIndex, slideDelay, ExpressWindow)
 					}
 
@@ -160,8 +175,12 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 						log.Println("Column", startIdx-1, "cannot be accessed !")
 						return
 					}
-					curPathwayIndex.Set(startIdx - 1)
-					go drawExp(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex, ExpressWindow)
+					//log.Println("pathway index = ", startIdx)
+					//curPathwayIndex.Set(startIdx - 1)
+					//startIdx, _ = curPathwayIndex.Get()
+					//log.Println("new pathway index = ", startIdx)
+					//go drawExp(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex, ExpressWindow)
+					go startEspressComput(a, e, header, firstTable, header[startIdx-1], grad.Selected, f, curPathwayIndex, ExpressWindow)
 				}),
 				widget.NewButton("Next Slide", func() {
 					startIdx, _ := curPathwayIndex.Get()
@@ -170,7 +189,8 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 						return
 					}
 					curPathwayIndex.Set(startIdx + 1)
-					go drawExp(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex, ExpressWindow)
+					//go drawExp(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex, ExpressWindow)
+					go startEspressComput(a, e, header, firstTable, header[startIdx+1], grad.Selected, f, curPathwayIndex, ExpressWindow)
 				}),
 			),
 		),
@@ -212,18 +232,28 @@ func buttonDrawExpress(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 func startSlideShow(a fyne.App, e *Editor, header []string, firstTable, grad string, f binding.Float, anim binding.Bool, curPathwayIndex binding.Int, slideDelay binding.Float, ExpressWindow fyne.Window) {
 	m := len(header)
 	startIdx, _ := curPathwayIndex.Get()
-	for i := startIdx; i < m; i++ {
+	log.Println("start slide show : curPathwayIndex=", startIdx)
+	// listen to anim
+	an, _ := anim.Get()
+	if !an {
+		return
+	}
+
+	for i := startIdx + 1; i < m; i++ {
+
+		if header[i] != "" {
+			log.Println(i, "/", m-1, " column :", header[i])
+
+			//drawExp(a, e, header, firstTable, header[i], grad, f, curPathwayIndex, ExpressWindow)
+			startEspressComput(a, e, header, firstTable, header[i], grad, f, curPathwayIndex, ExpressWindow)
+			pause, _ := slideDelay.Get()
+			time.Sleep(time.Duration(1000*pause) * time.Millisecond)
+		}
 		// listen to anim
 		an, _ := anim.Get()
 		if !an {
-			curPathwayIndex.Set(i)
+			//curPathwayIndex.Set(i)
 			break
-		}
-		if header[i] != "" {
-			drawExp(a, e, header, firstTable, header[i], grad, f, curPathwayIndex, ExpressWindow)
-			pause, _ := slideDelay.Get()
-			time.Sleep(time.Duration(1000*pause) * time.Millisecond)
-			log.Println(i, "/", m-1, " column :", header[i])
 		}
 
 	}
@@ -253,8 +283,8 @@ func getExpress(a fyne.App, header []string, filename string, expcol string, cur
 	ycor := binding.BindPreferenceString("ycor", pref) // set the link to preferences for y coordinates
 	yc, _ := ycor.Get()
 
-	colIndexes := filter.GetColIndex(header, []string{expcol, xc, yc})
-	curPathwayIndex.Set(colIndexes[0]) // set the current expression Index to the selected column to enable button next/previous slide
+	colIndexes := filter.GetColIndex(header, []string{expcol, xc, yc}) // selected column + xy
+	curPathwayIndex.Set(colIndexes[0])                                 // set the current expression Index to the selected column to enable button next/previous slide
 	return filter.ReadExpress(a, filename, colIndexes)
 }
 
@@ -300,6 +330,8 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 	go plot.BuildDensity(expressions, 100., filter.TrimString(expcol, 40), ExpressWindow)
 	go saveTMPfiles(pts, expressions, min, max, nbPts)
 
+	circlesObjets := make([]fyne.CanvasObject, nbPts) // store all the circles to add them all in one time
+
 	for c := 0; c < nbPts; c++ {
 		// progress bar increases when 50% of points are loaded
 		if c == int(nbPts/2) {
@@ -313,7 +345,8 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 		clcolor := gradUser(gradien, grad, scaleExp[c])
 
 		e.drawcircle(ApplyZoomInt(e, pts[c].X), ApplyZoomInt(e, pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
-
+		circle := drawRoundedRect(ApplyZoomInt(e, pts[c].X), ApplyZoomInt(e, pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+		circlesObjets[c] = circle //add the spot to the slice of objects
 	}
 	// draw legend title, dot and value for the current cexpression
 	// if the hide legend preference is checked, the legend is not drawn
@@ -331,6 +364,7 @@ func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gr
 			expLegend(e, op, diameter, gradien, grad, min, max, colorText) // not transparency gradien in legend
 		}
 	}
+	e.clusterContainer.Objects = append(e.clusterContainer.Objects, circlesObjets...)
 	e.clusterContainer.Refresh()
 	f.Set(0.) // reset progress bar
 }
@@ -485,7 +519,8 @@ func updateMinMaxExp(vmin, vmax float64, a fyne.App, e *Editor, expcol, gradien 
 	newMin := vmin/100.*(tmp.Max-tmp.Min) + tmp.Min
 	newMax := vmax/100.*(tmp.Max-tmp.Min) + tmp.Min
 	scaleExp := filter.ScaleSliceMinMax(tmp.Exp, newMin, newMax)
-	refreshExp(a, e, newMin, newMax, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
+	//refreshExp(a, e, newMin, newMax, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
+	refreshImageExp(a, e, newMin, newMax, tmp, scaleExp, expcol, gradien, f, ExpressWindow)
 }
 
 func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record, scaleExp []float64, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
@@ -517,8 +552,8 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 		log.Println("Intensities not availble for column", expcol)
 		return
 	}
-	f.Set(0.3) // progress bar set to 30% after data reading
-
+	f.Set(0.3)                                            // progress bar set to 30% after data reading
+	circlesObjets := make([]fyne.CanvasObject, tmp.NbPts) // store all the circles to add them all in one time
 	for c := 0; c < tmp.NbPts; c++ {
 		// progress bar increases when 50% of points are loaded
 		if c == int(tmp.NbPts/2) {
@@ -530,8 +565,9 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 		}
 		clcolor := gradUser(gradien, grad, scaleExp[c])
 
-		e.drawcircle(ApplyZoomInt(e, tmp.Pts[c].X), ApplyZoomInt(e, tmp.Pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
-
+		//e.drawcircle(ApplyZoomInt(e, tmp.Pts[c].X), ApplyZoomInt(e, tmp.Pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+		circle := drawRoundedRect(ApplyZoomInt(e, tmp.Pts[c].X), ApplyZoomInt(e, tmp.Pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+		circlesObjets[c] = circle //add the spot to the slice of objects
 	}
 	// draw legend title, dot and value for the current cexpression
 	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
@@ -545,7 +581,7 @@ func refreshExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record
 		expLegend(e, op, diameter, gradien, grad, newMin, newMax, colorText) // not transparency gradien in legend
 	}
 	//expLegend(e, op, diameter, gradien, grad, newMin, newMax, colorText)
-
+	e.clusterContainer.Objects = append(e.clusterContainer.Objects, circlesObjets...)
 	e.clusterContainer.Refresh()
 	ExpressWindow.Content().Refresh()
 	f.Set(0.) // reset progress bar

@@ -26,14 +26,15 @@ func (z *Zoom) updateZoom(val, zoomStep int, f binding.Float) {
 	if val < z.edit.zooMin {
 		val = z.edit.zooMin // zoom must be at least the zooMin
 		f.Set(0.)           // progress bar
-		return
+		//return
 	} else if val > 200 {
 		val = 200 //zoom Max
 		f.Set(0.) // progress bar
-		return
+		//return
 	}
 	z.edit.setZoom(val, zoomStep)
 	z.zoom.SetText(fmt.Sprintf("Zoom %d%%", z.edit.zoom))
+	//z.edit.layer.Refresh()
 	f.Set(0.) // progress bar
 }
 
@@ -84,7 +85,7 @@ func newZoom(edit *Editor, a fyne.App, f binding.Float) fyne.CanvasObject {
 
 func (e *Editor) setZoom(zoom, zoomStep int) {
 	//initAllLayers(e) // remove clusters and gates
-	initCluster(e)
+	//initCluster(e)
 	initGatesContainer(e)
 	e.zoom = zoom
 
@@ -99,7 +100,7 @@ func (e *Editor) setZoom(zoom, zoomStep int) {
 	redrawGates(e)
 	redrawGatesNB(e.drawSurface) // redraw gates numbers
 	e.drawSurface.Refresh()
-	//e.clusterContainer.Refresh()
+	//e.layer.Refresh()
 	//e.gateContainer.Refresh()
 }
 

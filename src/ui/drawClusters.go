@@ -98,6 +98,8 @@ func drawLegend(e *Editor, R, G, B, op uint8, x, y, diameter, clusterName int, c
 	spotDiam := diameter * 100 / e.zoom
 	if spotDiam >= 15 {
 		spotDiam = 15
+	} else if spotDiam < 5 {
+		spotDiam = 5
 	}
 	e.drawcircle(x, y, spotDiam, color.NRGBA{R, G, B, op})
 }

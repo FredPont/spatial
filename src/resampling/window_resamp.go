@@ -27,7 +27,6 @@ func ResampWin(a fyne.App, Table *string, header []string, f binding.Float) {
 	explain.Alignment = fyne.TextAlignLeading
 	// Create a list of strings for the checkbox labels
 	myCheckboxLabels := header
-
 	// Create a CheckGroup widget with the checkbox labels
 	myCheckGroup := widget.NewCheckGroup(myCheckboxLabels, func(selected []string) {
 		// Handle the checkbox selection change event
@@ -86,7 +85,6 @@ func ResampWin(a fyne.App, Table *string, header []string, f binding.Float) {
 	),
 		container.NewScroll(
 			myCheckGroup),
-		//myCheckGroup,
 	)
 
 	//myScrollContent := container.NewScroll(myContainer)
