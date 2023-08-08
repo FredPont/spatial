@@ -515,6 +515,7 @@ func loadTMPfiles(fname string) filter.Record {
 
 // update the Min and Max expression
 func updateMinMaxExp(vmin, vmax float64, a fyne.App, e *Editor, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
+	f.Set(0.1)
 	tmp := loadTMPfiles("temp/expressTMP.json")
 	newMin := vmin/100.*(tmp.Max-tmp.Min) + tmp.Min
 	newMax := vmax/100.*(tmp.Max-tmp.Min) + tmp.Min

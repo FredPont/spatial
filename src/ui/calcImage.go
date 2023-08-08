@@ -307,9 +307,9 @@ func drawImageExp(a fyne.App, e *Editor, header []string, filename string, expco
 // drawImageExp use the library gg (https://pkg.go.dev/github.com/fogleman/gg) to create a transparent png image
 // with the size of the original microscopy image. Expression spots are ploted as dots in this image
 func refreshImageExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.Record, scaleExp []float64, expcol, gradien string, f binding.Float, ExpressWindow fyne.Window) {
-	f.Set(0.1)     // progress bar set to 20%
 	initCluster(e) // remove all dots of the cluster container
 	pref := a.Preferences()
+	f.Set(0.15) // progress bar set to 15%
 
 	//calc image size to draw the cluster dots
 	H := pref.IntWithFallback("imgH", 500)
@@ -344,7 +344,7 @@ func refreshImageExp(a fyne.App, e *Editor, newMin, newMax float64, tmp filter.R
 		log.Println("Intensities not availble for column", expcol)
 		return
 	}
-	f.Set(0.2) // progress bar set to 30% after data reading
+	f.Set(0.2) // progress bar set to 20% after data reading
 
 	for c := 0; c < tmp.NbPts; c++ {
 		// Calculate the progress as a percentage

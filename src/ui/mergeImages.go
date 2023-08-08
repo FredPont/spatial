@@ -96,6 +96,54 @@ func Merge2Img(img1, img2 image.Image, filename1, filename2 string, fileOut stri
 	wg.Done()
 }
 
+// Merge2ImgFileName stack two images on top of each other from their file names
+func Merge2ImgFileName(filename1, filename2 string, fileOut string) {
+	// Open the first image
+	file1, err := os.Open(filename1)
+	if err != nil {
+		panic(err)
+	}
+	defer file1.Close()
+
+	img1, _, err := image.Decode(file1)
+	if err != nil {
+		panic(err)
+	}
+	// Open the second image
+	file2, err := os.Open(filename2)
+	if err != nil {
+		panic(err)
+	}
+	defer file2.Close()
+
+	img2, _, err := image.Decode(file2)
+	if err != nil {
+		panic(err)
+	}
+
+	// Create a new draw image with the same dimensions as the original
+	finalImg := image.NewRGBA(img1.Bounds())
+
+	// Draw the original image onto the new draw image
+	draw.Draw(finalImg, img1.Bounds(), img1, image.Point{0, 0}, draw.Src)
+
+	// Draw the  image 2 onto the new draw image
+	draw.Draw(finalImg, img1.Bounds(), img2, image.Point{0, 0}, draw.Over)
+
+	// Save the stacked image to a file
+	outputFile, err := os.Create(fileOut)
+	if err != nil {
+		panic(err)
+	}
+	defer outputFile.Close()
+
+	err = png.Encode(outputFile, finalImg)
+	if err != nil {
+		panic(err)
+	}
+
+}
+
 // MergeIMG merges png images together 2 by 2 using multithread in temp rir and then remove all files in temp dir
 func MTmergeIMG(dir string, pathOut string) {
 

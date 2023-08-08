@@ -68,7 +68,7 @@ func buildVulcanoTools(v *Vulcano) {
 	w.Show()
 }
 
-//refreshVulanoTools reload the table of selected vulcano dots
+// refreshVulanoTools reload the table of selected vulcano dots
 func refreshVulanoTools(v *Vulcano) {
 	a := fyne.CurrentApp()
 	pref := a.Preferences()
@@ -185,7 +185,8 @@ func refreshVulanoTools(v *Vulcano) {
 				return
 			}
 
-			go drawExp(a, v.imageEditor, v.header, v.tableName, choosedItem, grad.Selected, f, PathwayIndex, v.tools)
+			//go drawExp(a, v.imageEditor, v.header, v.tableName, choosedItem, grad.Selected, f, PathwayIndex, v.tools)
+			go startEspressComput(a, v.imageEditor, v.header, v.tableName, choosedItem, grad.Selected, f, PathwayIndex, v.tools)
 		}),
 
 		widget.NewButton("Save volcano plot", func() {

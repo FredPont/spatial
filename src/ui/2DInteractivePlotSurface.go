@@ -22,6 +22,7 @@ import (
 	"image/color"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 )
 
@@ -30,23 +31,26 @@ type Interactive2Dsurf struct {
 	drawSurface      *plotRaster
 	min              fyne.Size // size of the scatter container
 	win              fyne.Window
+	calc             *canvas.Image   // image calc to display the 2D plot dots
+	calcSeldots      *canvas.Image   // image calc to display the 2D plot dots selected by the user
 	layer            *fyne.Container // container with plot and interactive drawsurface
 	gateContainer    *fyne.Container // container with the gate dot lines
 	scatterContainer *fyne.Container // container with the scatter circles
-	tools            fyne.Window     // 2D plot tools windows
-	imageEditor      *Editor         // editor of the microscopie image is embeded to allow expression plots
-	header           []string        // header of the first data table (to allow expression plots)
-	tableName        string          // name of the first data table (to allow expression plots)
+	//tools            fyne.Window     // 2D plot tools windows
+	//imageEditor      *Editor         // editor of the microscopie image is embeded to allow expression plots
+	//header           []string        // header of the first data table (to allow expression plots)
+	//tableName        string          // name of the first data table (to allow expression plots)
 
 }
 
 // NewInterative2D creates a new interactive 2D plot
 func NewInterative2D() (*Interactive2Dsurf, int, int) {
 	w, h := 800, 800
-
+	calcImg := canvas.NewImageFromFile("temp/2Dplot/2Dplot.png")
+	calcDots := canvas.NewImageFromFile("temp/2Dplot/dotsIngGates.png")                      // dots selected by the user
 	sel := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{0, 0, 0, 0}))         // select container
 	sca := container.NewWithoutLayout(iRect(w/2, h/2, w, h, color.RGBA{255, 255, 255, 255})) // scatter container should be independant of select container for separate initialisaion
-	plotEdit := &Interactive2Dsurf{min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: sel, scatterContainer: sca}
+	plotEdit := &Interactive2Dsurf{calc: calcImg, calcSeldots: calcDots, min: fyne.Size{Width: float32(w), Height: float32(h)}, gateContainer: sel, scatterContainer: sca}
 	plotEdit.drawSurface = newInteractive2DRaster(plotEdit)
 
 	return plotEdit, w, h
@@ -56,7 +60,7 @@ func NewInterative2D() (*Interactive2Dsurf, int, int) {
 func (p *Interactive2Dsurf) build2DinterPlot(w fyne.Window) {
 	p.win = w
 	//e.layer = container.NewMax(e.scatterContainer)
-	p.layer = container.NewMax(p.drawSurface, p.scatterContainer, p.gateContainer)
+	p.layer = container.NewStack(p.drawSurface, p.scatterContainer, p.calc, p.calcSeldots, p.gateContainer)
 	w.SetContent(p.layer)
 
 }

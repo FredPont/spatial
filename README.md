@@ -42,6 +42,23 @@ https://doi.org/10.1186/s12859-023-05150-1
 
 [High throughput data extraction with scSpatial Explorer](https://youtu.be/rSefd0pmc7g)
 
+## <span style="color:red">New !</span>
+The new version of Single-Cell Spatial Explorer under development is able to process millions of spots. Thus, it is possible to use the software with technologies such as Akoya PhenoCycler.
+The strategy to how to use such datasets is explained in the documentation, read it carefully before starting.
+
+Ki67 expression
+![Ki67](./src/web/akoyaKi67.jpg)
+Keratin 14 expression
+![K14](./src/web/akoyaKeratin14.jpg)
+Cells Clusters
+![AkoClu1](./src/web/akoyaCluster1.jpg)
+Cells cluster layers
+![AkoClu2](./src/web/akoya_clusters.png)
+Cells characterization with a 2D plot
+![Ako2D1](./src/web/akoya2D1.png)
+Cells in gates characterization with a 2D plot
+![Ako2D1](./src/web/akoyaPlotGate.png)
+
 ## ScreenShots
 
 Single-Cell Spatial Explorer is a compiled software, easy to install and to use. It produces beautiful pictures from microcopy images and single cell data sets. Many information can be visualized on top on the microscopy image, such as gene expression, clusters, pathways (screenshot), antibodies... :
@@ -162,4 +179,4 @@ Thanks to [Miguel Madrid](https://github.com/mimame) for his advices on Github.
 
 The GO developpment team is aknowledged as well as the contributors to Go's GUI ([Fyne](https://github.com/fyne-io)), data and color ecosystem, especially the following projects :
 
-[gonum](https://www.gonum.org/), [fc](https://github.com/ajstarks/fc), [colorgrad](https://github.com/mazznoer/colorgrad), [go-colorful](https://github.com/lucasb-eyer/go-colorful), [stats](https://pkg.go.dev/github.com/aclements/go-moremath/stats)
+[Go graphics](https://github.com/fogleman/gg), [gonum](https://www.gonum.org/), [fc](https://github.com/ajstarks/fc), [colorgrad](https://github.com/mazznoer/colorgrad), [go-colorful](https://github.com/lucasb-eyer/go-colorful), [stats](https://pkg.go.dev/github.com/aclements/go-moremath/stats)

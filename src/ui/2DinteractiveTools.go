@@ -77,6 +77,7 @@ func show2DinterTools(a fyne.App, e *Editor, winplot fyne.Window, inter2D *Inter
 			go import2DGates(inter2D, f)
 		}),
 		widget.NewButton("Clear Gates", func() {
+			go clearCluster(e)
 			go init2DScatterGates(inter2D)
 		}),
 		// screenshot
@@ -95,6 +96,8 @@ func show2DinterTools(a fyne.App, e *Editor, winplot fyne.Window, inter2D *Inter
 
 // build2DPlot start extracting the plot data and make the plot
 func build2DPlot(inter2D *Interactive2Dsurf, prefs fyne.Preferences, header []string, firstTable string) (PlotBox, map[string]filter.Dot, map[string]filter.Point) {
+	Init2DTempDir() // clear previous scatter plot
+
 	subtable := extract2DinterData(prefs, header, firstTable)
 	imageMap, plotMap := subTableToMap(subtable)
 
@@ -105,7 +108,9 @@ func build2DPlot(inter2D *Interactive2Dsurf, prefs fyne.Preferences, header []st
 	dotsize, _ := ds2.Get()
 
 	// built scatter plot
-	plotbox.scatterPlot(inter2D, dotsize)
+	//plotbox.scatterPlot(inter2D, dotsize)
+	//plotbox.draw2DplotImg(inter2D, dotsize)
+	plotbox.startDraw2DplotImg(inter2D, dotsize)
 	plotbox.xAxisScat(inter2D)
 	plotbox.yAxisScat(inter2D)
 	inter2D.scatterContainer.Refresh()
@@ -190,12 +195,15 @@ func dotMapToPointMap(p *PlotBox, dotmap map[string]filter.Dot) map[string]filte
 // show the dots in gate in the microscopy image
 func searchDotsInGates(e *Editor, inter2D *Interactive2Dsurf, p *PlotBox, dotmap map[string]filter.Dot, imagemap map[string]filter.Point, selectedGradient string, f binding.Float) {
 	f.Set(0.3)
+	// clear previously selected dots or spots on microscopy image
+	clearCluster(e)
 	scatter := dotMapToPointMap(p, dotmap)
 	cellsInGates := selectedCells(inter2D, scatter)
 	//gradient := grad2D(selectedGradient)
 
 	go plotDotsMicrocop(e, cellsInGates, imagemap, selectedGradient)
-	plotDotsInGates(p, inter2D, cellsInGates, selectedGradient)
+	//plotDotsInGates(p, inter2D, cellsInGates, selectedGradient)
+	go plotDotsInGatesImg(p, inter2D, cellsInGates, selectedGradient)
 
 	inter2D.gateContainer.Refresh()
 	f.Set(0.)
@@ -257,9 +265,14 @@ func nrgbaModel(c color.Color) color.NRGBA {
 
 // extract the cells ID of the cells in gates and get their corresponding XY coordinates for the microscopy image
 func plotDotsMicrocop(e *Editor, cellsInGates []map[string]filter.Point, imageMap map[string]filter.Point, selectedGradient string) {
-	initCluster(e) // remove all dots of the cluster container
+	initCluster(e)                           // remove all dots of the cluster container
+	initTempDir("temp/2Dplot/selectedDots/") // clear previous images from selected dots
 	nbGates := len(cellsInGates)
 
+	if len(cellsInGates) == 0 {
+		log.Println("No dots selected !")
+		return
+	}
 	// get the image microscopy coordinates of the cells in one gate from the cells names in the 2D plot
 	for i, cellsingate := range cellsInGates {
 		var cellsXY []filter.Point
@@ -267,9 +280,12 @@ func plotDotsMicrocop(e *Editor, cellsInGates []map[string]filter.Point, imageMa
 		for cellid := range cellsingate {
 			cellsXY = append(cellsXY, imageMap[cellid])
 		}
-		drawCells(e, cellsXY, dotcolor)
+		//drawCells(e, cellsXY, dotcolor)
+		drawCellsImg(e, cellsXY, dotcolor, i)
 	}
-
+	MergeIMG("temp/2Dplot/selectedDots/", "temp/2Dplot/selectedDots/merge.png")
+	Merge2ImgFileName("temp/imgOut.png", "temp/2Dplot/selectedDots/merge.png", "temp/imgOut.png")
+	e.layer.Refresh()
 }
 
 // draw the selected cells on the microscopy image

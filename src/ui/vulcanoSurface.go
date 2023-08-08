@@ -64,7 +64,7 @@ func NewVulcano() (*Vulcano, int, int) {
 func (v *Vulcano) buildVulc(w fyne.Window) {
 	v.win = w
 	//e.layer = container.NewMax(e.scatterContainer)
-	v.layer = container.NewMax(v.drawSurface, v.scatterContainer, v.selectContainer)
+	v.layer = container.NewStack(v.drawSurface, v.scatterContainer, v.selectContainer)
 	w.SetContent(v.layer)
 
 }

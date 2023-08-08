@@ -149,7 +149,25 @@ func init2DScatterGates(inter2D *Interactive2Dsurf) {
 	inter2D.drawSurface.gatesNumbers.x = nil
 	inter2D.drawSurface.gatesNumbers.y = nil
 	inter2D.drawSurface.gatesNumbers.nb = 0
-	inter2D.gateContainer.Refresh()
+	init2DselectedDots()
+	//inter2D.gateContainer.Refresh()
+	inter2D.layer.Refresh()
+}
+
+// clear selected dots image
+func init2DselectedDots() {
+	filter.CopyFile("temp/2Dplot/transpa_800x800.png", "temp/2Dplot/dotsIngGates.png")
+}
+
+////////////////////////////
+//     TEMP folder
+////////////////////////////
+
+func Init2DTempDir() {
+	// copy blanc 2D plot image
+	filter.CopyFile("temp/2Dplot/transpa_800x800.png", "temp/2Dplot/2Dplot.png")
+	filter.CopyFile("temp/2Dplot/transpa_800x800.png", "temp/2Dplot/2DplotDots.png")
+	filter.CopyFile("temp/2Dplot/transpa_800x800.png", "temp/2Dplot/dotsIngGates.png")
 }
 
 ////////////////////////////

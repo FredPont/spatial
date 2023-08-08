@@ -178,7 +178,7 @@ func clearLastGate(e *Editor) {
 	}
 	//log.Println("e.drawSurface.gatesNumbers.nb=", e.drawSurface.gatesNumbers.nb)
 	nob := len(e.gateNumberContainer.Objects) - 1 // nb of objects in the gate nb container minus the last one
-	log.Println("nb de gate names", nob)
+	log.Println("nb of gates", nob)
 
 	e.gateNumberContainer.Objects = e.gateNumberContainer.Objects[:nob] // remove last object = last gate name
 
