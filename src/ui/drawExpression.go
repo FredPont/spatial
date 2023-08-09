@@ -5,6 +5,7 @@ import (
 	"log"
 	"spatial/src/filter"
 	"spatial/src/plot"
+	"spatial/src/pogrebDB"
 	"spatial/src/pref"
 	"strconv"
 	"time"
@@ -273,7 +274,20 @@ func setDelay(slidePause *widget.Entry, slideDelay binding.Float) {
 
 }
 
+// getExpress get the values from the expression column selected by the user and the XY columns
 func getExpress(a fyne.App, header []string, filename string, expcol string, curPathwayIndex binding.Int) ([]float64, []filter.Point) {
+	// get the user preference for using the database
+	pref := fyne.CurrentApp().Preferences()
+	useDBpref := binding.BindPreferenceBool("useDataBase", pref)
+	useDB, _ := useDBpref.Get()
+	// use the pogreb database instead of CSV if selected by the user in preferences
+	if useDB {
+		return pogrebDB.DBgetExpress(a, header, filename, expcol, curPathwayIndex)
+	}
+	return getExpressCSV(a, header, filename, expcol, curPathwayIndex)
+}
+
+func getExpressCSV(a fyne.App, header []string, filename string, expcol string, curPathwayIndex binding.Int) ([]float64, []filter.Point) {
 	pref := a.Preferences()
 	// X coordinates
 	xcor := binding.BindPreferenceString("xcor", pref) // set the link to preferences for X coordinates

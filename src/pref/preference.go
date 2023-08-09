@@ -153,7 +153,7 @@ func BuildPref(a fyne.App, head []string) {
 		prefs.SetBool("multithreadCluster", v)
 	})
 	clusterMT := binding.BindPreferenceBool("multithreadCluster", prefs)
-	clMT, _ := clusterMT.Get()
+	clMT, err := clusterMT.Get()
 	if err != nil {
 		log.Println("wrong value for cluster multithread !", err)
 	}
@@ -188,6 +188,14 @@ func BuildPref(a fyne.App, head []string) {
 	hideLgd, _ := hideL.Get()
 	hideLegend.SetChecked(hideLgd)
 
+	// use database pogreb instead of csv files
+	usePogreb := widget.NewCheck("", func(v bool) {
+		prefs.SetBool("useDataBase", v)
+	})
+	useDBpref := binding.BindPreferenceBool("useDataBase", prefs)
+	useDB, _ := useDBpref.Get()
+	usePogreb.SetChecked(useDB)
+
 	// create form
 	form := &widget.Form{
 		Items: []*widget.FormItem{ // we can specify items in the constructor
@@ -202,6 +210,7 @@ func BuildPref(a fyne.App, head []string) {
 			{Text: "vulcano selection square size in pixels", Widget: vulcSquare},
 			{Text: "Use multithreads for clusters", Widget: clusterMTcheck},
 			{Text: "Expression number of threads", Widget: expThreads},
+			{Text: "Convert CSV to DataBase (restart needed)", Widget: usePogreb},
 			{Text: "Clusters color gradient", Widget: grad},
 			{Text: "Shuffle colors", Widget: shuffleGradient},
 			{Text: "Hide Legend (cluster & expression)", Widget: hideLegend},

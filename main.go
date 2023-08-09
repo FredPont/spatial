@@ -21,6 +21,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"spatial/src/pogrebDB"
 	"spatial/src/ui"
 
 	"fyne.io/fyne/v2"
@@ -29,11 +30,17 @@ import (
 )
 
 func main() {
-	title()
 	a := app.NewWithID("SpatialExplorer")
-	log.Println("preferences saved in :", a.Storage().RootURI())
+	title()
+
 	// initPref initialise some user preferences when not set
 	ui.InitPref()
+	pogrebDB.InitPogreb()
+
+	log.Println("preferences saved in :", a.Storage().RootURI())
+
+	//InitTempDir remove old 2D plots and gates from temp/2Dplot dir
+	ui.Init2DTempDir()
 
 	w := a.NewWindow("image")
 	w.SetMaster()

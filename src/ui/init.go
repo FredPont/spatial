@@ -254,6 +254,10 @@ func InitPref() {
 	// number of threads for expression
 	expThreads := prefs.IntWithFallback("nbExpressThreads", 1)
 	prefs.SetInt("nbExpressThreads", expThreads)
+
+	// database pogreb instead of csv files
+	pogrebDB := prefs.BoolWithFallback("useDataBase", false)
+	prefs.SetBool("useDataBase", pogrebDB)
 }
 
 // init background colors

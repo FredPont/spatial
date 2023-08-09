@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	fyne.io/fyne/v2 v2.3.6-0.20230717215520-4e63455578cc
+	github.com/akrylysov/pogreb v0.10.1
 	github.com/fogleman/gg v1.3.0
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mazznoer/colorgrad v0.9.1

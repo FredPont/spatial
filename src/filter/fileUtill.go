@@ -203,6 +203,24 @@ func scaleXY(X, Y string, scaleFactor float64, rotate string) (int64, int64) {
 
 }
 
+func ScaleXY(X, Y string, scaleFactor float64, rotate string) (int64, int64) {
+
+	x, err := strconv.ParseFloat(X, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	xScaled := int64(math.Round(x * scaleFactor))
+
+	y, err := strconv.ParseFloat(Y, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	yScaled := int64(math.Round(y * scaleFactor))
+
+	return Rotation(xScaled, yScaled, rotate)
+
+}
+
 // Rotation set the image rotation to + 90 or -90
 func Rotation(xScaled, yScaled int64, rotate string) (int64, int64) {
 	pref := fyne.CurrentApp().Preferences()

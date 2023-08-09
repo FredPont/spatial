@@ -426,6 +426,7 @@ func MTdrawImageExp(a fyne.App, e *Editor, header []string, filename string, exp
 
 	log.Println("start reading data")
 	expressions, pts := getExpress(a, header, filename, expcol, curPathwayIndex) // []expressions and []Point
+	//expressions, pts := pogrebDB.DBgetExpress(a, header, filename, expcol, curPathwayIndex) // []expressions and []Point
 	if len(expressions) < 1 {
 		log.Println("Intensities not available for column", expcol)
 		return
