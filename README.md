@@ -46,17 +46,17 @@ https://doi.org/10.1186/s12859-023-05150-1
 The new version of Single-Cell Spatial Explorer under development is able to process millions of spots. Thus, it is possible to use the software with technologies such as Akoya PhenoCycler.
 The strategy to how to use such datasets is explained in the documentation, read it carefully before starting.
 
-Ki67 expression
+Ki67 expression (2.2 x 10<sup>6</sup> spots)
 ![Ki67](./src/web/akoyaKi67.jpg)
-Keratin 14 expression
+Keratin 14 expression (2.2 x 10<sup>6</sup> spots)
 ![K14](./src/web/akoyaKeratin14.jpg)
-Cells Clusters
+Cells Clusters (2.2 x 10<sup>6</sup> spots)
 ![AkoClu1](./src/web/akoyaCluster1.jpg)
-Cells cluster layers
+Cells cluster layers (2.2 x 10<sup>6</sup> spots)
 ![AkoClu2](./src/web/akoya_clusters.png)
-Cells characterization with a 2D plot
+Cells characterization with a 2D plot (2.2 x 10<sup>6</sup> spots)
 ![Ako2D1](./src/web/akoya2D1.png)
-Cells in gates characterization with a 2D plot
+Cells in gates characterization with a 2D plot (2.2 x 10<sup>6</sup> spots)
 ![Ako2D1](./src/web/akoyaPlotGate.png)
 
 ## ScreenShots
