@@ -52,11 +52,12 @@ func InitPogreb() {
 				}
 				return
 			}
+			// the current db file does not correspond to the data file so it is necessary to convert the CSV
+			CSVtoPogreb() // convert current csv file to pogreb DB
+			return
 
-		} else {
-			CSVtoPogreb() // if there is no pogreb file, convert current csv file to pogreb DB
 		}
-
+		CSVtoPogreb() // if there is no pogreb file, convert current csv file to pogreb DB
 	}
 	return
 

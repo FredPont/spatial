@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"spatial/src/filter"
+	"spatial/src/pogrebDB"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -32,7 +33,7 @@ func makeplot(a fyne.App, zoom int, header []string, filename, colX, colY, plotN
 	param := prefToConf(a.Preferences())
 	// index of the 2 columns to plot and the XY columns with the image coordinates (to be able to filter the gates)
 	colIndexes := filter.GetColIndex(header, []string{colX, colY, param.X, param.Y})
-	mapAndGates := filter.ReadColumns(filename, colIndexes)
+	mapAndGates := pogrebDB.ReadColumns(filename, colIndexes)
 
 	// get the two first columns of mapAndGates to get map coordinates
 	scatterData := strToplot(extract2cols(mapAndGates, 0, 1))
@@ -298,6 +299,6 @@ func prefToConf(pref fyne.Preferences) filter.Conf {
 	r := binding.BindPreferenceString("rotate", pref) // set the link to preferences for rotation
 	rotate, _ := r.Get()
 
-	return filter.Conf{X:x, Y:y, Scale:scale, Rotate:rotate}
+	return filter.Conf{X: x, Y: y, Scale: scale, Rotate: rotate}
 
 }

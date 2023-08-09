@@ -179,4 +179,5 @@ Thanks to [Miguel Madrid](https://github.com/mimame) for his advices on Github.
 
 The GO developpment team is aknowledged as well as the contributors to Go's GUI ([Fyne](https://github.com/fyne-io)), data and color ecosystem, especially the following projects :
 
-[Go graphics](https://github.com/fogleman/gg), [gonum](https://www.gonum.org/), [fc](https://github.com/ajstarks/fc), [colorgrad](https://github.com/mazznoer/colorgrad), [go-colorful](https://github.com/lucasb-eyer/go-colorful), [stats](https://pkg.go.dev/github.com/aclements/go-moremath/stats)
+[Go graphics](https://github.com/fogleman/gg), [gonum](https://www.gonum.org/), [fc](https://github.com/ajstarks/fc), [colorgrad](https://github.com/mazznoer/colorgrad), [go-colorful](https://github.com/lucasb-eyer/go-colorful), [stats](https://pkg.go.dev/github.com/aclements/go-moremath/stats),  [pogreb](https://github.com/akrylysov/pogreb), 
+[progressbar](https://github.com/schollz/progressbar)

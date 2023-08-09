@@ -13,6 +13,7 @@ func TestGetColIndex(t *testing.T) {
 		want   []int
 	}{
 		{[]string{"a", "b", "c", "d", "e", "f"}, []string{"e", "b", "z", "c"}, []int{4, 1, 2}},
+		{[]string{"a", "b", "c", "d", "e", "f"}, []string{"x", "b", "z", "c"}, []int{1, 2}},
 	}
 	for i, tc := range tests {
 		t.Run(fmt.Sprintf("Index=%d", i), func(t *testing.T) {

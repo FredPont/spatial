@@ -90,8 +90,8 @@ func GetColIndex(header, list []string) []int {
 		}
 	}
 
-	if len(indexes) < 2 {
-		log.Fatal("XY columns not found in table !", list)
+	if len(indexes) < len(list) {
+		log.Fatal("Columns not found in table ! ", list)
 	}
 	return indexes
 }
@@ -108,35 +108,62 @@ func selByIndex(row []string, indexes []int) []string {
 	return selection
 }
 
-// ReadColumns read only columns with positions in indexes
-func ReadColumns(filename string, colIndexes []int) [][]string {
-	var xy [][]string
-	// Open the file
-	csvfile, err := os.Open("data/" + filename)
-	if err != nil {
-		log.Fatalln("Couldn't open the csv file", err)
-	}
-	defer csvfile.Close()
-	// Parse the file
-	r := csv.NewReader(bufio.NewReader(csvfile))
-	//r := csv.NewReader(csvfile)
-	r.Comma = '\t'
-	r.Read() // skip header
+// SelByIndex select item in a slice according to indexes
+// we use it to select in the table X,Y columns
+// corresponding to indexes positions
+func SelByIndex(row []string, indexes []int) []string {
+	var selection []string
 
-	// Iterate through the records
-	for {
-		// Read each record from csv
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
-		xy = append(xy, selByIndex(record, colIndexes))
+	for _, i := range indexes {
+		selection = append(selection, row[i])
 	}
-	return xy
+	return selection
 }
+
+// // ReadColumns read only columns with positions in indexes
+// func ReadColumns(filename string, colIndexes []int) [][]string {
+// 	// get the user preference for using the database
+// 	pref := fyne.CurrentApp().Preferences()
+// 	useDBpref := binding.BindPreferenceBool("useDataBase", pref)
+// 	useDB, err := useDBpref.Get()
+// 	check(err)
+
+// 	// if the user want to use a database, data are read from the database
+// 	if useDB {
+// 		return pogrebDB.ReadColumnsDB(filename, colIndexes)
+// 	}
+// 	return ReadColumnsCSV(filename, colIndexes)
+// }
+
+// // ReadColumns read only columns with positions in indexes
+// func ReadColumnsCSV(filename string, colIndexes []int) [][]string {
+// 	var xy [][]string
+// 	// Open the file
+// 	csvfile, err := os.Open("data/" + filename)
+// 	if err != nil {
+// 		log.Fatalln("Couldn't open the csv file", err)
+// 	}
+// 	defer csvfile.Close()
+// 	// Parse the file
+// 	r := csv.NewReader(bufio.NewReader(csvfile))
+// 	//r := csv.NewReader(csvfile)
+// 	r.Comma = '\t'
+// 	r.Read() // skip header
+
+// 	// Iterate through the records
+// 	for {
+// 		// Read each record from csv
+// 		record, err := r.Read()
+// 		if err == io.EOF {
+// 			break
+// 		}
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+// 		xy = append(xy, selByIndex(record, colIndexes))
+// 	}
+// 	return xy
+// }
 
 // ReadClusters read only columns with positions in indexes and fill a map
 // cluster NB => slice of x,y coordinates

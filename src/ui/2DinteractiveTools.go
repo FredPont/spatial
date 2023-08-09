@@ -23,6 +23,7 @@ import (
 	"log"
 	"math"
 	"spatial/src/filter"
+	"spatial/src/pogrebDB"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -152,7 +153,7 @@ func plotColIndex(prefs fyne.Preferences, header []string) []int {
 func extract2DinterData(prefs fyne.Preferences, header []string, firstTable string) [][]string {
 
 	colIndexes := plotColIndex(prefs, header)
-	cols := filter.ReadColumns(firstTable, colIndexes)
+	cols := pogrebDB.ReadColumns(firstTable, colIndexes)
 
 	return cols
 }
