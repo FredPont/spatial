@@ -56,7 +56,5 @@ func process(file string) {
 	defer db.Close()
 	// read CSV
 	ReadAll(db, "data/"+file)
-	// header := fileutil.ReadAll(db, "data/"+file, &wg)
-	//fileutil.ReadColumn(db, header[1])
 
 }

@@ -28,6 +28,7 @@ import (
 	"strings"
 
 	"github.com/akrylysov/pogreb"
+	"github.com/schollz/progressbar/v3"
 )
 
 func check(e error) {
@@ -35,28 +36,6 @@ func check(e error) {
 		log.Println(e)
 	}
 }
-
-// // ListFiles lists all files in a directory
-// func ListFiles(dir string) []string {
-// 	var filesList []string
-// 	files, err := os.ReadDir(dir)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	for _, f := range files {
-// 		//fmt.Println(f.Name())
-// 		filesList = append(filesList, f.Name())
-// 	}
-// 	return filesList
-// }
-
-// // RemExt remove file extension
-// func RemExt(filename string) (string, string) {
-// 	var extension = filepath.Ext(filename)
-// 	var name = filename[0 : len(filename)-len(extension)]
-// 	return name, extension
-// }
 
 ////////////////////////////////////////
 // read all csv in RAM !
@@ -102,7 +81,9 @@ func loadData(db *pogreb.DB, data [][]string, header []string) {
 	nrow := len(data)
 	column := make([]string, nrow)
 	fmt.Print(" col : ", ncol, " rows : ", nrow, "	")
+	bar := progressbar.Default(int64(ncol)) // Add a new progress bar
 	for i := 0; i < ncol; i++ {
+		bar.Add(1) // show progress bar
 		for j := 0; j < nrow; j++ {
 			column[j] = data[j][i]
 		}

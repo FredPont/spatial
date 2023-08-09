@@ -38,16 +38,23 @@ func InitPogreb() {
 		dataFiles := filter.ListFiles("data/")
 		dataInUse, _ := filter.RemExt(dataFiles[0])
 		DBFiles := filter.ListFiles("temp/pogreb/")
-		DBfile := DBFiles[0]
-		//log.Println("data ", dataInUse, " DB ", DBfile)
-		if DBfile == dataInUse {
-			fmt.Println("A database with the name ", DBfile, " already exist. Do you want to replace it (y/n) ? [n]")
-			var input string
-			fmt.Scanf("%s", &input)
-			if input == "y" || input == "Y" {
-				CSVtoPogreb() // convert current csv file to pogreb DB
+		DBfile := ""
+		if len(DBFiles) != 0 {
+			DBfile = DBFiles[0]
+
+			//log.Println("data ", dataInUse, " DB ", DBfile)
+			if DBfile == dataInUse {
+				fmt.Println("A database with the name ", DBfile, " already exist. Do you want to replace it (y/n) ? [n]")
+				var input string
+				fmt.Scanf("%s", &input)
+				if input == "y" || input == "Y" {
+					CSVtoPogreb() // convert current csv file to pogreb DB
+				}
+				return
 			}
-			return
+
+		} else {
+			CSVtoPogreb() // if there is no pogreb file, convert current csv file to pogreb DB
 		}
 
 	}
