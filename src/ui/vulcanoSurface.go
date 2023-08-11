@@ -19,19 +19,10 @@
 package ui
 
 import (
-	//"fmt"
-
 	"image/color"
-
-	//"log"
-
-	//"math"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	//"fyne.io/fyne/v2/data/binding"
-	//"fyne.io/fyne/v2/theme"
-	//"fyne.io/fyne/v2/widget"
 )
 
 // Vulcano contains the drawsurface, containers for scatter and select lines

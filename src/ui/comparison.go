@@ -427,16 +427,3 @@ func writePV(filename string, pvTable []PVrecord) {
 		filter.WriteOneLine(out, strings.Join(line, "\t"))
 	}
 }
-
-//formatOutFile add extension csv to file name or build a file name with time string when the filename is not given by the user
-// func formatOutFile(name string) string {
-// 	var outfile string
-
-// 	if name == "" {
-// 		current_time := time.Now()
-// 		outfile = "comparison_" + current_time.Format("2006-01-02_150405") + ".csv"
-// 	} else {
-// 		outfile = name + ".csv"
-// 	}
-// 	return outfile
-// }

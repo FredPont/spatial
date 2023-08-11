@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"io"
 	"math"
-	"math/rand"
 	"strconv"
 	"time"
 
@@ -110,51 +109,6 @@ func SelByIndex(row []string, indexes []int) []string {
 	}
 	return selection
 }
-
-// // ReadColumns read only columns with positions in indexes
-// func ReadColumns(filename string, colIndexes []int) [][]string {
-// 	// get the user preference for using the database
-// 	pref := fyne.CurrentApp().Preferences()
-// 	useDBpref := binding.BindPreferenceBool("useDataBase", pref)
-// 	useDB, err := useDBpref.Get()
-// 	check(err)
-
-// 	// if the user want to use a database, data are read from the database
-// 	if useDB {
-// 		return pogrebDB.ReadColumnsDB(filename, colIndexes)
-// 	}
-// 	return ReadColumnsCSV(filename, colIndexes)
-// }
-
-// // ReadColumns read only columns with positions in indexes
-// func ReadColumnsCSV(filename string, colIndexes []int) [][]string {
-// 	var xy [][]string
-// 	// Open the file
-// 	csvfile, err := os.Open("data/" + filename)
-// 	if err != nil {
-// 		log.Fatalln("Couldn't open the csv file", err)
-// 	}
-// 	defer csvfile.Close()
-// 	// Parse the file
-// 	r := csv.NewReader(bufio.NewReader(csvfile))
-// 	//r := csv.NewReader(csvfile)
-// 	r.Comma = '\t'
-// 	r.Read() // skip header
-
-// 	// Iterate through the records
-// 	for {
-// 		// Read each record from csv
-// 		record, err := r.Read()
-// 		if err == io.EOF {
-// 			break
-// 		}
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 		xy = append(xy, SelByIndex(record, colIndexes))
-// 	}
-// 	return xy
-// }
 
 // ReadClusters read only columns with positions in indexes and fill a map
 // cluster NB => slice of x,y coordinates
@@ -421,69 +375,6 @@ func ReadGradient(filename string) []string {
 	return str
 }
 
-// ScaleSlice01 scale a slice between 0-1 and return the scaled 0-1 slice,  min and max
-func ScaleSlice01(s []float64) ([]float64, float64, float64) {
-	var norm []float64
-	min, max := FindMinAndMax(s)
-	for _, v := range s {
-		if max != min {
-			z := (v - min) / (max - min)
-			norm = append(norm, z)
-		} else {
-			norm = append(norm, 0.)
-		}
-	}
-
-	return norm, min, max
-}
-
-// ScaleSliceMinMax scale a slice between min-Max
-func ScaleSliceMinMax(s []float64, min, max float64) []float64 {
-	var norm []float64
-
-	for _, v := range s {
-		if max != min {
-			z := (v - min) / (max - min)
-			norm = append(norm, z)
-		} else {
-			norm = append(norm, 0.)
-		}
-	}
-
-	return norm
-}
-
-// credit : https://learningprogramming.net/golang/golang-golang/find-max-and-min-of-array-in-golang/
-func FindMinAndMax(a []float64) (min, max float64) {
-	min = a[0]
-	max = a[0]
-	for _, value := range a {
-		if value < min {
-			min = value
-		}
-		if value > max {
-			max = value
-		}
-	}
-	return min, max
-}
-
-// search str in m keys
-func strInMap(str string, m map[string]bool) bool {
-	_, found := m[str]
-	return found
-}
-
-// StrToMap convert an array of string to map[string]bool
-func StrToMap(a []string) map[string]bool {
-	dic := make(map[string]bool, len(a))
-
-	for _, x := range a {
-		dic[x] = true
-	}
-	return dic
-}
-
 // RemExt remove file extension
 func RemExt(filename string) (string, string) {
 	var extension = filepath.Ext(filename)
@@ -625,39 +516,6 @@ func FormatOutFile(prefix, name string, ext string) string {
 	return outfile
 }
 
-// PopIntItem return last int from []int
-func PopIntItem(s []int) int {
-	return s[len(s)-1]
-}
-
-// PopIntArray return the new []int witout last item
-func PopIntArray(s []int) []int {
-	return s[:len(s)-1]
-}
-
-// PopPointItem return last Point from []Point
-func PopPointItem(s []Point) Point {
-	return s[len(s)-1]
-}
-
-// StrToInt convert a string to an int
-func StrToInt(s string) int {
-	intVar, err := strconv.Atoi(s)
-	if err != nil {
-		log.Println("cannot convert string ", s, " to int !")
-	}
-	return intVar
-}
-
-// StrToF64 convert a string to a float64
-func StrToF64(s string) float64 {
-	floatVar, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		log.Println("cannot convert string ", s, " to float64 !")
-	}
-	return floatVar
-}
-
 // TrimString cut a string to length
 // credits : https://dev.to/takakd/go-safe-truncate-string-9h0
 func TrimString(str string, length int) string {
@@ -674,87 +532,6 @@ func TrimString(str string, length int) string {
 		}
 	}
 	return truncated
-}
-
-// ShuffleInt randomise a slice of int
-func ShuffleInt(a []int) []int {
-
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(a), func(i, j int) { a[i], a[j] = a[j], a[i] })
-
-	return a
-}
-
-// FillSliceInt fills a slice with n integers from 0 to n-1
-func FillSliceInt(n int) []int {
-	var slice = make([]int, n)
-	for i := range slice {
-		slice[i] = i
-	}
-	return slice
-}
-
-// DivideNB divide a number into integer parts
-func DivideNB(number, numParts int) []int {
-
-	// Calculate the quotient and remainder
-	quotient := number / numParts
-	remainder := number % numParts
-
-	// Create an array to store the resulting parts
-	parts := make([]int, numParts)
-
-	// Fill the array with the quotient value
-	for i := 0; i < numParts; i++ {
-		parts[i] = quotient
-	}
-
-	// Distribute the remainder evenly among the parts
-	for i := 0; i < remainder; i++ {
-		parts[i]++
-	}
-
-	// Print the resulting parts
-	//fmt.Println(parts)
-	return parts
-}
-
-// DivideSlice divide a slice into  parts
-func DivideSlice(slice []Point, parts int) [][]Point {
-
-	length := len(slice)
-	if length < parts {
-		parts = length
-	}
-
-	result := make([][]Point, parts)
-	partSize := length / parts
-	remainder := length % parts
-
-	start := 0
-	for i := 0; i < parts; i++ {
-		end := start + partSize
-		if remainder > 0 {
-			end++
-			remainder--
-		}
-
-		result[i] = slice[start:end]
-		start = end
-	}
-
-	return result
-}
-
-// SumSliceInt, make the sum of the n first numbers in a slice
-func SumSliceInt(n int, numbers []int) int {
-	// Sum of first n numbers
-	sum := 0
-	for i := 0; i < n; i++ {
-		sum += numbers[i]
-	}
-	return sum
-	//fmt.Printf("Sum of first %d numbers: %d", n, sum)
 }
 
 // WriteCSV export a [][]string as CSV file

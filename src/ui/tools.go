@@ -315,11 +315,3 @@ func filterPtToStr(p filter.Point) []string {
 	str := []string{x, y}
 	return str
 }
-
-// convert one fyne position to one []string
-// func fynPosToStr(p fyne.Position) []string {
-// 	x := fmt.Sprintf("%.0f", p.X)
-// 	y := fmt.Sprintf("%.0f", p.Y)
-// 	str := []string{x, y}
-// 	return str
-// }

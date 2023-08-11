@@ -302,87 +302,6 @@ func getExpressCSV(a fyne.App, header []string, filename string, expcol string, 
 	return filter.ReadExpress(a, filename, colIndexes)
 }
 
-// func drawExp(a fyne.App, e *Editor, header []string, filename string, expcol, gradien string, f binding.Float, curPathwayIndex binding.Int, ExpressWindow fyne.Window) {
-// 	f.Set(0.2)     // progress bar set to 20%
-// 	initCluster(e) // remove all dots of the cluster container
-// 	pref := a.Preferences()
-// 	// Dot opacity
-// 	DotOp := binding.BindPreferenceFloat("dotOpacity", pref) // pref binding for the  dot opacity
-// 	opacity, _ := DotOp.Get()
-// 	op := uint8(opacity)
-
-// 	// pre-build expression gradient
-// 	grad := preBuildGradient(gradien)
-
-// 	// Dot opacity gradient
-// 	gradop := binding.BindPreferenceBool("gradOpacity", pref)
-// 	opGrad, _ := gradop.Get()                               // enabled/disabled opacity gradient
-// 	gradMax := binding.BindPreferenceFloat("gradMax", pref) // pref binding for user Max value for the opacity gradient
-// 	opMax, _ := gradMax.Get()
-// 	gradMin := binding.BindPreferenceFloat("gradMin", pref) // pref binding for user Min value for the opacity gradient
-// 	opMin, _ := gradMin.Get()
-// 	if opMin >= opMax {
-// 		log.Println("Min threshold, ", opMin, " must be <= Max threshold, ", opMax)
-// 	}
-
-// 	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) //  dot diameter
-// 	diameter, _ := clustDia.Get()
-// 	diameter = ApplyZoomInt(e, diameter)
-
-// 	log.Println("start reading data")
-// 	expressions, pts := getExpress(a, header, filename, expcol, curPathwayIndex) // []expressions and []Point
-// 	if len(expressions) < 1 {
-// 		log.Println("Intensities not available for column", expcol)
-// 		return
-// 	}
-// 	log.Println("stop reading data")
-// 	f.Set(0.3) // progress bar set to 30% after data reading
-// 	nbPts := len(pts)
-// 	scaleExp, min, max := filter.ScaleSlice01(expressions)
-
-// 	// density plot of the expression distribution
-// 	go plot.BuildDensity(expressions, 100., filter.TrimString(expcol, 40), ExpressWindow)
-// 	go saveTMPfiles(pts, expressions, min, max, nbPts)
-
-// 	circlesObjets := make([]fyne.CanvasObject, nbPts) // store all the circles to add them all in one time
-
-// 	for c := 0; c < nbPts; c++ {
-// 		// progress bar increases when 50% of points are loaded
-// 		if c == int(nbPts/2) {
-// 			f.Set(0.5) // 50 % progression for progress bar
-// 		}
-// 		// transparency gradient
-// 		if opGrad && opMin < opMax {
-// 			op = gradTransp(expressions[c], min, max, opMin, opMax)
-// 		}
-// 		//op = gradTransp(expressions[c], min, max)
-// 		clcolor := gradUser(gradien, grad, scaleExp[c])
-
-// 		e.drawcircle(ApplyZoomInt(e, pts[c].X), ApplyZoomInt(e, pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
-// 		circle := drawRoundedRect(ApplyZoomInt(e, pts[c].X), ApplyZoomInt(e, pts[c].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
-// 		circlesObjets[c] = circle //add the spot to the slice of objects
-// 	}
-// 	// draw legend title, dot and value for the current cexpression
-// 	// if the hide legend preference is checked, the legend is not drawn
-// 	hideL := binding.BindPreferenceBool("hideLegend", pref)
-// 	hideLgd, _ := hideL.Get()
-// 	if !hideLgd {
-// 		R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
-// 		colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
-// 		titleLegend(e, expcol, colorText)
-// 		// transparency gradient
-// 		if opGrad && opMin < opMax {
-// 			//fmt.Println("opGrad", opGrad, " opMin opMax", opMin, opMax)
-// 			gradOpLegend(e, diameter, gradien, grad, min, max, opMin, opMax, colorText)
-// 		} else {
-// 			expLegend(e, op, diameter, gradien, grad, min, max, colorText) // not transparency gradien in legend
-// 		}
-// 	}
-// 	e.clusterContainer.Objects = append(e.clusterContainer.Objects, circlesObjets...)
-// 	e.clusterContainer.Refresh()
-// 	f.Set(0.) // reset progress bar
-// }
-
 // gradTransp compute opacity based on expression score
 func gradTransp(exp, min, max, opMin, opMax float64) uint8 {
 	if max == min {
@@ -466,32 +385,7 @@ func unscale(v, min, max float64) float64 {
 	return v*(max-min) + min
 }
 
-// gradUser return the gradien value with name "gradien"
-// func gradUser(gradien string) func(float64) RGB {
-// 	switch gradien {
-// 	case "Turbo":
-// 		return func(val float64) RGB { return TurboGradien(val) }
-// 	case "Viridis":
-// 		return func(val float64) RGB { return ViridisGrad(val) }
-// 	case "White - Red":
-// 		return func(val float64) RGB { return WRgradien(val) }
-// 	case "Yellow - Red":
-// 		return func(val float64) RGB { return YlRdGradien(val) }
-// 	case "Purple - Red":
-// 		return func(val float64) RGB { return PuRdGradien(val) }
-// 	case "Inferno":
-// 		return func(val float64) RGB { return InferGrad(val) }
-// 	case "Plasma":
-// 		return func(val float64) RGB { return PlasmaGradien(val) }
-// 	case "Red - Yellow ":
-// 		return func(val float64) RGB { return RDYLGradien(val) }
-// 	case "Custom":
-// 		return func(val float64) RGB { return CustomGradien(val) }
-// 	default:
-// 		return func(val float64) RGB { return WRgradien(val) }
-// 	}
-
-// }
+// gradUser return the gradien (with name "gradien") RGB value at a specific point
 func gradUser(gradien string, grad colorgrad.Gradient, val float64) RGB {
 	return rgbModel(grad.At(val))
 }

@@ -104,19 +104,3 @@ func (r *interactiveRaster) drawGateNb(x, y int, gateNB string) {
 	//gateNB := strconv.Itoa(r.gatesNumbers.nb)
 	AbsText(r.edit.gateNumberContainer, x-offset, y+offset, gateNB, 20, color.NRGBA{255, 255, 0, 255})
 }
-
-// func abs(x int) int {
-// 	if x < 0 {
-// 		return -x
-// 	}
-// 	return x
-
-// }
-
-// func swap(a, b int) (int, int) {
-// 	var x2 int = 0
-// 	x2 = a
-// 	a = b
-// 	b = x2
-// 	return a, b
-// }

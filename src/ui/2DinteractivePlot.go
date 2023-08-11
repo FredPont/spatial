@@ -138,14 +138,3 @@ func (p *PlotBox) yScatlabel(v *Interactive2Dsurf, x int) {
 
 	AbsText(v.scatterContainer, x-labelSize, yCoord(p, p.Ymax)-25, ylabel, 12, color.NRGBA{0, 0, 0, 255}) // axis title
 }
-
-// gatesDotPlot plot the cells inside one gate in the 2D plot
-// func (p *PlotBox) gatesDotPlot(v *Interactive2Dsurf, dotsize int, cells map[string]filter.Point, dotcolor color.NRGBA) {
-
-// 	for _, xy := range cells {
-// 		//x, y := xCoord(p, float64(xy.X)), yCoord(p, float64(xy.Y))
-// 		v.drawSurface.drawcircleGateCont(xy.X, xy.Y, dotsize, dotcolor)
-// 		//log.Println(x, y)
-// 	}
-
-// }

@@ -220,21 +220,6 @@ func selectedCells(inter2D *Interactive2Dsurf, scatter map[string]filter.Point) 
 	return cellsInGates
 }
 
-// plot the dots in gates in color in the 2D scatter plot. dots are plotted in the gate container
-// func plotDotsInGates(p *PlotBox, inter2D *Interactive2Dsurf, cellsInGates []map[string]filter.Point, selectedGradient string) {
-// 	prefs := fyne.CurrentApp().Preferences()
-// 	//get scatter dot size
-// 	ds := binding.BindPreferenceString("2Ddotsize", prefs) // set the link to 2D dot size preferences
-// 	ds2 := binding.StringToInt(ds)
-// 	dotsize, _ := ds2.Get()
-
-// 	nbGates := len(cellsInGates)
-// 	for i := 0; i < nbGates; i++ {
-// 		dotcolor := dotColors(nbGates, i, selectedGradient)
-// 		p.gatesDotPlot(inter2D, dotsize, cellsInGates[i], dotcolor)
-// 	}
-// }
-
 // dotColors computes the color of scatter dots
 // for a total number of clusters "nbGates"
 // colors are computed from gradients except "Hematoxilin Eosine" that return
@@ -288,29 +273,6 @@ func plotDotsMicrocop(e *Editor, cellsInGates []map[string]filter.Point, imageMa
 	Merge2ImgFileName("temp/imgOut.png", "temp/2Dplot/selectedDots/merge.png", "temp/imgOut.png")
 	e.layer.Refresh()
 }
-
-// draw the selected cells on the microscopy image
-// func drawCells(e *Editor, cellsXY []filter.Point, dotcolor color.NRGBA) {
-// 	pref := fyne.CurrentApp().Preferences()
-// 	clustOp := binding.BindPreferenceFloat("clustOpacity", pref) // cluster opacity
-// 	opacity, _ := clustOp.Get()
-// 	op := uint8(opacity)
-// 	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) // cluster dot diameter
-// 	diameter, _ := clustDia.Get()
-// 	diameter = ApplyZoomInt(e, diameter)
-// 	sf := binding.BindPreferenceFloat("scaleFactor", pref) // set the link to preferences for scaling factor
-// 	scaleFactor, _ := sf.Get()                             // read the preference for scaling factor
-// 	rot := binding.BindPreferenceString("rotate", pref)    // set the link to preferences for rotation
-// 	rotate, _ := rot.Get()
-
-// 	for _, xy := range cellsXY {
-// 		xScaled, yScaled := scale(xy.X, xy.Y, scaleFactor, rotate)
-// 		e.drawcircle(ApplyZoomInt(e, xScaled), ApplyZoomInt(e, yScaled), diameter, color.NRGBA{dotcolor.R, dotcolor.G, dotcolor.B, op})
-// 		//log.Println(xy)
-// 	}
-
-// 	e.clusterContainer.Refresh()
-// }
 
 // apply the scaling factor and rotation to xy coordinates
 func scale(x, y int, scaleFactor float64, rotate string) (int, int) {
