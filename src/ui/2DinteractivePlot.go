@@ -51,17 +51,17 @@ func buildPlot(plotMap map[string]filter.Dot) PlotBox {
 }
 
 // Scatter makes a scatter chart
-func (p *PlotBox) scatterPlot(v *Interactive2Dsurf, dotsize int) {
+// func (p *PlotBox) scatterPlot(v *Interactive2Dsurf, dotsize int) {
 
-	for i, xplot := range p.X {
-		//x := int(MapRange(x, p.Xmin, p.Xmax, p.Left, 800-p.Right))
-		//y := int(MapRange(p.Y[i], p.Ymin, p.Ymax, p.Bottom, 800-p.Top))
-		x, y := xCoord(p, xplot), yCoord(p, p.Y[i])
-		v.drawcircleScattCont(x, y, dotsize, color.NRGBA{128, 128, 128, 255})
-		//log.Println(x, y)
-	}
+// 	for i, xplot := range p.X {
+// 		//x := int(MapRange(x, p.Xmin, p.Xmax, p.Left, 800-p.Right))
+// 		//y := int(MapRange(p.Y[i], p.Ymin, p.Ymax, p.Bottom, 800-p.Top))
+// 		x, y := xCoord(p, xplot), yCoord(p, p.Y[i])
+// 		v.drawcircleScattCont(x, y, dotsize, color.NRGBA{128, 128, 128, 255})
+// 		//log.Println(x, y)
+// 	}
 
-}
+// }
 
 // XAxis makes the X axis
 func (p *PlotBox) xAxisScat(v *Interactive2Dsurf) {
@@ -140,12 +140,12 @@ func (p *PlotBox) yScatlabel(v *Interactive2Dsurf, x int) {
 }
 
 // gatesDotPlot plot the cells inside one gate in the 2D plot
-func (p *PlotBox) gatesDotPlot(v *Interactive2Dsurf, dotsize int, cells map[string]filter.Point, dotcolor color.NRGBA) {
+// func (p *PlotBox) gatesDotPlot(v *Interactive2Dsurf, dotsize int, cells map[string]filter.Point, dotcolor color.NRGBA) {
 
-	for _, xy := range cells {
-		//x, y := xCoord(p, float64(xy.X)), yCoord(p, float64(xy.Y))
-		v.drawSurface.drawcircleGateCont(xy.X, xy.Y, dotsize, dotcolor)
-		//log.Println(x, y)
-	}
+// 	for _, xy := range cells {
+// 		//x, y := xCoord(p, float64(xy.X)), yCoord(p, float64(xy.Y))
+// 		v.drawSurface.drawcircleGateCont(xy.X, xy.Y, dotsize, dotcolor)
+// 		//log.Println(x, y)
+// 	}
 
-}
+// }

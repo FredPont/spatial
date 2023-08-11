@@ -2,7 +2,6 @@ package ui
 
 import (
 	"encoding/csv"
-	"fmt"
 	"image/png"
 	"spatial/src/filter"
 	"spatial/src/plot"
@@ -318,9 +317,9 @@ func filterPtToStr(p filter.Point) []string {
 }
 
 // convert one fyne position to one []string
-func fynPosToStr(p fyne.Position) []string {
-	x := fmt.Sprintf("%.0f", p.X)
-	y := fmt.Sprintf("%.0f", p.Y)
-	str := []string{x, y}
-	return str
-}
+// func fynPosToStr(p fyne.Position) []string {
+// 	x := fmt.Sprintf("%.0f", p.X)
+// 	y := fmt.Sprintf("%.0f", p.Y)
+// 	str := []string{x, y}
+// 	return str
+// }

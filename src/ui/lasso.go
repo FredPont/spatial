@@ -76,15 +76,15 @@ func (r *interactiveRaster) drawline(x, y, x1, y1 int) fyne.CanvasObject {
 
 // drawline a circle at x,y position to the gate dot container
 func (e *Editor) drawcircleGateDot(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
-	c := iCircle(x, y, ray, color)   // draw circle rayon ray
-	e.gateDotsContainer.AddObject(c) // add the cicle to the cluster container
+	c := iCircle(x, y, ray, color) // draw circle rayon ray
+	e.gateDotsContainer.Add(c)     // add the cicle to the cluster container
 	return c
 }
 
 // drawcircleGateCont draw a circle at x,y position to the gate container
 func (e *Editor) drawcircleGateCont(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
 	c := iCircle(x, y, ray, color) // draw circle rayon ray
-	e.gateContainer.AddObject(c)   // add the cicle to the cluster container
+	e.gateContainer.Add(c)         // add the cicle to the cluster container
 	return c
 }
 
@@ -105,18 +105,18 @@ func (r *interactiveRaster) drawGateNb(x, y int, gateNB string) {
 	AbsText(r.edit.gateNumberContainer, x-offset, y+offset, gateNB, 20, color.NRGBA{255, 255, 0, 255})
 }
 
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
+// func abs(x int) int {
+// 	if x < 0 {
+// 		return -x
+// 	}
+// 	return x
 
-}
+// }
 
-func swap(a, b int) (int, int) {
-	var x2 int = 0
-	x2 = a
-	a = b
-	b = x2
-	return a, b
-}
+// func swap(a, b int) (int, int) {
+// 	var x2 int = 0
+// 	x2 = a
+// 	a = b
+// 	b = x2
+// 	return a, b
+// }

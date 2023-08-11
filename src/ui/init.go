@@ -47,10 +47,10 @@ func initGates(e *Editor) {
 	initGatesNBwindow(e) // clear all gates numbers displayed
 }
 
-func initAllLayers(e *Editor) {
-	initCluster(e)
-	initGates(e)
-}
+// func initAllLayers(e *Editor) {
+// 	initCluster(e)
+// 	initGates(e)
+// }
 
 func initGatesContainer(e *Editor) {
 	e.gateContainer.Objects = nil
@@ -157,6 +157,12 @@ func init2DScatterGates(inter2D *Interactive2Dsurf) {
 // clear selected dots image
 func init2DselectedDots() {
 	filter.CopyFile("temp/2Dplot/transpa_800x800.png", "temp/2Dplot/dotsIngGates.png")
+}
+
+// init2DinterTempMT clear temp/2Dplot/MTdots/ to avoid overlapping from previous plot
+func init2DinterTempMT() {
+	filter.ClearDir("temp/2Dplot/MTdots")
+
 }
 
 ////////////////////////////

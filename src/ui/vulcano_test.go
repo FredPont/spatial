@@ -38,7 +38,7 @@ func TestDataColwidth(t *testing.T) {
 		data [][]string
 		want float32
 	}{
-		{[][]string{[]string{"top left very large column", "top right"}, []string{"bottom left", "bottom right"}}, 260},
+		{[][]string{{"top left very large column", "top right"}, {"bottom left", "bottom right"}}, 260},
 	}
 	for i, tc := range tests {
 		t.Run(fmt.Sprintf("Index=%d", i), func(t *testing.T) {

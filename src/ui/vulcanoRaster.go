@@ -118,7 +118,8 @@ func (r *vulcWidgetRender) Layout(size fyne.Size) {
 }
 
 func (r *vulcWidgetRender) MinSize() fyne.Size {
-	return r.MinSize()
+	return fyne.NewSize(800, 800)
+	//return r.MinSize()
 }
 
 func (r *vulcWidgetRender) Refresh() {

@@ -58,9 +58,9 @@ func ReadCompareTable(zoom int, filename string, colIndexes []int, XYindex []int
 		test, g := rowInGroup(zoom, record, XYindex, group1, group2, param)
 		if test {
 			if g == 1 {
-				table1 = append(table1, selByIndex(record, colIndexes))
+				table1 = append(table1, SelByIndex(record, colIndexes))
 			} else if g == 2 {
-				table2 = append(table2, selByIndex(record, colIndexes))
+				table2 = append(table2, SelByIndex(record, colIndexes))
 			}
 		}
 		// } else {
@@ -115,10 +115,10 @@ func ReadGateVsAll(zoom int, filename string, colIndexes []int, XYindex []int, g
 		test, g := rowInGroup1(zoom, record, XYindex, group1, param)
 		if test {
 			if g == 1 {
-				table1 = append(table1, selByIndex(record, colIndexes))
+				table1 = append(table1, SelByIndex(record, colIndexes))
 			}
 		} else {
-			table2 = append(table2, selByIndex(record, colIndexes))
+			table2 = append(table2, SelByIndex(record, colIndexes))
 		}
 	}
 	return table1, table2, true

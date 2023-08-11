@@ -55,6 +55,9 @@ func ReadHeader(path string) []string {
 	reader.FieldsPerRecord = -1
 
 	record, err := reader.Read() // read first line
+	if err != nil {
+		log.Println("cannot read header of ", path)
+	}
 
 	return record
 }
@@ -94,18 +97,6 @@ func GetColIndex(header, list []string) []int {
 		log.Fatal("Columns not found in table ! ", list)
 	}
 	return indexes
-}
-
-// selByIndex select item in a slice according to indexes
-// we use it to select in the table X,Y columns
-// corresponding to indexes positions
-func selByIndex(row []string, indexes []int) []string {
-	var selection []string
-
-	for _, i := range indexes {
-		selection = append(selection, row[i])
-	}
-	return selection
 }
 
 // SelByIndex select item in a slice according to indexes
@@ -160,7 +151,7 @@ func SelByIndex(row []string, indexes []int) []string {
 // 		if err != nil {
 // 			log.Fatal(err)
 // 		}
-// 		xy = append(xy, selByIndex(record, colIndexes))
+// 		xy = append(xy, SelByIndex(record, colIndexes))
 // 	}
 // 	return xy
 // }
@@ -202,8 +193,8 @@ func ReadClusters(a fyne.App, filename string, colIndexes []int) map[int][]Point
 		if err != nil {
 			log.Fatal(err)
 		}
-		cxy := selByIndex(record, colIndexes)
-		xScaled, yScaled := scaleXY(cxy[1], cxy[2], scaleFactor, rotate)
+		cxy := SelByIndex(record, colIndexes)
+		xScaled, yScaled := ScaleXY(cxy[1], cxy[2], scaleFactor, rotate)
 		clustNB, err := strconv.Atoi(cxy[0])
 		check(err)
 		clusterMap[clustNB] = append(clusterMap[clustNB], Point{int(xScaled), int(yScaled)})
@@ -211,25 +202,7 @@ func ReadClusters(a fyne.App, filename string, colIndexes []int) map[int][]Point
 	return clusterMap
 }
 
-// scaleXY apply scaling factor and rotation to xy
-func scaleXY(X, Y string, scaleFactor float64, rotate string) (int64, int64) {
-
-	x, err := strconv.ParseFloat(X, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	xScaled := int64(math.Round(x * scaleFactor))
-
-	y, err := strconv.ParseFloat(Y, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	yScaled := int64(math.Round(y * scaleFactor))
-
-	return Rotation(xScaled, yScaled, rotate)
-
-}
-
+// ScaleXY apply scaling factor and rotation to xy
 func ScaleXY(X, Y string, scaleFactor float64, rotate string) (int64, int64) {
 
 	x, err := strconv.ParseFloat(X, 64)
@@ -348,12 +321,12 @@ func ClustersByCells(a fyne.App, filename string, colIndexes []int, cellImport m
 		if err != nil {
 			log.Fatal(err)
 		}
-		ncxy := selByIndex(record, colIndexes)
+		ncxy := SelByIndex(record, colIndexes)
 		// continue if cell name is not in the cellnames map keys
-		if strInMap(ncxy[0], cellImport) == false {
+		if !strInMap(ncxy[0], cellImport) {
 			continue
 		}
-		xScaled, yScaled := scaleXY(ncxy[2], ncxy[3], scaleFactor, rotate)
+		xScaled, yScaled := ScaleXY(ncxy[2], ncxy[3], scaleFactor, rotate)
 		clustNB, err := strconv.Atoi(ncxy[1])
 		check(err)
 		clusterMap[clustNB] = append(clusterMap[clustNB], Point{int(xScaled), int(yScaled)})
@@ -405,8 +378,8 @@ func ReadExpress(a fyne.App, filename string, colIndexes []int) ([]float64, []Po
 		if err != nil {
 			log.Fatal(err)
 		}
-		cxy := selByIndex(record, colIndexes)
-		xScaled, yScaled := scaleXY(cxy[1], cxy[2], scaleFactor, rotate)
+		cxy := SelByIndex(record, colIndexes)
+		xScaled, yScaled := ScaleXY(cxy[1], cxy[2], scaleFactor, rotate)
 		exp, err := strconv.ParseFloat(cxy[0], 64)
 		if err != nil {
 			//log.Println("column number", colIndexes[0]+1, "does not contain a number", err)

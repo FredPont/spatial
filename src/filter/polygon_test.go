@@ -54,8 +54,8 @@ func TestPopPoints(t *testing.T) {
 		polygons [][]Point
 		want     [][]Point
 	}{
-		{[][]Point{[]Point{{0, 0}, {10, 0}, {10, 10}}, []Point{{0, 0}, {10, 0}}},
-			[][]Point{[]Point{{0, 0}, {10, 0}, {10, 10}}}},
+		{[][]Point{{{0, 0}, {10, 0}, {10, 10}}, {{0, 0}, {10, 0}}},
+			[][]Point{{{0, 0}, {10, 0}, {10, 10}}}},
 	}
 
 	for i, tc := range tests {

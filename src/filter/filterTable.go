@@ -66,7 +66,10 @@ func FilterTable(zoom int, dataFile, outfile string, polygon []Point, param Conf
 	reader.FieldsPerRecord = -1
 
 	// read table header
-	header, err := reader.Read()                                         //read first line of pathway
+	header, err := reader.Read() //read first line of pathway
+	if err != nil {
+		log.Println("cannot read header of ", path)
+	}
 	WriteOneLine(out, strings.Join(header, "\t")+"\t"+"GateNumber"+"\n") // write header in result file
 	XYindex := GetColIndex(header, []string{param.X, param.Y})
 	//fmt.Println(XYindex)
@@ -93,7 +96,7 @@ func filterRow(zoom int, record []string, XYindex []int, polygon []Point, param 
 	scaleFactor := param.Scale
 	rotate := param.Rotate
 
-	XYstr := selByIndex(record, XYindex) // []string with XY coordinates
+	XYstr := SelByIndex(record, XYindex) // []string with XY coordinates
 	//fmt.Println(XYstr)
 
 	x, err := strconv.ParseFloat(XYstr[0], 64)
@@ -180,56 +183,3 @@ func ZoomPolygon(p []Point, zf float64) []Point {
 	}
 	return zoomedPoly
 }
-
-// func zoomPolygon(zoom int, polygon []Point) []Point {
-// 	var zoomPoly []Point
-// 	for _, p := range polygon {
-// 		zoomPoly = append(zoomPoly, Point{p.X * 100 / zoom, p.Y * 100 / zoom})
-// 	}
-// 	return zoomPoly
-// }
-
-/*
-// applyZoomInt64 correct the input integer by the current zoom factor
-func applyZoomInt64(zoom int, val int64) int64 {
-	if zoom == 100 {
-		return val
-	}
-	return val * int64(zoom) / 100
-}
-*/
-/*
-func TablePlot3(dataFile string, polygon []Point, param Conf, columnX, columnY string, ch1 chan<- [][]string) {
-	var xy [][]string
-	path := "data/" + dataFile
-
-	csvFile, err := os.Open(path)
-	check(err)
-	defer csvFile.Close()
-	reader := csv.NewReader(bufio.NewReader(csvFile))
-	reader.Comma = '\t'
-	reader.FieldsPerRecord = -1
-
-	// read table header
-	header, err := reader.Read() //read first line of pathway
-
-	// get the index of the columns with the XY coordinates of the microscopie image
-	XYindex := GetColIndex(header, []string{param.X, param.Y})
-	// get the index of the columns with the XY coordinates of the gate dots
-	gateidx := GetColIndex(header, []string{columnX, columnY})
-	//fmt.Println(XYindex)
-	for {
-		// Read in a row. Check if we are at the end of the file.
-		record, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-
-		if filterRow(record, XYindex, polygon, param) {
-			xy = append(xy, []string{record[gateidx[0]], record[gateidx[1]]})
-		}
-
-	}
-	ch1 <- xy
-}
-*/

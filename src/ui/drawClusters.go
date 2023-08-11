@@ -2,9 +2,9 @@ package ui
 
 import (
 	"image/color"
-	"log"
 	"spatial/src/filter"
 	"spatial/src/plot"
+	"spatial/src/pogrebDB"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -27,69 +27,77 @@ func getClusters(a fyne.App, header []string, filename string) map[int][]filter.
 	clucol, _ := clustercolumn.Get()
 
 	colIndexes := filter.GetColIndex(header, []string{clucol, xc, yc})
+
+	useDBpref := binding.BindPreferenceBool("useDataBase", pref)
+	useDB, _ := useDBpref.Get()
+	// use the pogreb database instead of CSV if selected by the user in preferences
+	if useDB {
+		return pogrebDB.ReadClustersDB(a, filename, colIndexes)
+	}
+
 	return filter.ReadClusters(a, filename, colIndexes)
 }
 
-func drawClusters(a fyne.App, e *Editor, header []string, filename string, f binding.Float) {
-	f.Set(0.2)     // progress bar
-	initCluster(e) // remove all dots of the cluster container
-	pref := a.Preferences()
-	clustOp := binding.BindPreferenceFloat("clustOpacity", pref) // cluster opacity
-	opacity, _ := clustOp.Get()
-	op := uint8(opacity)
-	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) // cluster dot diameter
-	diameter, _ := clustDia.Get()
-	diameter = ApplyZoomInt(e, diameter)
+// func drawClusters(a fyne.App, e *Editor, header []string, filename string, f binding.Float) {
+// 	f.Set(0.2)     // progress bar
+// 	initCluster(e) // remove all dots of the cluster container
+// 	pref := a.Preferences()
+// 	clustOp := binding.BindPreferenceFloat("clustOpacity", pref) // cluster opacity
+// 	opacity, _ := clustOp.Get()
+// 	op := uint8(opacity)
+// 	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) // cluster dot diameter
+// 	diameter, _ := clustDia.Get()
+// 	diameter = ApplyZoomInt(e, diameter)
 
-	clusterMap := getClusters(a, header, filename) // cluster nb => []Point
-	log.Println(len(clusterMap), "clusters detected")
+// 	clusterMap := getClusters(a, header, filename) // cluster nb => []Point
+// 	log.Println(len(clusterMap), "clusters detected")
 
-	nbCluster := len(clusterMap)
-	clustNames := filter.KeysIntPoint(clusterMap)
+// 	nbCluster := len(clusterMap)
+// 	clustNames := filter.KeysIntPoint(clusterMap)
 
-	legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
+// 	legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
 
-	colors := allClustColors(nbCluster)
-	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
-	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
+// 	colors := allClustColors(nbCluster)
+// 	R, G, B, _ := plot.GetPrefColorRGBA(a, "legendColR", "legendColG", "legendColB", "legendColA")
+// 	colorText := color.NRGBA{uint8(R), uint8(G), uint8(B), 255}
 
-	// if the hide legend preference is checked, the legend is not drawn
-	hideL := binding.BindPreferenceBool("hideLegend", pref)
-	hideLgd, _ := hideL.Get()
-	circlesObjets := make([]fyne.CanvasObject, countDataPoints(clusterMap))
-	idxObjct := 0 // number of objects
-	for c := 0; c < nbCluster; c++ {
-		// f.Set(float64(c) / float64(nbCluster-1)) // % progression for progress bar. This is too fast to be seen
-		coordinates := clusterMap[clustNames[c]]
-		//clcolor := ClusterColors(nbCluster, c)
-		clcolor := colors[c]
-		for i := 0; i < len(coordinates); i++ {
-			circle := drawRoundedRect(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
-			circlesObjets[idxObjct] = circle //add the spot to the slice of objects
-			idxObjct++
-		}
-		// draw legend dot and name for the current cluster
-		// if the hide legend preference is checked, the legend is not drawn
-		if hideLgd {
-			continue
-		}
-		drawLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, diameter, clustNames[c], colorText)
-		legendPosition.Y = legendPosition.Y + 30
-		// set progress bar to 50% when half cluster have been computed
-		if c == int(nbCluster/2) {
-			f.Set(0.5) // progress bar
-		}
-	}
-	// if the hide legend preference is checked, the legend name is not drawn
-	if !hideLgd {
-		titleLegend(e, "     clusters", getLegendColor(a))
-	}
-	//e.clusterContainer.Objects = circlesObjets
-	e.clusterContainer.Objects = append(e.clusterContainer.Objects, circlesObjets...)
-	e.clusterContainer.Refresh()
+// 	// if the hide legend preference is checked, the legend is not drawn
+// 	hideL := binding.BindPreferenceBool("hideLegend", pref)
+// 	hideLgd, _ := hideL.Get()
+// 	circlesObjets := make([]fyne.CanvasObject, countDataPoints(clusterMap))
+// 	idxObjct := 0 // number of objects
+// 	for c := 0; c < nbCluster; c++ {
+// 		// f.Set(float64(c) / float64(nbCluster-1)) // % progression for progress bar. This is too fast to be seen
+// 		coordinates := clusterMap[clustNames[c]]
+// 		//clcolor := ClusterColors(nbCluster, c)
+// 		clcolor := colors[c]
+// 		for i := 0; i < len(coordinates); i++ {
+// 			circle := drawRoundedRect(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+// 			circlesObjets[idxObjct] = circle //add the spot to the slice of objects
+// 			idxObjct++
+// 		}
+// 		// draw legend dot and name for the current cluster
+// 		// if the hide legend preference is checked, the legend is not drawn
+// 		if hideLgd {
+// 			continue
+// 		}
+// 		drawLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, diameter, clustNames[c], colorText)
+// 		legendPosition.Y = legendPosition.Y + 30
+// 		// set progress bar to 50% when half cluster have been computed
+// 		if c == int(nbCluster/2) {
+// 			f.Set(0.5) // progress bar
+// 		}
+// 	}
+// 	// if the hide legend preference is checked, the legend name is not drawn
+// 	if !hideLgd {
+// 		titleLegend(e, "     clusters", getLegendColor(a))
+// 	}
+// 	//e.clusterContainer.Objects = circlesObjets
+// 	e.clusterContainer.Objects = append(e.clusterContainer.Objects, circlesObjets...)
+// 	e.clusterContainer.Refresh()
 
-	f.Set(0.) // reset progress bar
-}
+// 	f.Set(0.) // reset progress bar
+// }
 
 // draw the cluster legend : color + cluster number
 func drawLegend(e *Editor, R, G, B, op uint8, x, y, diameter, clusterName int, colorText color.NRGBA) {
@@ -111,13 +119,13 @@ func getLegendColor(a fyne.App) color.NRGBA {
 }
 
 // countDataPoints get the number of data points to estimate the number of cluster to draw
-func countDataPoints(clusterMap map[int][]filter.Point) int {
-	ct := 0
-	for _, clu := range clusterMap {
-		ct = ct + len(clu)
-	}
-	return ct
-}
+// func countDataPoints(clusterMap map[int][]filter.Point) int {
+// 	ct := 0
+// 	for _, clu := range clusterMap {
+// 		ct = ct + len(clu)
+// 	}
+// 	return ct
+// }
 
 // credits : https://github.com/ajstarks/fc
 // iCircle draws a circle centered at (x,y)
@@ -144,8 +152,8 @@ func drawRoundedRect(x, y, rad int, color color.NRGBA) *canvas.Rectangle {
 
 // drawcircle, draws a circle at x,y position to the cluster container
 func (e *Editor) drawcircle(x, y, ray int, color color.NRGBA) fyne.CanvasObject {
-	c := iCircle(x, y, ray, color)  // draw circle rayon ray
-	e.clusterContainer.AddObject(c) // add the cicle to the cluster container
+	c := iCircle(x, y, ray, color) // draw circle rayon ray
+	e.clusterContainer.Add(c)      // add the cicle to the cluster container
 	//e.clusterContainer.Objects = append(e.clusterContainer.Objects, c)
 	return c
 }
@@ -163,5 +171,5 @@ func AbsText(cont *fyne.Container, x, y int, s string, size int, color color.NRG
 	adj := fsize / 5
 	p := fyne.Position{X: fx, Y: fy - (fsize + adj)}
 	t.Move(p)
-	cont.AddObject(t)
+	cont.Add(t)
 }

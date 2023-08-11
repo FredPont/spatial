@@ -183,7 +183,8 @@ func (r *rasterWidgetRender) Layout(size fyne.Size) {
 }
 
 func (r *rasterWidgetRender) MinSize() fyne.Size {
-	return r.MinSize()
+	//return r.MinSize()
+	return fyne.NewSize(500, 500)
 }
 
 func (r *rasterWidgetRender) Refresh() {

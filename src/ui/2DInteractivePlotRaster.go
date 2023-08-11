@@ -43,7 +43,7 @@ type plotRaster struct {
 	gatesLines   [][]fyne.CanvasObject // all the gates dots
 	gatesNumbers GateNB                // GateNB number holds the gate number coordinates and the number of gates starting from 1
 	alledges     [][]filter.Point      // points coordinates of all the gate
-	plot2DBox    PlotBox
+	//plot2DBox    PlotBox
 }
 
 func (r *plotRaster) MinSize() fyne.Size {
@@ -125,7 +125,8 @@ func (r *plotWidgetRender) Layout(size fyne.Size) {
 }
 
 func (r *plotWidgetRender) MinSize() fyne.Size {
-	return r.MinSize()
+	//return r.MinSize()
+	return fyne.NewSize(600, 600)
 }
 
 func (r *plotWidgetRender) Refresh() {

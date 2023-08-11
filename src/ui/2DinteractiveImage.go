@@ -55,6 +55,8 @@ func (p *PlotBox) MTdraw2DplotImg(v *Interactive2Dsurf, dotsize int) {
 	W, H := 800, 800
 	// clear selected dots image
 	init2DselectedDots()
+	// clear temp dir : "temp/2Dplot/MTdots/"
+	init2DinterTempMT()
 
 	dc := gg.NewContext(W, H)
 	dc.SetRGBA(0, 0, 0, 0) // create a transparent image
