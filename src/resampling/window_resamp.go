@@ -21,7 +21,7 @@ func ResampWin(a fyne.App, Table *string, header []string, f binding.Float) {
 	resampRate := 1
 
 	// Create the explaination text
-	myText := "It is recommended to reduce very large datasets by resampling.\nCaution: a too large resampling rate can create \"holes\"\n in the spot distribution.\nSelect the resampling rate 1/n and the columns to convert to integer.\nXY coordinates and cluster numbers must be integers"
+	myText := "It is recommended to reduce very large datasets by resampling.\nCaution: a too large resampling rate can create \"holes\"\n in the spot distribution.\nSelect the resampling rate 1/n and the columns to convert to integer.\nXY coordinates and cluster numbers must be integers.\nTo use database instead of CSV, restart the software after resampling."
 
 	explain := widget.NewLabel(myText)
 	explain.Alignment = fyne.TextAlignLeading
