@@ -9,11 +9,11 @@ import (
 	"fyne.io/fyne/v2/data/binding"
 )
 
-func buttonImportCells(a fyne.App, e *Editor, preference fyne.Preferences, iCellFI binding.Int, f binding.Float, impCellFindex int, header []string, firstTable string) {
+func buttonImportCells(a fyne.App, e *Editor, preference fyne.Preferences, f binding.Float, impCellFindex int, header []string, firstTable string) {
 	f.Set(0.3) // progress bar
 	importedCells, files := importCells()
 	f.Set(0.5) // progress bar
-	iCellFI = binding.BindPreferenceInt("imported file index", preference)
+	iCellFI := binding.BindPreferenceInt("imported file index", preference)
 	impCellFindex, _ = iCellFI.Get()
 	if impCellFindex > len(importedCells)-1 {
 		impCellFindex = 0
@@ -72,28 +72,35 @@ func drawImportCells(a fyne.App, e *Editor, header []string, filename string, f 
 	op := uint8(opacity)
 	clustDia := binding.BindPreferenceInt("clustDotDiam", pref) // cluster dot diameter
 	diameter, _ := clustDia.Get()
-	diameter = ApplyZoomInt(e, diameter)
+	legendDiameter := ApplyZoomInt(e, diameter)
 
 	clusterMap := getImportedCells(a, header, filename, cellImport) // cluster nb => []Point
-	//log.Println(len(clusterMap), "clusters detected")
+	//log.Println(clusterMap, "clusters detected")
 
 	nbCluster := len(clusterMap)
 	clustNames := filter.KeysIntPoint(clusterMap)
+	//log.Println(clustNames, "Name clusters detected")
 
 	legendPosition := filter.Point{X: 15, Y: 15} // initial legend position for cluster names
 	title(e, cellfile)                           // draw title with file name
+
+	spotsToDisplay := make([]fyne.CanvasObject, 0)
+
 	for c := 0; c < nbCluster; c++ {
 		f.Set(float64(c) / float64(nbCluster-1)) // % progression for progress bar
 		coordinates := clusterMap[clustNames[c]]
 		clcolor := ClusterColors(nbCluster, c)
 		for i := 0; i < len(coordinates); i++ {
-			e.drawcircle(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+			//e.drawcircle(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op})
+			//add the spot to the slice of objects
+			spotsToDisplay = append(spotsToDisplay, drawRoundedRect(ApplyZoomInt(e, coordinates[i].X), ApplyZoomInt(e, coordinates[i].Y), diameter, color.NRGBA{clcolor.R, clcolor.G, clcolor.B, op}))
+
 		}
 		// draw legend dot and name for the current cluster
-		impCellLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, diameter, clustNames[c])
+		impCellLegend(e, clcolor.R, clcolor.G, clcolor.B, op, legendPosition.X, legendPosition.Y, legendDiameter, clustNames[c])
 		legendPosition.Y = legendPosition.Y + 30
 	}
-
+	e.clusterContainer.Objects = append(e.clusterContainer.Objects, spotsToDisplay...)
 	e.clusterContainer.Refresh()
 }
 

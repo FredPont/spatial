@@ -147,7 +147,7 @@ func BuildTools(a fyne.App, w fyne.Window, e *Editor) {
 		clusDotOpacity,
 
 		widget.NewButton("Import cells", func() {
-			go buttonImportCells(a, e, preference, iCellFI, f, impCellFindex, header, firstTable)
+			go buttonImportCells(a, e, preference, f, impCellFindex, header, firstTable)
 		}),
 
 		// zoom : very important : never unzom under the window size
