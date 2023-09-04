@@ -26,11 +26,8 @@ func ResampWin(a fyne.App, Table *string, header []string, f binding.Float) {
 	explain := widget.NewLabel(myText)
 	explain.Alignment = fyne.TextAlignLeading
 	// Create a list of strings for the checkbox labels
-	myCheckboxLabels := header
-	// Create a CheckGroup widget with the checkbox labels
-	myCheckGroup := widget.NewCheckGroup(myCheckboxLabels, func(selected []string) {
-		// Handle the checkbox selection change event
-	})
+	headerMap := make(map[string]bool, len(header))
+	myCheckbox := listColums(header, headerMap)
 
 	// Create a text entry widget for the resampling rate 1/n
 	skipRows := widget.NewEntry()
@@ -55,7 +52,7 @@ func ResampWin(a fyne.App, Table *string, header []string, f binding.Float) {
 			fmt.Println("The resampling rate is:", resampRate)
 
 			// get the column indexes
-			colnames := myCheckGroup.Selected
+			colnames := selectedCols(headerMap)
 			colIndexes := findAllcolIndexe(colnames, header)
 
 			Resample("data/"+firstTable, "data/"+"0_"+firstTable, resampRate, colIndexes, colnames, "\t", f)
@@ -84,7 +81,7 @@ func ResampWin(a fyne.App, Table *string, header []string, f binding.Float) {
 		),
 	),
 		container.NewScroll(
-			myCheckGroup),
+			myCheckbox),
 	)
 
 	//myScrollContent := container.NewScroll(myContainer)
@@ -118,4 +115,35 @@ func findAllcolIndexe(colnames []string, header []string) []int {
 		}
 	}
 	return indexes
+}
+
+func listColums(header []string, headerMap map[string]bool) *widget.List {
+	list := widget.NewList(
+		func() int {
+			return len(header)
+		},
+		func() fyne.CanvasObject {
+			return widget.NewCheck("", nil)
+		},
+		func(i widget.ListItemID, o fyne.CanvasObject) {
+			o.(*widget.Check).SetText(header[i])
+			o.(*widget.Check).SetChecked(o.(*widget.Check).Checked)
+			o.(*widget.Check).OnChanged = func(value bool) {
+				headerMap[header[i]] = true
+			}
+		})
+
+	return list
+}
+
+// get all selected columns from header map
+func selectedCols(headerMap map[string]bool) []string {
+	var cols []string
+	for k, v := range headerMap {
+		if v {
+			cols = append(cols, k)
+		}
+
+	}
+	return cols
 }
