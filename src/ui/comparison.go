@@ -346,15 +346,18 @@ func foldChangePV(table1, table2 [][]string, colnames []string) []PVrecord {
 
 // extract column c from table and convert it to float
 func getColum(c int, table [][]string) []float64 {
-	var col []float64
+	//var col []float64
 	l := len(table)
+	col := make([]float64, l)
+
 	for i := 0; i < l; i++ {
 		x, err := strconv.ParseFloat(table[i][c], 64)
 		if err != nil {
 			log.Println(x, "cannot be converted to float", err)
 			return []float64{}
 		}
-		col = append(col, x)
+		//col = append(col, x)
+		col[i] = x
 	}
 	return col
 }
