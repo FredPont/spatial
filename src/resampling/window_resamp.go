@@ -2,6 +2,7 @@ package resampling
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -27,7 +28,7 @@ func ResampWin(a fyne.App, Table *string, header []string, f binding.Float) {
 	explain.Alignment = fyne.TextAlignLeading
 	// Create a list of strings for the checkbox labels
 	headerMap := make(map[string]bool, len(header))
-	myCheckbox := listColums(header, headerMap)
+	myCheckbox := listColums(header[1:], headerMap) // skip col1 = cells ID
 
 	// Create a text entry widget for the resampling rate 1/n
 	skipRows := widget.NewEntry()
@@ -53,11 +54,13 @@ func ResampWin(a fyne.App, Table *string, header []string, f binding.Float) {
 
 			// get the column indexes
 			colnames := selectedCols(headerMap)
+			//log.Println("selectect columns ", colnames)
 			colIndexes := findAllcolIndexe(colnames, header)
 
 			Resample("data/"+firstTable, "data/"+"0_"+firstTable, resampRate, colIndexes, colnames, "\t", f)
 			*Table = "0_" + firstTable
 
+			log.Println("To use the resampled dataset in a database, restart the software")
 			win.Close() // close tool window
 		}
 	})
@@ -117,6 +120,7 @@ func findAllcolIndexe(colnames []string, header []string) []int {
 	return indexes
 }
 
+// listColums create a checkbox list with column names
 func listColums(header []string, headerMap map[string]bool) *widget.List {
 	list := widget.NewList(
 		func() int {
@@ -143,7 +147,6 @@ func selectedCols(headerMap map[string]bool) []string {
 		if v {
 			cols = append(cols, k)
 		}
-
 	}
 	return cols
 }
