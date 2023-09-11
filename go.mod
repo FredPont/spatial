@@ -31,7 +31,7 @@ require (
 	github.com/go-latex/latex v0.0.0-20230307184459-12ec69307ad9 // indirect
 	github.com/go-pdf/fpdf v0.8.0 // indirect
 	github.com/go-text/render v0.0.0-20230619120952-35bccb6164b8 // indirect
-	github.com/go-text/typesetting v0.0.0-20230803102845-24e03d8b5372 // indirect
+	github.com/go-text/typesetting v0.0.0-20230905121921-abdbcca6e0eb // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/goki/freetype v1.0.1 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
@@ -48,8 +48,8 @@ require (
 	github.com/tevino/abool v1.2.0 // indirect
 	github.com/yuin/goldmark v1.5.6 // indirect
 	golang.org/x/image v0.12.0 // indirect
-	golang.org/x/mobile v0.0.0-20230901161150-52620a4a7557 // indirect
-	golang.org/x/net v0.14.0 // indirect
+	golang.org/x/mobile v0.0.0-20230906132913-2077a3224571 // indirect
+	golang.org/x/net v0.15.0 // indirect
 	golang.org/x/sys v0.12.0 // indirect
 	golang.org/x/term v0.12.0 // indirect
 	golang.org/x/text v0.13.0 // indirect

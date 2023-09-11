@@ -20,8 +20,8 @@ func buttonImportCells(a fyne.App, e *Editor, preference fyne.Preferences, f bin
 	}
 	cellImport := filter.StrToMap(importedCells[impCellFindex])
 	cellfile, _ := filter.RemExt(files[impCellFindex])
-	drawImportCells(a, e, header, firstTable, f, cellImport, cellfile)
-
+	//drawImportCells(a, e, header, firstTable, f, cellImport, cellfile)
+	drawImportCellsImg(a, e, header, firstTable, f, cellImport, cellfile)
 	// increment file index by 1
 	if impCellFindex < len(importedCells)-1 {
 		preference.SetInt("imported file index", impCellFindex+1)
