@@ -89,6 +89,9 @@ To better characterize cells, Single-Cell Spatial Explorer can plot the gates co
 Single-Cell Spatial Explorer can take advantage of years of development in image analysis. It is compatible with [FIJI](https://fiji.sc/) and [ImageJ](https://imagej.nih.gov/ij/). In this picture the contours of tumoral cells have been obtained by FIJI analysis and were imported into Single-Cell Spatial Explorer:
 ![FIJI](./src/web/fiji.png)
 
+
+Single-Cell Spatial Explorer is compatible with [Single-Cell Signature Explorer](https://doi.org/10.1093/nar/gkz601) available [here](https://sites.google.com/site/fredsoftwares/products/single-cell-signature-explorer). It is able to display classical (non spatial) scRNAseq data with the help of [Spatial Background Builder](https://github.com/FredPont/Spatial_Background_Builder).![signature explorer](./src/web/signatureExplorer.png)
+
 ## Prerequisites
 A computer with at least 8 Go RAM and a HD display with at least a HD resolution of 1920×1080.
 
