@@ -188,13 +188,6 @@ func Rotation(xScaled, yScaled int64, rotate string) (int64, int64) {
 		return xRot, yRot
 	case "-90":
 
-		// get the image width
-		// imgWidth := binding.BindPreferenceInt("imgW", pref)
-		// imgW, err := imgWidth.Get()
-		// if err != nil {
-		// 	log.Println("cannot read image width from preferences !", err)
-		// }
-
 		// get the image heigth
 		imgHeight := binding.BindPreferenceInt("imgH", pref)
 		imgH, err := imgHeight.Get()
@@ -204,6 +197,27 @@ func Rotation(xScaled, yScaled int64, rotate string) (int64, int64) {
 
 		xRot := yScaled
 		yRot := int64(imgH) - xScaled
+		return xRot, yRot
+	case "Vertical mirror":
+		// get the image width
+		imgWidth := binding.BindPreferenceInt("imgW", pref)
+		imgW, err := imgWidth.Get()
+		if err != nil {
+			log.Println("cannot read image width from preferences !", err)
+		}
+		yRot := yScaled
+		xRot := int64(imgW) - xScaled
+		return xRot, yRot
+	case "Horizontal mirror":
+		// get the image heigth
+		imgHeight := binding.BindPreferenceInt("imgH", pref)
+		imgH, err := imgHeight.Get()
+		if err != nil {
+			log.Println("cannot read image width from preferences !", err)
+		}
+
+		xRot := xScaled
+		yRot := int64(imgH) - yScaled
 		return xRot, yRot
 	}
 	return xScaled, yScaled

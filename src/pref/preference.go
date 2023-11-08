@@ -50,7 +50,7 @@ func BuildPref(a fyne.App, head []string) {
 	rotstr, _ := rota.Get()
 	log.Println("rotation : ", rotstr)
 	// coordinates +90° / -90° / no rotation
-	rot := widget.NewRadioGroup([]string{"no rotation", "+90", "-90", "Vertical mirror"}, func(s string) {
+	rot := widget.NewRadioGroup([]string{"no rotation", "+90", "-90", "Vertical mirror", "Horizontal mirror"}, func(s string) {
 		//fmt.Println("Selected", s)
 		switch s {
 		case "no rotation":
@@ -61,6 +61,8 @@ func BuildPref(a fyne.App, head []string) {
 			prefs.SetString("rotate", "-90")
 		case "Vertical mirror":
 			prefs.SetString("rotate", "Vertical mirror")
+		case "Horizontal mirror":
+			prefs.SetString("rotate", "Horizontal mirror")
 		}
 	})
 
@@ -73,6 +75,8 @@ func BuildPref(a fyne.App, head []string) {
 		rot.SetSelected("-90")
 	case "Vertical mirror":
 		rot.SetSelected("Vertical mirror")
+	case "Horizontal mirror":
+		rot.SetSelected("Horizontal mirror")
 	}
 
 	// X coordinates
