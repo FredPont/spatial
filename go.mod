@@ -9,7 +9,7 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mazznoer/colorgrad v0.9.1
 	github.com/schollz/progressbar v1.0.0
-	github.com/schollz/progressbar/v3 v3.14.0
+	github.com/schollz/progressbar/v3 v3.14.1
 	gonum.org/v1/plot v0.14.0
 )
 
@@ -28,10 +28,10 @@ require (
 	github.com/go-fonts/liberation v0.3.2 // indirect
 	github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20231102141658-eca20e8abded // indirect
-	github.com/go-latex/latex v0.0.0-20230307184459-12ec69307ad9 // indirect
+	github.com/go-latex/latex v0.0.0-20231108140139-5c1ce85aa4ea // indirect
 	github.com/go-pdf/fpdf v0.9.0 // indirect
 	github.com/go-text/render v0.0.0-20230619120952-35bccb6164b8 // indirect
-	github.com/go-text/typesetting v0.0.0-20231101082850-a36c1d9288f6 // indirect
+	github.com/go-text/typesetting v0.0.0-20231113130822-cf4b5dada737 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/goki/freetype v1.0.1 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
@@ -48,8 +48,8 @@ require (
 	github.com/tevino/abool v1.2.0 // indirect
 	github.com/yuin/goldmark v1.6.0 // indirect
 	golang.org/x/image v0.14.0 // indirect
-	golang.org/x/mobile v0.0.0-20231006135142-2b44d11868fe // indirect
-	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/mobile v0.0.0-20231108233038-35478a0c49da // indirect
+	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/term v0.14.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
