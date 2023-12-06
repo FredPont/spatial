@@ -2,7 +2,7 @@ package filter
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"os"
 )
 
@@ -41,7 +41,7 @@ func LoadJson(fname string) Record {
 		panic(err)
 	}
 	defer fp.Close()
-	bytes, err := ioutil.ReadAll(fp)
+	bytes, err := io.ReadAll(fp)
 	if err != nil {
 		panic(err)
 	}
